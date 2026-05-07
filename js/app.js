@@ -27,57 +27,161 @@ function navigate(pageId, clickedBtn) {
   if (pageId === "jobs") renderJobs();
 }
 
+// function renderFeed(posts) {
+//   const container = document.getElementById("feed-container");
+//   if (!container) return;
+//   const data = posts || POSTS;
+//   container.innerHTML = data.map((post) => `
+//     <article class="post-card" id="post-${post.id}">
+//       <div class="post-top">
+//         <img src="${post.avatar}" alt="${post.name}" loading="lazy"/>
+//         <div class="post-meta">
+//           <div class="post-name">${post.name}<span class="verified-dot"></span></div>
+//           <div class="post-role">${post.role} · ${post.time}</div>
+//         </div>
+//         <button class="post-more">···</button>
+//       </div>
+//       <div class="post-body">
+//         <div class="post-title">${post.title}</div>
+//         <div class="post-text">${post.text}</div>
+//       </div>
+//       <div class="post-image-wrap">
+//         <img src="${post.image}" alt="${post.title}" class="post-image" loading="lazy"/>
+//         ${post.trusted ? `<div class="trusted-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Trusted Content</div>` : ""}
+//       </div>
+//       <div style="padding:10px 16px 0;display:flex;align-items:center;">
+//         <button class="revenue-badge" id="rev-${post.id}" onclick="claimRevenue(${post.id}, this)">
+//           💰 $${post.earnings ? post.earnings.toFixed(2) : "0.00"} earned today — Claim
+//         </button>
+//       </div>
+//       <div class="post-actions">
+//         <button class="action-btn ${post.liked ? "liked" : ""}" onclick="toggleLike(${post.id}, this)">
+//           <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+//           <span class="like-count">${formatNum(post.likes)}</span>
+//         </button>
+//         <button class="action-btn" onclick="this.style.color='#2563eb'">
+//           <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+//           ${post.comments}
+//         </button>
+//         <button class="action-btn" onclick="this.style.color='#7c3aed'">
+//           <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+//           ${post.shares}
+//         </button>
+//         <div class="action-spacer"></div>
+//         <button class="action-btn ${post.saved ? "saved" : ""}" onclick="toggleSave(${post.id}, this)">
+//           <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+//         </button>
+//       </div>
+//       <div class="post-footer">
+//         <div class="post-tags">${post.tags.map((t) => `<span class="post-tag">${t}</span>`).join("")}</div>
+//         <span class="view-count">${post.views} views</span>
+//       </div>
+//     </article>
+//   `).join("");
+// }
 function renderFeed(posts) {
   const container = document.getElementById("feed-container");
   if (!container) return;
+
   const data = posts || POSTS;
-  container.innerHTML = data.map((post) => `
+
+  container.innerHTML = data
+    .map(
+      (post) => `
+
     <article class="post-card" id="post-${post.id}">
+
+      <!-- TOP -->
       <div class="post-top">
         <img src="${post.avatar}" alt="${post.name}" loading="lazy"/>
         <div class="post-meta">
-          <div class="post-name">${post.name}<span class="verified-dot"></span></div>
+          <div class="post-name">
+            ${post.name}<span class="verified-dot"></span>
+          </div>
           <div class="post-role">${post.role} · ${post.time}</div>
         </div>
         <button class="post-more">···</button>
       </div>
+
+      <!-- TEXT -->
       <div class="post-body">
         <div class="post-title">${post.title}</div>
         <div class="post-text">${post.text}</div>
       </div>
+
+      <!-- MEDIA SECTION -->
       <div class="post-image-wrap">
-        <img src="${post.image}" alt="${post.title}" class="post-image" loading="lazy"/>
-        ${post.trusted ? `<div class="trusted-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Trusted Content</div>` : ""}
+
+        ${
+          // 🔥 NEW POSTS (video)
+          post.type === "video" && post.media
+            ? `
+              <video class="post-image" controls>
+                <source src="${post.media}" type="video/mp4">
+              </video>
+            `
+            : // 🔥 NEW POSTS (image uploaded)
+              post.media
+              ? `<img src="${post.media}" class="post-image" loading="lazy"/>`
+              : // ✅ OLD POSTS (existing image — DO NOT REMOVE)
+                post.image
+                ? `<img src="${post.image}" class="post-image" loading="lazy"/>`
+                : // nothing
+                  ""
+        }
+
+        ${
+          post.trusted
+            ? `<div class="trusted-badge">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Trusted Content
+              </div>`
+            : ""
+        }
+
       </div>
+
+      <!-- REVENUE -->
       <div style="padding:10px 16px 0;display:flex;align-items:center;">
         <button class="revenue-badge" id="rev-${post.id}" onclick="claimRevenue(${post.id}, this)">
           💰 $${post.earnings ? post.earnings.toFixed(2) : "0.00"} earned today — Claim
         </button>
       </div>
+
+      <!-- ACTIONS -->
       <div class="post-actions">
+
         <button class="action-btn ${post.liked ? "liked" : ""}" onclick="toggleLike(${post.id}, this)">
-          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          <span class="like-count">${formatNum(post.likes)}</span>
+          ❤️ <span class="like-count">${formatNum(post.likes)}</span>
         </button>
-        <button class="action-btn" onclick="this.style.color='#2563eb'">
-          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          ${post.comments}
-        </button>
-        <button class="action-btn" onclick="this.style.color='#7c3aed'">
-          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          ${post.shares}
-        </button>
+
+        <button class="action-btn">${post.comments}</button>
+
+        <button class="action-btn">${post.shares}</button>
+
         <div class="action-spacer"></div>
+
         <button class="action-btn ${post.saved ? "saved" : ""}" onclick="toggleSave(${post.id}, this)">
-          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          🔖
         </button>
+
       </div>
+
+      <!-- FOOTER -->
       <div class="post-footer">
-        <div class="post-tags">${post.tags.map((t) => `<span class="post-tag">${t}</span>`).join("")}</div>
-        <span class="view-count">${post.views} views</span>
+        <div class="post-tags">
+          ${(post.tags || []).map((t) => `<span class="post-tag">${t}</span>`).join("")}
+        </div>
+        <span class="view-count">${post.views || 0} views</span>
       </div>
+
     </article>
-  `).join("");
+
+  `,
+    )
+    .join("");
 }
 
 function toggleLike(postId, btn) {
@@ -176,20 +280,165 @@ function selectChip(btn) {
   btn.classList.add("active");
 }
 
+// function publishPost() {
+//   const content = document.getElementById("post-content");
+//   if (!content.value.trim()) {
+//     content.style.borderColor = "#e11d48";
+//     content.focus();
+//     setTimeout(() => (content.style.borderColor = ""), 2000);
+//     return;
+//   }
+//   closeModal();
+//   content.value = "";
+//   document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
+//   const toggle = document.getElementById("med-edu-toggle");
+//   if (toggle) toggle.classList.remove("on");
+//   showToast("🎉 Post published successfully!");
+// }
+let selectedFile = null;
+
+function previewMedia(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  selectedFile = file;
+
+  const preview = document.getElementById("preview-container");
+  preview.innerHTML = "";
+
+  const url = URL.createObjectURL(file);
+
+  if (file.type.startsWith("video")) {
+    preview.innerHTML = `<video src="${url}" controls width="100%"></video>`;
+  } else {
+    preview.innerHTML = `<img src="${url}" width="100%">`;
+  }
+}
+// function publishPost() {
+//   const content = document.getElementById("post-content");
+
+//   if (!content.value.trim()) return;
+
+//   const newPost = {
+//     id: Date.now(),
+//     name: "Dr. Michael Chen",
+//     avatar:
+//       "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80&h=80&fit=crop&crop=face",
+//     role: "Healthcare Professional",
+//     time: "Just now",
+//     title: "User Post",
+//     text: content.value,
+//     image: uploadedMediaType === "image" ? uploadedMediaURL : "",
+//     video: uploadedMediaType === "video" ? uploadedMediaURL : "",
+//     likes: 0,
+//     comments: 0,
+//     shares: 0,
+//     views: 0,
+//     liked: false,
+//     saved: false,
+//     earnings: 0,
+//     tags: ["User Post"],
+//     trusted: false,
+//   };
+
+//   POSTS.unshift(newPost);
+//   renderFeed();
+
+//   // reset
+//   uploadedMediaURL = "";
+//   uploadedMediaType = "";
+//   document.getElementById("media-preview").innerHTML = "";
+
+//   closeModal();
+//   content.value = "";
+
+//   showToast("🎉 Post published!");
+// }
+// let uploadedFile = null;
+// let uploadedType = null; // "image" or "video"
+// function handleFileUpload(event) {
+//   const file = event.target.files[0];
+//   if (!file) return;
+
+//   uploadedFile = URL.createObjectURL(file);
+//   uploadedType = file.type.startsWith("video") ? "video" : "image";
+
+//   const preview = document.getElementById("preview-container");
+
+//   if (uploadedType === "image") {
+//     preview.innerHTML = `<img src="${uploadedFile}" style="width:100%;border-radius:10px;">`;
+//   } else {
+//     preview.innerHTML = `
+//       <video controls style="width:100%;border-radius:10px;">
+//         <source src="${uploadedFile}" type="${file.type}">
+//       </video>
+//     `;
+//   }
+// }
+
+let uploadedMedia = "";
+let mediaType = "image";
+
+// HANDLE FILE SELECTION
+document.getElementById("media-input").addEventListener("change", function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function (event) {
+    uploadedMedia = event.target.result;
+
+    if (file.type.startsWith("video")) {
+      mediaType = "video";
+    } else {
+      mediaType = "image";
+    }
+  };
+
+  reader.readAsDataURL(file);
+});
+
+// PUBLISH POST
 function publishPost() {
-  const content = document.getElementById("post-content");
-  if (!content.value.trim()) {
-    content.style.borderColor = "#e11d48";
-    content.focus();
-    setTimeout(() => (content.style.borderColor = ""), 2000);
+  const text = document.getElementById("post-content").value;
+
+  if (!text && !uploadedMedia) {
+    alert("Add content or media!");
     return;
   }
+
+  const newPost = {
+    id: Date.now(),
+    name: "Dr. Michael Chen",
+    avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80",
+    role: "Healthcare Professional",
+    time: "Just now",
+    title: "New Medical Post",
+    text: text,
+    media: uploadedMedia,
+    type: mediaType,
+    trusted: false,
+    likes: 0,
+    comments: 0,
+    shares: 0,
+    views: 0,
+    tags: ["New"],
+    liked: false,
+    saved: false,
+  };
+
+  // IMPORTANT: add to top
+  POSTS.unshift(newPost);
+
+  // RE-RENDER
+  renderFeed();
+
+  // RESET
+  document.getElementById("post-content").value = "";
+  uploadedMedia = "";
+
   closeModal();
-  content.value = "";
-  document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
-  const toggle = document.getElementById("med-edu-toggle");
-  if (toggle) toggle.classList.remove("on");
-  showToast("🎉 Post published successfully!");
 }
 
 document.addEventListener("keydown", (e) => {

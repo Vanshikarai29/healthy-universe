@@ -20,7 +20,7 @@
 
   <div class="sidebar-wallet">
     <div class="wallet-label">Health Balance</div>
-    <div class="wallet-amount">$<span id="user-balance">124.50</span></div>
+    <div class="wallet-amount">$<span id="user-balance">0.00</span></div>
     <small>Ad-Revenue Share</small>
   </div>
 
@@ -51,18 +51,17 @@
       Jobs
     </button>
     <button class="nav-link" onclick="navigate('wallet', this)">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path>
-    <path d="M19 10h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2z"></path>
-    <circle cx="16" cy="12" r="1"></circle>
-  </svg>
-  Wallet
-</button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path>
+        <path d="M19 10h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2z"></path>
+        <circle cx="16" cy="12" r="1"></circle>
+      </svg>
+      Wallet
+    </button>
     <button class="nav-link" onclick="navigate('profile', this)">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Profile
     </button>
-    <!-- ✨ ADDED: Settings nav -->
     <button class="nav-link" onclick="navigate('settings', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Settings
@@ -70,10 +69,10 @@
   </nav>
 
   <div class="sidebar-user">
-    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80&h=80&fit=crop&crop=face" alt="Dr. Michael Chen" class="sidebar-avatar"/>
+    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80&h=80&fit=crop&crop=face" alt="User" class="sidebar-avatar" id="sidebar-avatar"/>
     <div class="sidebar-user-info">
-      <span class="sidebar-user-name">Dr. Michael C...</span>
-      <span class="sidebar-user-role">Psychiatrist</span>
+      <span class="sidebar-user-name" id="sidebar-user-name">Loading...</span>
+      <span class="sidebar-user-role" id="sidebar-user-role">Member</span>
     </div>
     <button class="sidebar-more">···</button>
   </div>
@@ -89,7 +88,7 @@
         <p>Learn and earn from verified healthcare professionals</p>
       </div>
       <div class="mobile-balance">
-        <span class="coin-icon">💰</span> $<span id="mobile-user-balance">124.50</span>
+        <span class="coin-icon">💰</span> $<span id="mobile-user-balance">0.00</span>
       </div>
     </div>
     <div class="feed-tabs">
@@ -147,7 +146,7 @@
         <h1>Book a Consultation</h1>
         <p>Connect with verified healthcare professionals — pay with HU Coins or wallet</p>
       </div>
-      <div class="consult-balance-pill">🪙 2,340 HU Coins available</div>
+      <div class="consult-balance-pill">🪙 <span id="consult-coins">500</span> HU Coins available</div>
     </div>
     <div class="consult-search-row">
       <div class="search-bar consult-search">
@@ -237,162 +236,120 @@
     <div id="jobs-list"></div>
     <div id="applications-list" style="display:none;"></div>
   </section>
+
   <!-- WALLET PAGE -->
-<section id="page-wallet" class="page">
-  <div class="page-header wallet-page-header">
-    <div>
-      <h1>Wallet & Earnings</h1>
-      <p>Track your revenue, withdrawals, and HU Coins</p>
-    </div>
-    <button class="wallet-withdraw-btn" onclick="openWithdrawModal()">💸 Withdraw Funds</button>
-  </div>
-
-  <!-- Balance Cards -->
-  <div class="wallet-cards-grid">
-    <div class="wallet-card wallet-card-primary">
-      <div class="wallet-card-icon">💰</div>
-      <div class="wallet-card-content">
-        <span class="wallet-card-label">Available Balance</span>
-        <span class="wallet-card-amount">$<span id="wallet-balance">124.50</span></span>
-        <span class="wallet-card-sub">Ready to withdraw</span>
+  <section id="page-wallet" class="page">
+    <div class="page-header wallet-page-header">
+      <div>
+        <h1>Wallet & Earnings</h1>
+        <p>Track your revenue, withdrawals, and HU Coins</p>
       </div>
-      <div class="wallet-card-trend up">↑ 26% vs last month</div>
+      <button class="wallet-withdraw-btn" onclick="openWithdrawModal()">💸 Withdraw Funds</button>
     </div>
-    <div class="wallet-card">
-      <div class="wallet-card-icon">🪙</div>
-      <div class="wallet-card-content">
-        <span class="wallet-card-label">HU Coins</span>
-        <span class="wallet-card-amount">2,340</span>
-        <span class="wallet-card-sub">≈ ₹234 value</span>
+    <div class="wallet-cards-grid">
+      <div class="wallet-card wallet-card-primary">
+        <div class="wallet-card-icon">💰</div>
+        <div class="wallet-card-content">
+          <span class="wallet-card-label">Available Balance</span>
+          <span class="wallet-card-amount">$<span id="wallet-balance">0.00</span></span>
+          <span class="wallet-card-sub">Ready to withdraw</span>
+        </div>
+        <div class="wallet-card-trend up">↑ 26% vs last month</div>
       </div>
-      <button class="wallet-card-action" onclick="showToast('🛒 Opening coin store...')">Spend</button>
-    </div>
-    <div class="wallet-card">
-      <div class="wallet-card-icon">📈</div>
-      <div class="wallet-card-content">
-        <span class="wallet-card-label">This Month</span>
-        <span class="wallet-card-amount">$124.50</span>
-        <span class="wallet-card-sub">From 12 posts</span>
+      <div class="wallet-card">
+        <div class="wallet-card-icon">🪙</div>
+        <div class="wallet-card-content">
+          <span class="wallet-card-label">HU Coins</span>
+          <span class="wallet-card-amount" id="wallet-coins">500</span>
+          <span class="wallet-card-sub">≈ ₹<span id="wallet-coins-inr">50</span> value</span>
+        </div>
+        <button class="wallet-card-action" onclick="showToast('🛒 Opening coin store...')">Spend</button>
       </div>
-    </div>
-    <div class="wallet-card">
-      <div class="wallet-card-icon">⏳</div>
-      <div class="wallet-card-content">
-        <span class="wallet-card-label">Pending</span>
-        <span class="wallet-card-amount">$8.45</span>
-        <span class="wallet-card-sub">Processing in 24h</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stats Row -->
-  <div class="wallet-stats-row">
-    <div class="wallet-stat-box">
-      <div class="wallet-stat-header">
-        <span>All-Time Earnings</span>
-        <span class="wallet-stat-badge">Lifetime</span>
-      </div>
-      <div class="wallet-stat-value">$1,420.00</div>
-      <div class="wallet-stat-bar-wrap">
-        <div class="wallet-stat-bar" style="width:100%"></div>
-      </div>
-    </div>
-    <div class="wallet-stat-box">
-      <div class="wallet-stat-header">
-        <span>Total Withdrawn</span>
-        <span class="wallet-stat-badge green">Completed</span>
-      </div>
-      <div class="wallet-stat-value">$1,295.50</div>
-      <div class="wallet-stat-bar-wrap">
-        <div class="wallet-stat-bar" style="width:91%"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Earnings Breakdown -->
-  <div class="wallet-section">
-    <div class="wallet-section-header">
-      <h2>Earnings Breakdown</h2>
-      <select class="wallet-period-select" onchange="showToast('📊 Period updated!')">
-        <option>This Month</option>
-        <option>Last Month</option>
-        <option>Last 3 Months</option>
-        <option>All Time</option>
-      </select>
-    </div>
-    <div class="earnings-breakdown-grid">
-      <div class="earnings-chart-wrap">
-        <div class="earnings-donut" id="earnings-donut"></div>
-        <div class="earnings-donut-center">
-          <span class="donut-total">$124.50</span>
-          <span class="donut-label">Total</span>
+      <div class="wallet-card">
+        <div class="wallet-card-icon">📈</div>
+        <div class="wallet-card-content">
+          <span class="wallet-card-label">This Month</span>
+          <span class="wallet-card-amount">$0.00</span>
+          <span class="wallet-card-sub">From your posts</span>
         </div>
       </div>
-      <div class="earnings-legend" id="earnings-legend"></div>
-    </div>
-  </div>
-
-  <!-- Transactions -->
-  <div class="wallet-section">
-    <div class="wallet-section-header">
-      <h2>Transaction History</h2>
-      <div class="wallet-txn-filters">
-        <button class="txn-filter-btn active" onclick="filterTransactions('all', this)">All</button>
-        <button class="txn-filter-btn" onclick="filterTransactions('earning', this)">Earnings</button>
-        <button class="txn-filter-btn" onclick="filterTransactions('withdrawal', this)">Withdrawals</button>
-        <button class="txn-filter-btn" onclick="filterTransactions('coins', this)">Coins</button>
+      <div class="wallet-card">
+        <div class="wallet-card-icon">⏳</div>
+        <div class="wallet-card-content">
+          <span class="wallet-card-label">Pending</span>
+          <span class="wallet-card-amount">$0.00</span>
+          <span class="wallet-card-sub">Processing in 24h</span>
+        </div>
       </div>
     </div>
-    <div class="transactions-list" id="transactions-list"></div>
-    <div class="wallet-load-more">
-      <button class="load-more-btn" onclick="showToast('📜 Loading more transactions...')">Load More</button>
+    <div class="wallet-stats-row">
+      <div class="wallet-stat-box">
+        <div class="wallet-stat-header"><span>All-Time Earnings</span><span class="wallet-stat-badge">Lifetime</span></div>
+        <div class="wallet-stat-value">$0.00</div>
+        <div class="wallet-stat-bar-wrap"><div class="wallet-stat-bar" style="width:100%"></div></div>
+      </div>
+      <div class="wallet-stat-box">
+        <div class="wallet-stat-header"><span>Total Withdrawn</span><span class="wallet-stat-badge green">Completed</span></div>
+        <div class="wallet-stat-value">$0.00</div>
+        <div class="wallet-stat-bar-wrap"><div class="wallet-stat-bar" style="width:0%"></div></div>
+      </div>
     </div>
-  </div>
-
-  <!-- Quick Actions -->
-  <div class="wallet-quick-actions">
-    <div class="quick-action-card" onclick="showToast('🎁 Referral link copied!')">
-      <div class="quick-action-icon">🎁</div>
-      <strong>Invite & Earn</strong>
-      <span>Get $5 per referral</span>
+    <div class="wallet-section">
+      <div class="wallet-section-header">
+        <h2>Earnings Breakdown</h2>
+        <select class="wallet-period-select" onchange="showToast('📊 Period updated!')">
+          <option>This Month</option><option>Last Month</option><option>Last 3 Months</option><option>All Time</option>
+        </select>
+      </div>
+      <div class="earnings-breakdown-grid">
+        <div class="earnings-chart-wrap">
+          <div class="earnings-donut" id="earnings-donut"></div>
+          <div class="earnings-donut-center"><span class="donut-total">$0.00</span><span class="donut-label">Total</span></div>
+        </div>
+        <div class="earnings-legend" id="earnings-legend"></div>
+      </div>
     </div>
-    <div class="quick-action-card" onclick="showToast('📊 Opening analytics...')">
-      <div class="quick-action-icon">📊</div>
-      <strong>Revenue Analytics</strong>
-      <span>Deep dive into earnings</span>
+    <div class="wallet-section">
+      <div class="wallet-section-header">
+        <h2>Transaction History</h2>
+        <div class="wallet-txn-filters">
+          <button class="txn-filter-btn active" onclick="filterTransactions('all', this)">All</button>
+          <button class="txn-filter-btn" onclick="filterTransactions('earning', this)">Earnings</button>
+          <button class="txn-filter-btn" onclick="filterTransactions('withdrawal', this)">Withdrawals</button>
+          <button class="txn-filter-btn" onclick="filterTransactions('coins', this)">Coins</button>
+        </div>
+      </div>
+      <div class="transactions-list" id="transactions-list"></div>
+      <div class="wallet-load-more">
+        <button class="load-more-btn" onclick="showToast('📜 Loading more transactions...')">Load More</button>
+      </div>
     </div>
-    <div class="quick-action-card" onclick="navigate('settings', document.querySelector('[onclick*=settings]'))">
-      <div class="quick-action-icon">⚙️</div>
-      <strong>Payout Settings</strong>
-      <span>Manage bank & UPI</span>
+    <div class="wallet-quick-actions">
+      <div class="quick-action-card" onclick="showToast('🎁 Referral link copied!')"><div class="quick-action-icon">🎁</div><strong>Invite & Earn</strong><span>Get $5 per referral</span></div>
+      <div class="quick-action-card" onclick="showToast('📊 Opening analytics...')"><div class="quick-action-icon">📊</div><strong>Revenue Analytics</strong><span>Deep dive into earnings</span></div>
+      <div class="quick-action-card" onclick="navigate('settings', document.querySelector('[onclick*=settings]'))"><div class="quick-action-icon">⚙️</div><strong>Payout Settings</strong><span>Manage bank & UPI</span></div>
+      <div class="quick-action-card" onclick="showToast('📄 Downloading statement...')"><div class="quick-action-icon">📄</div><strong>Download Statement</strong><span>PDF for tax filing</span></div>
     </div>
-    <div class="quick-action-card" onclick="showToast('📄 Downloading statement...')">
-      <div class="quick-action-icon">📄</div>
-      <strong>Download Statement</strong>
-      <span>PDF for tax filing</span>
-    </div>
-  </div>
-</section>
-
+  </section>
 
   <!-- PROFILE PAGE -->
   <section id="page-profile" class="page">
     <div class="profile-banner"></div>
     <div class="profile-card">
       <div class="profile-top">
-        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&crop=face" alt="Dr. Michael Chen" class="profile-avatar"/>
+        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&crop=face" alt="User" class="profile-avatar" id="profile-avatar"/>
         <div class="profile-name-row">
-          <h1>Dr. Michael Chen <span class="verified-dot large"></span></h1>
+          <h1 id="profile-name">Loading... <span class="verified-dot large"></span></h1>
           <button class="edit-btn" onclick="navigate('settings', document.querySelector('[onclick*=settings]'))">Edit Profile</button>
         </div>
       </div>
-      <p class="profile-role">Psychiatrist | Mental Health Advocate</p>
+      <p class="profile-role" id="profile-role">Healthcare Professional</p>
       <div class="profile-stats">
-        <div class="stat-item"><strong>1,243</strong><small>Posts</small></div>
-        <div class="stat-item"><strong>156K</strong><small>Followers</small></div>
-        <div class="stat-item"><strong>$1,420</strong><small>Earned Total</small></div>
+        <div class="stat-item"><strong>0</strong><small>Posts</small></div>
+        <div class="stat-item"><strong>0</strong><small>Followers</small></div>
+        <div class="stat-item"><strong>$0</strong><small>Earned Total</small></div>
       </div>
-      <p class="profile-bio">Board-certified psychiatrist specializing in anxiety disorders. Passionate about health-revenue sharing.</p>
+      <p class="profile-bio" id="profile-bio">Welcome to Healthy Universe!</p>
     </div>
     <div class="profile-tabs-bar">
       <button class="profile-tab active" onclick="setProfileTab(this)">Posts</button>
@@ -402,51 +359,29 @@
     <div class="posts-grid" id="posts-grid"></div>
   </section>
 
-  <!-- ✨ ADDED: Settings Page -->
+  <!-- SETTINGS PAGE -->
   <section id="page-settings" class="page">
     <div class="page-header">
       <h1>Settings</h1>
       <p>Manage your account, preferences and privacy</p>
     </div>
-
     <div class="settings-layout">
-
-      <!-- Settings Sidebar Nav -->
       <div class="settings-nav-panel">
-        <button class="settings-nav-item active" onclick="switchSettingsTab('profile', this)">
-          <span class="settings-nav-icon">👤</span> Profile
-        </button>
-        <button class="settings-nav-item" onclick="switchSettingsTab('account', this)">
-          <span class="settings-nav-icon">🔐</span> Account & Security
-        </button>
-        <button class="settings-nav-item" onclick="switchSettingsTab('notifications', this)">
-          <span class="settings-nav-icon">🔔</span> Notifications
-        </button>
-        <button class="settings-nav-item" onclick="switchSettingsTab('privacy', this)">
-          <span class="settings-nav-icon">🛡️</span> Privacy
-        </button>
-        <button class="settings-nav-item" onclick="switchSettingsTab('appearance', this)">
-          <span class="settings-nav-icon">🎨</span> Appearance
-        </button>
-        <button class="settings-nav-item" onclick="switchSettingsTab('revenue', this)">
-          <span class="settings-nav-icon">💰</span> Revenue & Wallet
-        </button>
-        <button class="settings-nav-item" onclick="switchSettingsTab('help', this)">
-          <span class="settings-nav-icon">❓</span> Help & Support
-        </button>
-        <button class="settings-nav-item settings-nav-danger" onclick="confirmLogout()">
-          <span class="settings-nav-icon">🚪</span> Log Out
-        </button>
+        <button class="settings-nav-item active" onclick="switchSettingsTab('profile', this)"><span class="settings-nav-icon">👤</span> Profile</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('account', this)"><span class="settings-nav-icon">🔐</span> Account & Security</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('notifications', this)"><span class="settings-nav-icon">🔔</span> Notifications</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('privacy', this)"><span class="settings-nav-icon">🛡️</span> Privacy</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('appearance', this)"><span class="settings-nav-icon">🎨</span> Appearance</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('revenue', this)"><span class="settings-nav-icon">💰</span> Revenue & Wallet</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('help', this)"><span class="settings-nav-icon">❓</span> Help & Support</button>
+        <button class="settings-nav-item settings-nav-danger" onclick="confirmLogout()"><span class="settings-nav-icon">🚪</span> Log Out</button>
       </div>
 
-      <!-- Settings Content Panel -->
       <div class="settings-content-panel">
 
         <!-- PROFILE TAB -->
         <div class="settings-tab active" id="stab-profile">
           <div class="settings-section-title">Profile Information</div>
-
-          <!-- Avatar -->
           <div class="settings-avatar-row">
             <div class="settings-avatar-wrap">
               <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&crop=face" alt="Avatar" class="settings-avatar" id="settings-avatar-img"/>
@@ -454,50 +389,42 @@
             </div>
             <div class="settings-avatar-info">
               <strong>Profile Photo</strong>
-              <span>JPG or PNG. Max size 5MB. Will be shown on your posts and profile.</span>
+              <span>JPG or PNG. Max size 5MB.</span>
             </div>
           </div>
-
           <div class="settings-form-grid">
             <div class="settings-field">
               <label class="settings-label">Full Name</label>
-              <input type="text" class="settings-input" id="sf-name" value="Dr. Michael Chen"/>
+              <input type="text" class="settings-input" id="sf-name" value=""/>
             </div>
             <div class="settings-field">
               <label class="settings-label">Username</label>
               <div class="settings-input-prefix-wrap">
                 <span class="settings-input-prefix">@</span>
-                <input type="text" class="settings-input with-prefix" id="sf-username" value="dr.michaelchen"/>
+                <input type="text" class="settings-input with-prefix" id="sf-username" value=""/>
               </div>
             </div>
             <div class="settings-field">
               <label class="settings-label">Specialty / Role</label>
               <select class="settings-input" id="sf-specialty">
-                <option selected>Psychiatrist</option>
-                <option>Cardiologist</option>
-                <option>Dermatologist</option>
-                <option>General Physician</option>
-                <option>Nutritionist</option>
-                <option>Orthopedic Surgeon</option>
-                <option>Pediatrician</option>
-                <option>Medical Student</option>
-                <option>Nurse / Practitioner</option>
-                <option>Healthcare Admin</option>
-                <option>Patient / General User</option>
+                <option>Psychiatrist</option><option>Cardiologist</option><option>Dermatologist</option>
+                <option>General Physician</option><option>Nutritionist</option><option>Orthopedic Surgeon</option>
+                <option>Pediatrician</option><option>Medical Student</option><option>Nurse / Practitioner</option>
+                <option>Healthcare Admin</option><option>Patient / General User</option>
               </select>
             </div>
             <div class="settings-field">
               <label class="settings-label">Hospital / Organisation</label>
-              <input type="text" class="settings-input" id="sf-hospital" value="NIMHANS, Bangalore"/>
+              <input type="text" class="settings-input" id="sf-hospital" value=""/>
             </div>
             <div class="settings-field settings-field-full">
               <label class="settings-label">Bio</label>
-              <textarea class="settings-textarea" id="sf-bio">Board-certified psychiatrist specializing in anxiety disorders. Passionate about health-revenue sharing.</textarea>
+              <textarea class="settings-textarea" id="sf-bio"></textarea>
               <span class="settings-field-hint">Max 160 characters</span>
             </div>
             <div class="settings-field">
               <label class="settings-label">Location</label>
-              <input type="text" class="settings-input" id="sf-location" value="Bangalore, Karnataka"/>
+              <input type="text" class="settings-input" id="sf-location" value=""/>
             </div>
             <div class="settings-field">
               <label class="settings-label">Website / LinkedIn</label>
@@ -515,66 +442,47 @@
           <div class="settings-form-grid">
             <div class="settings-field">
               <label class="settings-label">Email Address</label>
-              <input type="email" class="settings-input" id="sf-email" value="michael.chen@email.com"/>
+              <input type="email" class="settings-input" id="sf-email" value=""/>
             </div>
             <div class="settings-field">
               <label class="settings-label">Phone Number</label>
-              <input type="tel" class="settings-input" id="sf-phone" value="+91 98765 43210"/>
+              <input type="tel" class="settings-input" id="sf-phone" value=""/>
             </div>
             <div class="settings-field">
               <label class="settings-label">Account Type</label>
               <select class="settings-input">
                 <option selected>Verified Healthcare Professional</option>
-                <option>Medical Student</option>
-                <option>General User</option>
+                <option>Medical Student</option><option>General User</option>
               </select>
             </div>
             <div class="settings-field">
               <label class="settings-label">Member Since</label>
-              <input type="text" class="settings-input" value="January 2024" disabled style="background:var(--bg);color:var(--muted);"/>
+              <input type="text" class="settings-input" id="sf-member-since" value="" disabled style="background:var(--bg);color:var(--muted);"/>
             </div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Security</div>
-
           <div class="settings-security-item">
-            <div class="settings-security-info">
-              <strong>Password</strong>
-              <span>Last changed 3 months ago</span>
-            </div>
+            <div class="settings-security-info"><strong>Password</strong><span>Change your account password</span></div>
             <button class="settings-outline-btn" onclick="showToast('🔐 Password reset email sent!')">Change Password</button>
           </div>
-
           <div class="settings-security-item">
-            <div class="settings-security-info">
-              <strong>Two-Factor Authentication</strong>
-              <span>Add an extra layer of security to your account</span>
-            </div>
+            <div class="settings-security-info"><strong>Two-Factor Authentication</strong><span>Add an extra layer of security</span></div>
             <div class="settings-toggle-wrap">
               <span class="settings-toggle-label" id="tfa-label">Off</span>
               <button class="settings-toggle" id="tfa-toggle" onclick="toggleSettingSwitch('tfa-toggle','tfa-label','2FA enabled! ✓','2FA disabled')"></button>
             </div>
           </div>
-
           <div class="settings-security-item">
-            <div class="settings-security-info">
-              <strong>Active Sessions</strong>
-              <span>2 devices currently logged in</span>
-            </div>
+            <div class="settings-security-info"><strong>Active Sessions</strong><span>Manage logged-in devices</span></div>
             <button class="settings-outline-btn" onclick="showToast('📱 All other sessions logged out!')">Log out all devices</button>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title" style="color:#dc2626;">Danger Zone</div>
           <div class="settings-danger-box">
-            <div>
-              <strong>Delete Account</strong>
-              <p>Permanently delete your account and all data. This cannot be undone.</p>
-            </div>
+            <div><strong>Delete Account</strong><p>Permanently delete your account and all data. This cannot be undone.</p></div>
             <button class="settings-danger-btn" onclick="showToast('⚠️ Please contact support to delete your account')">Delete Account</button>
           </div>
-
           <div class="settings-save-row">
             <button class="settings-save-btn" onclick="saveSettings('Account')">Save Changes</button>
           </div>
@@ -584,49 +492,20 @@
         <div class="settings-tab" id="stab-notifications">
           <div class="settings-section-title">Push Notifications</div>
           <div class="settings-toggle-list">
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Likes on your posts</strong><span>When someone likes your content</span></div>
-              <button class="settings-toggle on" id="ntf-likes" onclick="toggleSettingSwitch('ntf-likes', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Comments</strong><span>When someone comments on your post</span></div>
-              <button class="settings-toggle on" id="ntf-comments" onclick="toggleSettingSwitch('ntf-comments', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>New Followers</strong><span>When someone starts following you</span></div>
-              <button class="settings-toggle on" id="ntf-followers" onclick="toggleSettingSwitch('ntf-followers', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Revenue Earned</strong><span>When your content earns ad revenue</span></div>
-              <button class="settings-toggle on" id="ntf-revenue" onclick="toggleSettingSwitch('ntf-revenue', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Consultation Reminders</strong><span>15 minutes before your appointment</span></div>
-              <button class="settings-toggle on" id="ntf-consult" onclick="toggleSettingSwitch('ntf-consult', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Job Alerts</strong><span>New jobs matching your specialty</span></div>
-              <button class="settings-toggle" id="ntf-jobs" onclick="toggleSettingSwitch('ntf-jobs', null, 'Saved!', 'Saved!')"></button>
-            </div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Likes on your posts</strong><span>When someone likes your content</span></div><button class="settings-toggle on" id="ntf-likes" onclick="toggleSettingSwitch('ntf-likes', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Comments</strong><span>When someone comments on your post</span></div><button class="settings-toggle on" id="ntf-comments" onclick="toggleSettingSwitch('ntf-comments', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>New Followers</strong><span>When someone starts following you</span></div><button class="settings-toggle on" id="ntf-followers" onclick="toggleSettingSwitch('ntf-followers', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Revenue Earned</strong><span>When your content earns ad revenue</span></div><button class="settings-toggle on" id="ntf-revenue" onclick="toggleSettingSwitch('ntf-revenue', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Consultation Reminders</strong><span>15 minutes before your appointment</span></div><button class="settings-toggle on" id="ntf-consult" onclick="toggleSettingSwitch('ntf-consult', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Job Alerts</strong><span>New jobs matching your specialty</span></div><button class="settings-toggle" id="ntf-jobs" onclick="toggleSettingSwitch('ntf-jobs', null, 'Saved!', 'Saved!')"></button></div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Email Notifications</div>
           <div class="settings-toggle-list">
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Weekly Digest</strong><span>Summary of your week's performance</span></div>
-              <button class="settings-toggle on" id="email-digest" onclick="toggleSettingSwitch('email-digest', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Platform Updates</strong><span>New features and announcements</span></div>
-              <button class="settings-toggle" id="email-updates" onclick="toggleSettingSwitch('email-updates', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Marketing Emails</strong><span>Promotions and special offers</span></div>
-              <button class="settings-toggle" id="email-marketing" onclick="toggleSettingSwitch('email-marketing', null, 'Saved!', 'Saved!')"></button>
-            </div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Weekly Digest</strong><span>Summary of your week's performance</span></div><button class="settings-toggle on" id="email-digest" onclick="toggleSettingSwitch('email-digest', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Platform Updates</strong><span>New features and announcements</span></div><button class="settings-toggle" id="email-updates" onclick="toggleSettingSwitch('email-updates', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Marketing Emails</strong><span>Promotions and special offers</span></div><button class="settings-toggle" id="email-marketing" onclick="toggleSettingSwitch('email-marketing', null, 'Saved!', 'Saved!')"></button></div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Do Not Disturb</div>
           <div class="settings-toggle-row" style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);">
@@ -641,55 +520,24 @@
           <div class="settings-field" style="max-width:360px;">
             <label class="settings-label">Who can see your profile?</label>
             <select class="settings-input" onchange="showToast('✓ Privacy setting saved!')">
-              <option selected>Everyone (Public)</option>
-              <option>Followers only</option>
-              <option>Verified professionals only</option>
+              <option selected>Everyone (Public)</option><option>Followers only</option><option>Verified professionals only</option>
             </select>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Content & Interactions</div>
           <div class="settings-toggle-list">
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Show Earnings on Posts</strong><span>Display how much your posts have earned</span></div>
-              <button class="settings-toggle on" id="prv-earnings" onclick="toggleSettingSwitch('prv-earnings', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Allow Direct Messages</strong><span>Let other users message you directly</span></div>
-              <button class="settings-toggle on" id="prv-dm" onclick="toggleSettingSwitch('prv-dm', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Show Online Status</strong><span>Let others see when you're active</span></div>
-              <button class="settings-toggle on" id="prv-online" onclick="toggleSettingSwitch('prv-online', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Allow Profile in Search</strong><span>Let your profile appear in search results</span></div>
-              <button class="settings-toggle on" id="prv-search" onclick="toggleSettingSwitch('prv-search', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Personalised Ads</strong><span>Allow ads based on your activity</span></div>
-              <button class="settings-toggle" id="prv-ads" onclick="toggleSettingSwitch('prv-ads', null, 'Saved!', 'Saved!')"></button>
-            </div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Show Earnings on Posts</strong><span>Display how much your posts have earned</span></div><button class="settings-toggle on" id="prv-earnings" onclick="toggleSettingSwitch('prv-earnings', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Allow Direct Messages</strong><span>Let other users message you directly</span></div><button class="settings-toggle on" id="prv-dm" onclick="toggleSettingSwitch('prv-dm', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Show Online Status</strong><span>Let others see when you're active</span></div><button class="settings-toggle on" id="prv-online" onclick="toggleSettingSwitch('prv-online', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Allow Profile in Search</strong><span>Let your profile appear in search results</span></div><button class="settings-toggle on" id="prv-search" onclick="toggleSettingSwitch('prv-search', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Personalised Ads</strong><span>Allow ads based on your activity</span></div><button class="settings-toggle" id="prv-ads" onclick="toggleSettingSwitch('prv-ads', null, 'Saved!', 'Saved!')"></button></div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Data & Privacy</div>
           <div class="settings-data-actions">
-            <div class="settings-data-item" onclick="showToast('📦 Your data export will be emailed to you within 24 hours')">
-              <div class="settings-data-icon">📦</div>
-              <div><strong>Download My Data</strong><span>Export all your posts, earnings and activity</span></div>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div class="settings-data-item" onclick="showToast('📋 Activity log opened!')">
-              <div class="settings-data-icon">📋</div>
-              <div><strong>View Activity Log</strong><span>See a full history of your account activity</span></div>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-            <div class="settings-data-item" onclick="showToast('🚫 Ad preferences updated!')">
-              <div class="settings-data-icon">🚫</div>
-              <div><strong>Manage Ad Preferences</strong><span>Control how we use your data for ads</span></div>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
+            <div class="settings-data-item" onclick="showToast('📦 Data export will be emailed within 24 hours')"><div class="settings-data-icon">📦</div><div><strong>Download My Data</strong><span>Export all your posts, earnings and activity</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="settings-data-item" onclick="showToast('📋 Activity log opened!')"><div class="settings-data-icon">📋</div><div><strong>View Activity Log</strong><span>See a full history of your account activity</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+            <div class="settings-data-item" onclick="showToast('🚫 Ad preferences updated!')"><div class="settings-data-icon">🚫</div><div><strong>Manage Ad Preferences</strong><span>Control how we use your data for ads</span></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
           </div>
         </div>
 
@@ -697,96 +545,24 @@
         <div class="settings-tab" id="stab-appearance">
           <div class="settings-section-title">Theme</div>
           <div class="settings-theme-grid">
-            <div class="settings-theme-card active" id="theme-light" onclick="selectTheme('light', this)">
-              <div class="settings-theme-preview light-preview">
-                <div class="tp-sidebar"></div>
-                <div class="tp-content">
-                  <div class="tp-card"></div>
-                  <div class="tp-card"></div>
-                </div>
-              </div>
-              <span>Light</span>
-            </div>
-            <div class="settings-theme-card" id="theme-dark" onclick="selectTheme('dark', this)">
-              <div class="settings-theme-preview dark-preview">
-                <div class="tp-sidebar"></div>
-                <div class="tp-content">
-                  <div class="tp-card"></div>
-                  <div class="tp-card"></div>
-                </div>
-              </div>
-              <span>Dark</span>
-            </div>
-            <div class="settings-theme-card" id="theme-system" onclick="selectTheme('system', this)">
-              <div class="settings-theme-preview system-preview">
-                <div class="tp-sidebar"></div>
-                <div class="tp-content">
-                  <div class="tp-card"></div>
-                  <div class="tp-card"></div>
-                </div>
-              </div>
-              <span>System</span>
-            </div>
+            <div class="settings-theme-card active" id="theme-light" onclick="selectTheme('light', this)"><div class="settings-theme-preview light-preview"><div class="tp-sidebar"></div><div class="tp-content"><div class="tp-card"></div><div class="tp-card"></div></div></div><span>Light</span></div>
+            <div class="settings-theme-card" id="theme-dark" onclick="selectTheme('dark', this)"><div class="settings-theme-preview dark-preview"><div class="tp-sidebar"></div><div class="tp-content"><div class="tp-card"></div><div class="tp-card"></div></div></div><span>Dark</span></div>
+            <div class="settings-theme-card" id="theme-system" onclick="selectTheme('system', this)"><div class="settings-theme-preview system-preview"><div class="tp-sidebar"></div><div class="tp-content"><div class="tp-card"></div><div class="tp-card"></div></div></div><span>System</span></div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Language & Region</div>
           <div class="settings-form-grid">
-            <div class="settings-field">
-              <label class="settings-label">Language</label>
-              <select class="settings-input" onchange="showToast('🌐 Language updated!')">
-                <option selected>English</option>
-                <option>Hindi</option>
-                <option>Tamil</option>
-                <option>Telugu</option>
-                <option>Bengali</option>
-                <option>Marathi</option>
-                <option>Gujarati</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label class="settings-label">Currency</label>
-              <select class="settings-input" onchange="showToast('💱 Currency updated!')">
-                <option selected>INR (₹)</option>
-                <option>USD ($)</option>
-                <option>EUR (€)</option>
-                <option>GBP (£)</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label class="settings-label">Time Zone</label>
-              <select class="settings-input" onchange="showToast('🕐 Time zone updated!')">
-                <option selected>Asia/Kolkata (IST +5:30)</option>
-                <option>Asia/Dubai (GST +4:00)</option>
-                <option>Europe/London (GMT +0:00)</option>
-                <option>America/New_York (EST -5:00)</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label class="settings-label">Date Format</label>
-              <select class="settings-input" onchange="showToast('📅 Date format updated!')">
-                <option selected>DD/MM/YYYY</option>
-                <option>MM/DD/YYYY</option>
-                <option>YYYY-MM-DD</option>
-              </select>
-            </div>
+            <div class="settings-field"><label class="settings-label">Language</label><select class="settings-input" onchange="showToast('🌐 Language updated!')"><option selected>English</option><option>Hindi</option><option>Tamil</option><option>Telugu</option><option>Bengali</option><option>Marathi</option><option>Gujarati</option></select></div>
+            <div class="settings-field"><label class="settings-label">Currency</label><select class="settings-input" onchange="showToast('💱 Currency updated!')"><option selected>INR (₹)</option><option>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option></select></div>
+            <div class="settings-field"><label class="settings-label">Time Zone</label><select class="settings-input" onchange="showToast('🕐 Time zone updated!')"><option selected>Asia/Kolkata (IST +5:30)</option><option>Asia/Dubai (GST +4:00)</option><option>Europe/London (GMT +0:00)</option><option>America/New_York (EST -5:00)</option></select></div>
+            <div class="settings-field"><label class="settings-label">Date Format</label><select class="settings-input" onchange="showToast('📅 Date format updated!')"><option selected>DD/MM/YYYY</option><option>MM/DD/YYYY</option><option>YYYY-MM-DD</option></select></div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Feed Preferences</div>
           <div class="settings-toggle-list">
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Autoplay Videos</strong><span>Automatically play videos in feed</span></div>
-              <button class="settings-toggle" id="app-autoplay" onclick="toggleSettingSwitch('app-autoplay', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Compact Post View</strong><span>Show more posts on screen at once</span></div>
-              <button class="settings-toggle" id="app-compact" onclick="toggleSettingSwitch('app-compact', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Show Revenue Badges</strong><span>Display earnings on every post</span></div>
-              <button class="settings-toggle on" id="app-revenue" onclick="toggleSettingSwitch('app-revenue', null, 'Saved!', 'Saved!')"></button>
-            </div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Autoplay Videos</strong><span>Automatically play videos in feed</span></div><button class="settings-toggle" id="app-autoplay" onclick="toggleSettingSwitch('app-autoplay', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Compact Post View</strong><span>Show more posts on screen at once</span></div><button class="settings-toggle" id="app-compact" onclick="toggleSettingSwitch('app-compact', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Show Revenue Badges</strong><span>Display earnings on every post</span></div><button class="settings-toggle on" id="app-revenue" onclick="toggleSettingSwitch('app-revenue', null, 'Saved!', 'Saved!')"></button></div>
           </div>
         </div>
 
@@ -794,71 +570,24 @@
         <div class="settings-tab" id="stab-revenue">
           <div class="settings-section-title">Earnings Overview</div>
           <div class="settings-revenue-cards">
-            <div class="settings-rev-card green">
-              <span class="settings-rev-label">Health Balance</span>
-              <span class="settings-rev-amount">$124.50</span>
-              <span class="settings-rev-sub">Available to withdraw</span>
-            </div>
-            <div class="settings-rev-card gold">
-              <span class="settings-rev-label">HU Coins</span>
-              <span class="settings-rev-amount">2,340</span>
-              <span class="settings-rev-sub">≈ ₹234 value</span>
-            </div>
-            <div class="settings-rev-card blue">
-              <span class="settings-rev-label">Total Earned</span>
-              <span class="settings-rev-amount">$1,420</span>
-              <span class="settings-rev-sub">All time</span>
-            </div>
+            <div class="settings-rev-card green"><span class="settings-rev-label">Health Balance</span><span class="settings-rev-amount">$<span id="rev-balance">0.00</span></span><span class="settings-rev-sub">Available to withdraw</span></div>
+            <div class="settings-rev-card gold"><span class="settings-rev-label">HU Coins</span><span class="settings-rev-amount" id="rev-coins">500</span><span class="settings-rev-sub">≈ ₹<span id="rev-coins-inr">50</span> value</span></div>
+            <div class="settings-rev-card blue"><span class="settings-rev-label">Total Earned</span><span class="settings-rev-amount">$0</span><span class="settings-rev-sub">All time</span></div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Withdrawal Settings</div>
           <div class="settings-form-grid">
-            <div class="settings-field">
-              <label class="settings-label">Payout Method</label>
-              <select class="settings-input" onchange="showToast('✓ Payout method saved!')">
-                <option selected>Bank Transfer (NEFT/IMPS)</option>
-                <option>UPI</option>
-                <option>PayPal</option>
-                <option>Razorpay</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label class="settings-label">Minimum Withdrawal</label>
-              <select class="settings-input" onchange="showToast('✓ Threshold saved!')">
-                <option>₹100</option>
-                <option selected>₹500</option>
-                <option>₹1,000</option>
-                <option>₹5,000</option>
-              </select>
-            </div>
-            <div class="settings-field">
-              <label class="settings-label">Bank Account / UPI ID</label>
-              <input type="text" class="settings-input" placeholder="Enter UPI ID or account number"/>
-            </div>
-            <div class="settings-field">
-              <label class="settings-label">Auto Withdraw</label>
-              <select class="settings-input" onchange="showToast('✓ Auto-withdraw schedule saved!')">
-                <option selected>Manual</option>
-                <option>Weekly</option>
-                <option>Monthly</option>
-              </select>
-            </div>
+            <div class="settings-field"><label class="settings-label">Payout Method</label><select class="settings-input" onchange="showToast('✓ Payout method saved!')"><option selected>Bank Transfer (NEFT/IMPS)</option><option>UPI</option><option>PayPal</option><option>Razorpay</option></select></div>
+            <div class="settings-field"><label class="settings-label">Minimum Withdrawal</label><select class="settings-input" onchange="showToast('✓ Threshold saved!')"><option>₹100</option><option selected>₹500</option><option>₹1,000</option><option>₹5,000</option></select></div>
+            <div class="settings-field"><label class="settings-label">Bank Account / UPI ID</label><input type="text" class="settings-input" placeholder="Enter UPI ID or account number"/></div>
+            <div class="settings-field"><label class="settings-label">Auto Withdraw</label><select class="settings-input" onchange="showToast('✓ Auto-withdraw schedule saved!')"><option selected>Manual</option><option>Weekly</option><option>Monthly</option></select></div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">Revenue Preferences</div>
           <div class="settings-toggle-list">
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Show earnings publicly</strong><span>Others can see how much your content earns</span></div>
-              <button class="settings-toggle on" id="rev-public" onclick="toggleSettingSwitch('rev-public', null, 'Saved!', 'Saved!')"></button>
-            </div>
-            <div class="settings-toggle-row">
-              <div class="settings-toggle-info"><strong>Receive brand collaboration offers</strong><span>Allow companies to send you paid collaboration requests</span></div>
-              <button class="settings-toggle on" id="rev-collab" onclick="toggleSettingSwitch('rev-collab', null, 'Saved!', 'Saved!')"></button>
-            </div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Show earnings publicly</strong><span>Others can see how much your content earns</span></div><button class="settings-toggle on" id="rev-public" onclick="toggleSettingSwitch('rev-public', null, 'Saved!', 'Saved!')"></button></div>
+            <div class="settings-toggle-row"><div class="settings-toggle-info"><strong>Receive brand collaboration offers</strong><span>Allow companies to send you paid collaboration requests</span></div><button class="settings-toggle on" id="rev-collab" onclick="toggleSettingSwitch('rev-collab', null, 'Saved!', 'Saved!')"></button></div>
           </div>
-
           <div class="settings-save-row">
             <button class="settings-save-btn" onclick="showToast('💰 Wallet settings saved!')">Save Wallet Settings</button>
             <button class="settings-outline-btn" style="margin-left:10px;" onclick="showToast('💸 Withdrawal initiated!')">Withdraw Now</button>
@@ -869,28 +598,11 @@
         <div class="settings-tab" id="stab-help">
           <div class="settings-section-title">Help & Support</div>
           <div class="settings-help-grid">
-            <div class="settings-help-card" onclick="showToast('📖 Opening Help Center...')">
-              <div class="settings-help-icon">📖</div>
-              <strong>Help Center</strong>
-              <span>Browse FAQs and guides</span>
-            </div>
-            <div class="settings-help-card" onclick="showToast('💬 Opening live chat...')">
-              <div class="settings-help-icon">💬</div>
-              <strong>Live Chat</strong>
-              <span>Talk to our support team</span>
-            </div>
-            <div class="settings-help-card" onclick="showToast('📧 support@healthyuniverse.in')">
-              <div class="settings-help-icon">📧</div>
-              <strong>Email Support</strong>
-              <span>support@healthyuniverse.in</span>
-            </div>
-            <div class="settings-help-card" onclick="showToast('🐛 Bug report submitted! Thank you.')">
-              <div class="settings-help-icon">🐛</div>
-              <strong>Report a Bug</strong>
-              <span>Help us improve the platform</span>
-            </div>
+            <div class="settings-help-card" onclick="showToast('📖 Opening Help Center...')"><div class="settings-help-icon">📖</div><strong>Help Center</strong><span>Browse FAQs and guides</span></div>
+            <div class="settings-help-card" onclick="showToast('💬 Opening live chat...')"><div class="settings-help-icon">💬</div><strong>Live Chat</strong><span>Talk to our support team</span></div>
+            <div class="settings-help-card" onclick="showToast('📧 support@healthyuniverse.in')"><div class="settings-help-icon">📧</div><strong>Email Support</strong><span>support@healthyuniverse.in</span></div>
+            <div class="settings-help-card" onclick="showToast('🐛 Bug report submitted! Thank you.')"><div class="settings-help-icon">🐛</div><strong>Report a Bug</strong><span>Help us improve the platform</span></div>
           </div>
-
           <div class="settings-divider"></div>
           <div class="settings-section-title">About</div>
           <div class="settings-about-list">
@@ -901,8 +613,8 @@
           </div>
         </div>
 
-      </div><!-- end settings-content-panel -->
-    </div><!-- end settings-layout -->
+      </div>
+    </div>
   </section>
 
 </main>
@@ -920,7 +632,7 @@
   <div class="rp-widget">
     <div class="rp-widget-title">HU Coins 🪙</div>
     <div class="hu-coins-row">
-      <div class="hu-coins-num">2,340</div>
+      <div class="hu-coins-num" id="rp-coins">500</div>
       <button class="hu-spend-btn" onclick="showToast('🛒 Opening Health Store...')">Spend</button>
     </div>
     <div style="font-size:11.5px;color:var(--muted);margin-top:4px;">Redeem on medicines, consultations &amp; more</div>
@@ -958,36 +670,21 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-user">
-      <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80&h=80&fit=crop&crop=face" alt="Dr. Michael Chen"/>
-      <div><strong>Dr. Michael Chen</strong><span class="verified-label">Verified Professional</span></div>
-    </div>
-    <textarea class="modal-textarea" id="post-content" placeholder="Share healthcare insights or a medical quiz..."></textarea>
-    <div class="upload-zone">
-      <div class="upload-icons">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        <svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-      </div>
-      <strong>Add Clinical Photos, Reels or Case Study</strong>
-    </div>
-    <div class="modal-section">
-      <label class="modal-label">Audience Category</label>
-      <div class="chips-row">
-        <button class="chip active" onclick="selectChip(this)">General Wellness</button>
-        <button class="chip" onclick="selectChip(this)">Medical Students</button>
-        <button class="chip" onclick="selectChip(this)">Healthcare Pros</button>
+      <img id="modal-user-avatar" src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80&h=80&fit=crop&crop=face"/>
+      <div>
+        <strong id="modal-user-name">You</strong>
+        <span class="verified-label">Verified Professional</span>
       </div>
     </div>
-    <div class="trusted-toggle medical-edu-toggle">
-      <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2.7 3 6 3s6-1 6-3v-5"/></svg>
-      <div class="trusted-text">
-        <strong>Publish as Medical Education</strong>
-        <span>Increases revenue share for viewers</span>
-      </div>
-      <button class="toggle-switch" id="med-edu-toggle" onclick="this.classList.toggle('on')"></button>
+    <textarea id="post-content" class="modal-textarea" placeholder="Share healthcare insights..."></textarea>
+    <input type="file" id="media-input" accept="image/*,video/*" hidden onchange="previewMedia(event)">
+    <div class="upload-zone" onclick="document.getElementById('media-input').click()">
+      <div class="upload-icons">📷 🎥</div>
+      <strong>Click to upload Image / Video</strong>
     </div>
+    <div id="preview-container"></div>
     <div class="modal-footer">
-      <div class="est-revenue">Est. Ad Share: <strong>$0.25/view</strong></div>
-      <button class="publish-btn" onclick="publishPost()">Post & Earn</button>
+      <button class="publish-btn" onclick="publishPost()">Post</button>
     </div>
   </div>
 </div>
@@ -996,10 +693,7 @@
 <div class="modal-overlay" id="booking-modal" onclick="closeBookingModal()">
   <div class="booking-modal-box" onclick="event.stopPropagation()">
     <div id="booking-step-1">
-      <div class="booking-modal-header">
-        <h2>Book Consultation</h2>
-        <button class="modal-close" onclick="closeBookingModal()">✕</button>
-      </div>
+      <div class="booking-modal-header"><h2>Book Consultation</h2><button class="modal-close" onclick="closeBookingModal()">✕</button></div>
       <div class="booking-doc-info" id="booking-doc-info"></div>
       <div class="booking-section">
         <div class="booking-section-title">Consultation Type</div>
@@ -1009,32 +703,19 @@
           <div class="consult-type-card" onclick="selectConsultType(this,'chat')"><div class="consult-type-icon">💬</div><div class="consult-type-label">Chat</div><div class="consult-type-sub">Text messages</div></div>
         </div>
       </div>
-      <div class="booking-section">
-        <div class="booking-section-title">Select Date</div>
-        <div class="date-scroll" id="date-scroll"></div>
-      </div>
-      <div class="booking-section">
-        <div class="booking-section-title">Available Time Slots</div>
-        <div class="time-slots-grid" id="time-slots-grid"></div>
-      </div>
-      <div class="booking-section">
-        <div class="booking-section-title">Describe Your Concern <span style="color:var(--muted);font-weight:400;">(optional)</span></div>
-        <textarea class="booking-textarea" id="booking-symptoms" placeholder="Briefly describe your symptoms..."></textarea>
-      </div>
+      <div class="booking-section"><div class="booking-section-title">Select Date</div><div class="date-scroll" id="date-scroll"></div></div>
+      <div class="booking-section"><div class="booking-section-title">Available Time Slots</div><div class="time-slots-grid" id="time-slots-grid"></div></div>
+      <div class="booking-section"><div class="booking-section-title">Describe Your Concern <span style="color:var(--muted);font-weight:400;">(optional)</span></div><textarea class="booking-textarea" id="booking-symptoms" placeholder="Briefly describe your symptoms..."></textarea></div>
       <button class="booking-next-btn" onclick="goToBookingStep2()">Continue to Payment →</button>
     </div>
     <div id="booking-step-2" style="display:none;">
-      <div class="booking-modal-header">
-        <button class="booking-back-btn" onclick="goToBookingStep1()">← Back</button>
-        <h2>Confirm & Pay</h2>
-        <button class="modal-close" onclick="closeBookingModal()">✕</button>
-      </div>
+      <div class="booking-modal-header"><button class="booking-back-btn" onclick="goToBookingStep1()">← Back</button><h2>Confirm & Pay</h2><button class="modal-close" onclick="closeBookingModal()">✕</button></div>
       <div class="booking-summary" id="booking-summary"></div>
       <div class="booking-section">
         <div class="booking-section-title">Payment Method</div>
         <div class="payment-options">
-          <label class="payment-option"><input type="radio" name="payment" value="coins" checked onchange="updatePaymentDisplay()"/><div class="payment-icon">🪙</div><div class="payment-info"><strong>HU Coins</strong><span>2,340 coins available</span></div><div class="payment-discount-badge">Save 10%</div></label>
-          <label class="payment-option"><input type="radio" name="payment" value="wallet" onchange="updatePaymentDisplay()"/><div class="payment-icon">💰</div><div class="payment-info"><strong>Health Balance</strong><span>$124.50 available</span></div></label>
+          <label class="payment-option"><input type="radio" name="payment" value="coins" checked onchange="updatePaymentDisplay()"/><div class="payment-icon">🪙</div><div class="payment-info"><strong>HU Coins</strong><span id="booking-coins-label">500 coins available</span></div><div class="payment-discount-badge">Save 10%</div></label>
+          <label class="payment-option"><input type="radio" name="payment" value="wallet" onchange="updatePaymentDisplay()"/><div class="payment-icon">💰</div><div class="payment-info"><strong>Health Balance</strong><span id="booking-balance-label">$0.00 available</span></div></label>
           <label class="payment-option"><input type="radio" name="payment" value="upi" onchange="updatePaymentDisplay()"/><div class="payment-icon">📱</div><div class="payment-info"><strong>UPI / Card</strong><span>Pay via UPI, debit or credit card</span></div></label>
         </div>
       </div>
@@ -1059,23 +740,11 @@
 <!-- APPLY MODAL -->
 <div class="modal-overlay" id="apply-modal" onclick="closeApplyModal()">
   <div class="apply-modal-box" onclick="event.stopPropagation()">
-    <div class="apply-modal-header">
-      <h2>Apply for Job</h2>
-      <button class="modal-close" onclick="closeApplyModal()">✕</button>
-    </div>
+    <div class="apply-modal-header"><h2>Apply for Job</h2><button class="modal-close" onclick="closeApplyModal()">✕</button></div>
     <div class="apply-modal-body">
-      <div class="apply-job-summary">
-        <img id="apply-job-logo" src="" alt="Company"/>
-        <div><strong id="apply-job-title">Job Title</strong><span id="apply-job-company">Company · Location</span></div>
-      </div>
-      <div class="apply-section">
-        <label class="apply-label">Full Name</label>
-        <input type="text" class="apply-input" id="apply-name" placeholder="Your full name"/>
-      </div>
-      <div class="apply-section">
-        <label class="apply-label">Email Address</label>
-        <input type="email" class="apply-input" id="apply-email" placeholder="your@email.com"/>
-      </div>
+      <div class="apply-job-summary"><img id="apply-job-logo" src="" alt="Company"/><div><strong id="apply-job-title">Job Title</strong><span id="apply-job-company">Company · Location</span></div></div>
+      <div class="apply-section"><label class="apply-label">Full Name</label><input type="text" class="apply-input" id="apply-name" placeholder="Your full name"/></div>
+      <div class="apply-section"><label class="apply-label">Email Address</label><input type="email" class="apply-input" id="apply-email" placeholder="your@email.com"/></div>
       <div class="apply-section">
         <label class="apply-label">Upload CV / Resume</label>
         <div id="cv-upload-zone">
@@ -1085,10 +754,7 @@
           </div>
         </div>
       </div>
-      <div class="apply-section">
-        <label class="apply-label">Cover Letter <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
-        <textarea class="apply-textarea" id="apply-cover" placeholder="Tell us why you're a great fit..."></textarea>
-      </div>
+      <div class="apply-section"><label class="apply-label">Cover Letter <span style="color:var(--muted);font-weight:400;">(optional)</span></label><textarea class="apply-textarea" id="apply-cover" placeholder="Tell us why you're a great fit..."></textarea></div>
       <button class="apply-submit-btn" onclick="submitApplication()">🚀 Submit Application</button>
     </div>
   </div>
@@ -1103,7 +769,7 @@
   </div>
 </div>
 
-<!-- ✨ ADDED: Logout Confirm Modal -->
+<!-- LOGOUT MODAL -->
 <div class="modal-overlay" id="logout-modal" onclick="document.getElementById('logout-modal').classList.remove('open')">
   <div class="logout-confirm-box" onclick="event.stopPropagation()">
     <div style="font-size:40px;margin-bottom:12px;">👋</div>
@@ -1111,205 +777,199 @@
     <p>Are you sure you want to log out of Healthy Universe?</p>
     <div class="logout-actions">
       <button class="settings-outline-btn" onclick="document.getElementById('logout-modal').classList.remove('open')">Cancel</button>
-      <button class="settings-danger-btn" onclick="showToast('👋 Logged out successfully!'); document.getElementById('logout-modal').classList.remove('open')">Yes, Log Out</button>
+      <button class="settings-danger-btn" onclick="localStorage.removeItem('hu_token'); localStorage.removeItem('hu_user'); window.location.href='auth.html';">Yes, Log Out</button>
     </div>
   </div>
 </div>
 
-
 <div class="toast" id="toast"></div>
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
-<script src="js/chatbot.js"></script>
+
 <!-- WITHDRAW MODAL -->
 <div class="modal-overlay" id="withdraw-modal" onclick="closeWithdrawModal()">
   <div class="withdraw-modal-box" onclick="event.stopPropagation()">
-    <div class="withdraw-modal-header">
-      <h2>Withdraw Funds</h2>
-      <button class="modal-close" onclick="closeWithdrawModal()">✕</button>
-    </div>
+    <div class="withdraw-modal-header"><h2>Withdraw Funds</h2><button class="modal-close" onclick="closeWithdrawModal()">✕</button></div>
     <div class="withdraw-modal-body">
-      <div class="withdraw-balance-display">
-        <span>Available Balance</span>
-        <strong>$124.50</strong>
-      </div>
-      
+      <div class="withdraw-balance-display"><span>Available Balance</span><strong id="withdraw-avail">$0.00</strong></div>
       <div class="withdraw-section">
         <label class="withdraw-label">Withdrawal Amount</label>
-        <div class="withdraw-amount-input-wrap">
-          <span class="withdraw-currency">$</span>
-          <input type="number" class="withdraw-amount-input" id="withdraw-amount" placeholder="0.00" max="124.50" oninput="validateWithdrawAmount()"/>
-        </div>
+        <div class="withdraw-amount-input-wrap"><span class="withdraw-currency">$</span><input type="number" class="withdraw-amount-input" id="withdraw-amount" placeholder="0.00" oninput="validateWithdrawAmount()"/></div>
         <div class="withdraw-quick-amounts">
           <button onclick="setWithdrawAmount(25)">$25</button>
           <button onclick="setWithdrawAmount(50)">$50</button>
           <button onclick="setWithdrawAmount(100)">$100</button>
-          <button onclick="setWithdrawAmount(124.50)">Max</button>
+          <button onclick="setWithdrawAmount(0)" id="withdraw-max-btn">Max</button>
         </div>
       </div>
-
       <div class="withdraw-section">
         <label class="withdraw-label">Withdrawal Method</label>
         <div class="withdraw-methods">
-          <label class="withdraw-method">
-            <input type="radio" name="withdraw-method" value="bank" checked/>
-            <div class="withdraw-method-content">
-              <span class="withdraw-method-icon">🏦</span>
-              <div>
-                <strong>Bank Transfer</strong>
-                <span>HDFC Bank ****4521</span>
-              </div>
-            </div>
-            <span class="withdraw-method-time">2-3 days</span>
-          </label>
-          <label class="withdraw-method">
-            <input type="radio" name="withdraw-method" value="upi"/>
-            <div class="withdraw-method-content">
-              <span class="withdraw-method-icon">📱</span>
-              <div>
-                <strong>UPI</strong>
-                <span>michael@upi</span>
-              </div>
-            </div>
-            <span class="withdraw-method-time">Instant</span>
-          </label>
-          <label class="withdraw-method">
-            <input type="radio" name="withdraw-method" value="paypal"/>
-            <div class="withdraw-method-content">
-              <span class="withdraw-method-icon">💳</span>
-              <div>
-                <strong>PayPal</strong>
-                <span>michael.chen@email.com</span>
-              </div>
-            </div>
-            <span class="withdraw-method-time">1-2 days</span>
-          </label>
+          <label class="withdraw-method"><input type="radio" name="withdraw-method" value="bank" checked/><div class="withdraw-method-content"><span class="withdraw-method-icon">🏦</span><div><strong>Bank Transfer</strong><span>Your linked bank account</span></div></div><span class="withdraw-method-time">2-3 days</span></label>
+          <label class="withdraw-method"><input type="radio" name="withdraw-method" value="upi"/><div class="withdraw-method-content"><span class="withdraw-method-icon">📱</span><div><strong>UPI</strong><span>Your UPI ID</span></div></div><span class="withdraw-method-time">Instant</span></label>
+          <label class="withdraw-method"><input type="radio" name="withdraw-method" value="paypal"/><div class="withdraw-method-content"><span class="withdraw-method-icon">💳</span><div><strong>PayPal</strong><span>Your PayPal account</span></div></div><span class="withdraw-method-time">1-2 days</span></label>
         </div>
       </div>
-
       <div class="withdraw-summary">
-        <div class="withdraw-summary-row">
-          <span>Withdrawal Amount</span>
-          <strong id="withdraw-display-amount">$0.00</strong>
-        </div>
-        <div class="withdraw-summary-row">
-          <span>Processing Fee</span>
-          <strong>$0.00</strong>
-        </div>
-        <div class="withdraw-summary-row total">
-          <span>You'll Receive</span>
-          <strong id="withdraw-receive-amount">$0.00</strong>
-        </div>
+        <div class="withdraw-summary-row"><span>Withdrawal Amount</span><strong id="withdraw-display-amount">$0.00</strong></div>
+        <div class="withdraw-summary-row"><span>Processing Fee</span><strong>$0.00</strong></div>
+        <div class="withdraw-summary-row total"><span>You'll Receive</span><strong id="withdraw-receive-amount">$0.00</strong></div>
       </div>
-
-      <button class="withdraw-confirm-btn" id="withdraw-confirm-btn" onclick="confirmWithdrawal()" disabled>
-        Withdraw Funds
-      </button>
+      <button class="withdraw-confirm-btn" id="withdraw-confirm-btn" onclick="confirmWithdrawal()" disabled>Withdraw Funds</button>
       <p class="withdraw-note">Minimum withdrawal: $10. Withdrawals are processed within 24 hours.</p>
     </div>
   </div>
 </div>
 
-<!-- WITHDRAW SUCCESS MODAL -->
 <div class="modal-overlay" id="withdraw-success-modal" onclick="closeWithdrawSuccess()">
   <div class="withdraw-success-box" onclick="event.stopPropagation()">
     <div class="withdraw-success-icon">✓</div>
     <h2>Withdrawal Initiated!</h2>
-    <p id="withdraw-success-details">Your withdrawal of <strong>$50.00</strong> has been initiated. You'll receive it within 2-3 business days.</p>
+    <p id="withdraw-success-details"></p>
     <button class="withdraw-success-btn" onclick="closeWithdrawSuccess()">Done</button>
   </div>
 </div>
 
-
-   
- 
- 
-<!-- ─── CHATBOT FLOATING BUTTON ─── -->
+<!-- CHATBOT -->
 <button class="hu-chat-btn" id="hu-chat-btn" onclick="toggleHUChat()" aria-label="Open Health Assistant">
   <span class="hu-chat-badge" id="hu-chat-badge">1</span>
- 
-  <!-- Open icon (robot/chat) -->
-  <span class="hu-btn-open">
-    <svg viewBox="0 0 24 24">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      <circle cx="9"  cy="10" r="1" fill="white" stroke="none"/>
-      <circle cx="15" cy="10" r="1" fill="white" stroke="none"/>
-    </svg>
-  </span>
- 
-  <!-- Close icon (×) -->
-  <span class="hu-btn-close">
-    <svg viewBox="0 0 24 24">
-      <line x1="18" y1="6" x2="6"  y2="18"/>
-      <line x1="6"  y1="6" x2="18" y2="18"/>
-    </svg>
-  </span>
+  <span class="hu-btn-open"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="white" stroke="none"/><circle cx="15" cy="10" r="1" fill="white" stroke="none"/></svg></span>
+  <span class="hu-btn-close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
 </button>
- 
- 
-<!-- ─── CHATBOT WINDOW ─── -->
+
 <div class="hu-chat-window" id="hu-chat-window">
- 
-  <!-- Header -->
   <div class="hu-chat-header">
-    <div class="hu-chat-header-avatar">
-      <svg viewBox="0 0 24 24">
-        <rect x="3" y="11" width="18" height="10" rx="2"/>
-        <path d="M9 11V7a3 3 0 0 1 6 0v4"/>
-        <circle cx="9"  cy="16" r="1" fill="white" stroke="none"/>
-        <circle cx="15" cy="16" r="1" fill="white" stroke="none"/>
-      </svg>
-    </div>
- 
-    <div class="hu-chat-header-info">
-      <span class="hu-chat-header-name">HU Health Assistant</span>
-      <span class="hu-chat-header-status">Always available</span>
-    </div>
- 
+    <div class="hu-chat-header-avatar"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M9 11V7a3 3 0 0 1 6 0v4"/><circle cx="9" cy="16" r="1" fill="white" stroke="none"/><circle cx="15" cy="16" r="1" fill="white" stroke="none"/></svg></div>
+    <div class="hu-chat-header-info"><span class="hu-chat-header-name">HU Health Assistant</span><span class="hu-chat-header-status">Always available</span></div>
     <div class="hu-chat-header-actions">
-      <!-- Refresh / restart chat -->
-      <button class="hu-chat-action-btn" onclick="huClearChat()" title="Restart chat">
-        <svg viewBox="0 0 24 24">
-          <polyline points="1 4 1 10 7 10"/>
-          <path d="M3.51 15a9 9 0 1 0 .49-4.7"/>
-        </svg>
-      </button>
-      <!-- Close -->
-      <button class="hu-chat-action-btn" onclick="toggleHUChat()" title="Close">
-        <svg viewBox="0 0 24 24">
-          <line x1="18" y1="6" x2="6"  y2="18"/>
-          <line x1="6"  y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
+      <button class="hu-chat-action-btn" onclick="huClearChat()" title="Restart chat"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.7"/></svg></button>
+      <button class="hu-chat-action-btn" onclick="toggleHUChat()" title="Close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
   </div>
- 
-  <!-- Disclaimer -->
-  <div class="hu-chat-disclaimer">
-    ⚠️ This assistant provides general health information only — not medical advice. Always consult a doctor for diagnosis and treatment.
-  </div>
- 
-  <!-- Messages -->
+  <div class="hu-chat-disclaimer">⚠️ This assistant provides general health information only — not medical advice. Always consult a doctor for diagnosis and treatment.</div>
   <div class="hu-chat-messages" id="hu-chat-messages"></div>
- 
-  <!-- Input -->
   <div class="hu-chat-input-wrap">
-    <input
-      type="text"
-      class="hu-chat-input"
-      id="hu-chat-input"
-      placeholder="Ask about symptoms, diet, medications…"
-      autocomplete="off"
-    />
-    <button class="hu-chat-send-btn" onclick="huSendMsg()" title="Send">
-      <svg viewBox="0 0 24 24">
-        <line x1="22" y1="2" x2="11" y2="13"/>
-        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-      </svg>
-    </button>
+    <input type="text" class="hu-chat-input" id="hu-chat-input" placeholder="Ask about symptoms, diet, medications…" autocomplete="off"/>
+    <button class="hu-chat-send-btn" onclick="huSendMsg()" title="Send"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
   </div>
- 
 </div>
+
+<!-- ══════════════════════════════════════════════
+     SCRIPTS — order matters!
+     api.js must come first (auth guard + publishPost)
+══════════════════════════════════════════════ -->
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/chatbot.js"></script>
+
+<!-- ── Live User Patch — runs after DOM + scripts are ready ── -->
+<script>
+(function applyLiveUser() {
+  try {
+    const u = JSON.parse(localStorage.getItem('hu_user') || 'null');
+    if (!u) return;
+
+    const name     = u.name      || 'User';
+    const role     = u.specialty || 'Member';
+    const bal      = parseFloat(u.balance  || 0).toFixed(2);
+    const coins    = u.hu_coins  || 500;
+    const coinsInr = coins / 10;
+    const email    = u.email     || '';
+    const hospital = u.hospital  || '';
+    const bio      = u.bio       || '';
+    const created  = u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN',{month:'long',year:'numeric'}) : '';
+
+    // ── Sidebar ──────────────────────────────────
+    const sName = document.getElementById('sidebar-user-name');
+    const sRole = document.getElementById('sidebar-user-role');
+    if (sName) sName.textContent = name.length > 14 ? name.slice(0,14)+'…' : name;
+    if (sRole) sRole.textContent = role;
+    if (u.avatar_url) {
+      const sAvatar = document.getElementById('sidebar-avatar');
+      if (sAvatar) sAvatar.src = u.avatar_url;
+    }
+
+    // ── Balances ─────────────────────────────────
+    ['user-balance','mobile-user-balance','wallet-balance'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.textContent = bal;
+    });
+    const wAvail = document.getElementById('withdraw-avail');
+    if (wAvail) wAvail.textContent = '$' + bal;
+
+    // ── HU Coins ─────────────────────────────────
+    ['rp-coins','wallet-coins','rev-coins'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.textContent = coins.toLocaleString();
+    });
+    ['wallet-coins-inr','rev-coins-inr'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.textContent = coinsInr;
+    });
+    const consultCoins = document.getElementById('consult-coins');
+    if (consultCoins) consultCoins.textContent = coins.toLocaleString();
+
+    // ── Settings rev balance ──────────────────────
+    const revBal = document.getElementById('rev-balance');
+    if (revBal) revBal.textContent = bal;
+
+    // ── Booking payment labels ────────────────────
+    const bCoins = document.getElementById('booking-coins-label');
+    const bBal   = document.getElementById('booking-balance-label');
+    if (bCoins) bCoins.textContent = coins.toLocaleString() + ' coins available';
+    if (bBal)   bBal.textContent   = '$' + bal + ' available';
+
+    // ── Modal author ──────────────────────────────
+    const mName   = document.getElementById('modal-user-name');
+    const mAvatar = document.getElementById('modal-user-avatar');
+    if (mName) mName.textContent = name;
+    if (mAvatar && u.avatar_url) mAvatar.src = u.avatar_url;
+
+    // ── Profile page ──────────────────────────────
+    const pName = document.getElementById('profile-name');
+    if (pName) pName.innerHTML = name + ' <span class="verified-dot large"></span>';
+    const pRole = document.getElementById('profile-role');
+    if (pRole) pRole.textContent = role + (hospital ? ' | ' + hospital : '');
+    const pBio = document.getElementById('profile-bio');
+    if (pBio && bio) pBio.textContent = bio;
+    if (u.avatar_url) {
+      const pAvatar = document.getElementById('profile-avatar');
+      if (pAvatar) pAvatar.src = u.avatar_url;
+      const sAvImg = document.getElementById('settings-avatar-img');
+      if (sAvImg) sAvImg.src = u.avatar_url;
+    }
+
+    // ── Settings fields ───────────────────────────
+    const fields = {
+      'sf-name':        name,
+      'sf-username':    name.toLowerCase().replace(/\s+/g,'.').replace(/[^a-z0-9.]/g,''),
+      'sf-email':       email,
+      'sf-hospital':    hospital,
+      'sf-bio':         bio,
+      'sf-member-since': created,
+    };
+    Object.entries(fields).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el || !val) return;
+      if (el.tagName === 'TEXTAREA') el.textContent = val;
+      else el.value = val;
+    });
+
+    // Set specialty dropdown
+    const sfSpec = document.getElementById('sf-specialty');
+    if (sfSpec && role) {
+      for (let opt of sfSpec.options) {
+        if (opt.value === role || opt.text === role) { opt.selected = true; break; }
+      }
+    }
+
+    // Apply name in apply modal
+    const applyName  = document.getElementById('apply-name');
+    const applyEmail = document.getElementById('apply-email');
+    if (applyName  && !applyName.value)  applyName.value  = name;
+    if (applyEmail && !applyEmail.value) applyEmail.value = email;
+
+  } catch(e) {
+    console.warn('User UI patch error:', e);
+  }
+})();
+</script>
 
 </body>
 </html>
