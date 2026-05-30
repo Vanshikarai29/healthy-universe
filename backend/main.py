@@ -5,7 +5,8 @@ from functools import wraps
 import sqlite3, os, uuid, bcrypt, jwt
 
 # ─── CONFIG ────────────────────────────────────────────────────────────────────
-SECRET_KEY         = "healthy-universe-secret-2024"
+# SECRET_KEY         = "healthy-universe-secret-2024"
+SECRET_KEY  = "healthy-universe-super-secret-key-2024-do-not-share"
 TOKEN_EXPIRE_DAYS  = 7
 UPLOAD_DIR         = os.path.join(os.path.dirname(__file__), "uploads")
 DB_PATH            = os.path.join(os.path.dirname(__file__), "healthy_universe.db")
