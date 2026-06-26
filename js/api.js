@@ -1,16 +1,46 @@
-// ─── api.js ─ Healthy Universe API Client ────────────────────────────────────
-//  Drop this in js/api.js and include BEFORE app.js in index.html
+// ─── api.js — Healthy Universe ───────────────────────────────────────────────
+const HU_API = "http://localhost:8000";
 
-const HU_API = "http://localhost:8000"; // ← change for production
+// ── Letter Avatar Generator ───────────────────────────────────────────────────
+function getLetterAvatar(name, size) {
+  size = size || 80;
+  var letter = (name || "U").charAt(0).toUpperCase();
+  var colors = [
+    "#22c55e",
+    "#16a34a",
+    "#0ea5e9",
+    "#8b5cf6",
+    "#f59e0b",
+    "#ef4444",
+    "#ec4899",
+    "#14b8a6",
+  ];
+  var color = colors[letter.charCodeAt(0) % colors.length];
+  var canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  var ctx = canvas.getContext("2d");
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.font =
+    "bold " + Math.round(size * 0.42) + "px DM Sans, Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(letter, size / 2, size / 2 + 1);
+  return canvas.toDataURL();
+}
 
-/* ── Token helpers ─────────────────────────────────────────────────────────── */
+// ── Token helpers ─────────────────────────────────────────────────────────────
 function huGetToken() {
   return localStorage.getItem("hu_token");
 }
 function huGetUser() {
   try {
     return JSON.parse(localStorage.getItem("hu_user") || "null");
-  } catch {
+  } catch (e) {
     return null;
   }
 }
@@ -20,28 +50,26 @@ function huLogout() {
   window.location.href = "auth.html";
 }
 
-/* Redirect to auth if not logged in */
+// ── Auth Guard ────────────────────────────────────────────────────────────────
 (function huAuthGuard() {
-  if (!huGetToken()) {
-    window.location.href = "auth.html";
-  }
+  if (!huGetToken()) window.location.href = "auth.html";
 })();
 
-/* ── Generic fetch wrapper ─────────────────────────────────────────────────── */
-async function huFetch(path, options = {}) {
-  const token = huGetToken();
-  const headers = { ...(options.headers || {}) };
-
+// ── Generic fetch wrapper ─────────────────────────────────────────────────────
+async function huFetch(path, options) {
+  options = options || {};
+  var token = huGetToken();
+  var headers = Object.assign({}, options.headers || {});
   if (token && !(options.body instanceof FormData)) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers["Authorization"] = "Bearer " + token;
     if (!headers["Content-Type"]) headers["Content-Type"] = "application/json";
   } else if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-    // Let browser set multipart boundary automatically for FormData
+    headers["Authorization"] = "Bearer " + token;
   }
-
-  const res = await fetch(`${HU_API}${path}`, { ...options, headers });
-
+  var res = await fetch(
+    HU_API + path,
+    Object.assign({}, options, { headers: headers }),
+  );
   if (res.status === 401) {
     huLogout();
     return null;
@@ -49,189 +77,284 @@ async function huFetch(path, options = {}) {
   return res;
 }
 
-/* ── Post Creation ─────────────────────────────────────────────────────────── */
-async function huCreatePost({ content, category, mediaFile }) {
-  const fd = new FormData();
-  fd.append("content", content);
-  fd.append("category", category || "General Wellness");
-  if (mediaFile) fd.append("media", mediaFile);
-
-  const res = await huFetch("/api/posts/create", { method: "POST", body: fd });
+// ── Create Post ───────────────────────────────────────────────────────────────
+async function huCreatePost(opts) {
+  var fd = new FormData();
+  fd.append("content", opts.content || "");
+  fd.append("category", opts.category || "General Wellness");
+  if (opts.mediaFile) fd.append("media", opts.mediaFile);
+  var res = await huFetch("/api/posts/create", { method: "POST", body: fd });
   if (!res) return null;
-
-  const data = await res.json();
+  var data = await res.json();
   if (!res.ok) throw new Error(data.detail || "Failed to create post");
   return data;
 }
 
-/* ── Fetch Feed ────────────────────────────────────────────────────────────── */
-async function huGetFeed(limit = 20, offset = 0) {
+// ── Fetch Feed ────────────────────────────────────────────────────────────────
+async function huGetFeed(limit, offset) {
+  limit = limit || 20;
+  offset = offset || 0;
   try {
-    const res = await huFetch(`/api/posts?limit=${limit}&offset=${offset}`);
-    if (!res || !res.ok) return [];
+    var res = await fetch(
+      HU_API + "/api/posts?limit=" + limit + "&offset=" + offset,
+    );
+    if (!res.ok) return [];
     return await res.json();
-  } catch {
+  } catch (e) {
     return [];
   }
 }
 
-/* ── Like Post ─────────────────────────────────────────────────────────────── */
+// ── Like Post ─────────────────────────────────────────────────────────────────
 async function huLikePost(postId) {
-  const res = await huFetch(`/api/posts/${postId}/like`, { method: "POST" });
+  var res = await huFetch("/api/posts/" + postId + "/like", { method: "POST" });
   if (!res || !res.ok) return null;
   return await res.json();
 }
 
-/* ── Populate user info in the UI ──────────────────────────────────────────── */
-function huPopulateUserUI() {
-  const user = huGetUser();
-  if (!user) return;
+// ── Apply all user data to UI ─────────────────────────────────────────────────
+function applyUserToUI() {
+  var u = huGetUser();
+  if (!u) return;
 
-  // Sidebar name + role
-  const nameEl = document.querySelector(".sidebar-user-name");
-  const roleEl = document.querySelector(".sidebar-user-role");
-  if (nameEl)
-    nameEl.textContent =
-      user.name?.length > 14 ? user.name.slice(0, 14) + "…" : user.name;
-  if (roleEl) roleEl.textContent = user.specialty || "Member";
+  var name = u.name || "User";
+  var role = u.specialty || "Member";
+  var bal = parseFloat(u.balance || 0).toFixed(2);
+  var coins = u.hu_coins || 500;
+  var email = u.email || "";
+  var hospital = u.hospital || "";
+  var bio = u.bio || "";
+  var created = u.created_at
+    ? new Date(u.created_at).toLocaleDateString("en-IN", {
+        month: "long",
+        year: "numeric",
+      })
+    : "";
 
-  // Balances
-  const bal = parseFloat(user.balance || 0).toFixed(2);
-  ["user-balance", "mobile-user-balance", "wallet-balance"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = bal;
-  });
+  // Generate letter avatars at different sizes
+  var avatarSm = getLetterAvatar(name, 72); // sidebar, modal
+  var avatarLg = getLetterAvatar(name, 160); // profile, settings
 
-  // HU Coins
-  const coins = user.hu_coins || 0;
-
-  // Avatar
-  if (user.avatar_url) {
-    document
-      .querySelectorAll(
-        ".sidebar-avatar, .modal-user img, .profile-avatar, .settings-avatar",
-      )
-      .forEach((img) => {
-        img.src = user.avatar_url;
-      });
+  // ── Sidebar ─────────────────────────────────────────────────────────────────
+  var sName = document.getElementById("sidebar-user-name");
+  var sRole = document.getElementById("sidebar-user-role");
+  var sAv = document.getElementById("sidebar-avatar");
+  if (sName)
+    sName.textContent = name.length > 14 ? name.slice(0, 14) + "…" : name;
+  if (sRole) sRole.textContent = role;
+  if (sAv) {
+    sAv.src = avatarSm;
+    sAv.alt = name.charAt(0).toUpperCase();
   }
-}
 
-/* ── Patch logout button ───────────────────────────────────────────────────── */
-function huPatchLogout() {
-  // Settings logout already shows a confirm modal in index.html
-  // This overrides confirmLogout() to use real logout
-  window.confirmLogout = function () {
-    document.getElementById("logout-modal")?.classList.add("open");
-  };
-
-  // Patch the actual logout action inside the modal
-  const logoutYesBtn = document.querySelector(
-    "#logout-modal .settings-danger-btn",
+  // ── Balances ─────────────────────────────────────────────────────────────────
+  ["user-balance", "mobile-user-balance", "wallet-balance"].forEach(
+    function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = bal;
+    },
   );
-  if (logoutYesBtn) {
-    logoutYesBtn.onclick = function () {
-      huLogout();
-    };
+  var wAvail = document.getElementById("withdraw-avail");
+  if (wAvail) wAvail.textContent = "$" + bal;
+
+  // ── HU Coins ──────────────────────────────────────────────────────────────────
+  ["rp-coins", "wallet-coins", "rev-coins"].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = coins.toLocaleString();
+  });
+  ["wallet-coins-inr", "rev-coins-inr"].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = Math.round(coins / 10);
+  });
+  var cc = document.getElementById("consult-coins");
+  if (cc) cc.textContent = coins.toLocaleString();
+
+  // ── Rev balance ───────────────────────────────────────────────────────────────
+  var rb = document.getElementById("rev-balance");
+  if (rb) rb.textContent = bal;
+
+  // ── Booking payment labels ────────────────────────────────────────────────────
+  var bCoins = document.getElementById("booking-coins-label");
+  var bBal = document.getElementById("booking-balance-label");
+  if (bCoins) bCoins.textContent = coins.toLocaleString() + " coins available";
+  if (bBal) bBal.textContent = "$" + bal + " available";
+
+  // ── Create post modal ─────────────────────────────────────────────────────────
+  var mName = document.getElementById("modal-user-name");
+  var mAv = document.getElementById("modal-user-avatar");
+  if (mName) mName.textContent = name;
+  if (mAv) {
+    mAv.src = avatarSm;
+    mAv.alt = name.charAt(0).toUpperCase();
   }
+
+  // ── Profile page ──────────────────────────────────────────────────────────────
+  var pName = document.getElementById("profile-name");
+  var pRole = document.getElementById("profile-role");
+  var pBio = document.getElementById("profile-bio");
+  var pAv = document.getElementById("profile-avatar");
+  if (pName)
+    pName.innerHTML = name + ' <span class="verified-dot large"></span>';
+  if (pRole) pRole.textContent = role + (hospital ? " | " + hospital : "");
+  if (pBio && bio) pBio.textContent = bio;
+  if (pAv) {
+    pAv.src = avatarLg;
+    pAv.alt = name.charAt(0).toUpperCase();
+  }
+
+  // ── Settings avatar ───────────────────────────────────────────────────────────
+  var sAvImg = document.getElementById("settings-avatar-img");
+  if (sAvImg) {
+    sAvImg.src = avatarLg;
+    sAvImg.alt = name.charAt(0).toUpperCase();
+  }
+
+  // ── Settings fields ───────────────────────────────────────────────────────────
+  function setField(id, val) {
+    var el = document.getElementById(id);
+    if (!el || !val) return;
+    if (el.tagName === "TEXTAREA") el.textContent = val;
+    else el.value = val;
+  }
+  setField("sf-name", name);
+  setField(
+    "sf-username",
+    name
+      .toLowerCase()
+      .replace(/\s+/g, ".")
+      .replace(/[^a-z0-9.]/g, ""),
+  );
+  setField("sf-email", email);
+  setField("sf-hospital", hospital);
+  setField("sf-bio", bio);
+  setField("sf-member-since", created);
+
+  // Specialty dropdown
+  var sfSpec = document.getElementById("sf-specialty");
+  if (sfSpec && role) {
+    for (var i = 0; i < sfSpec.options.length; i++) {
+      if (sfSpec.options[i].value === role || sfSpec.options[i].text === role) {
+        sfSpec.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  // Apply modal pre-fill
+  var an = document.getElementById("apply-name");
+  var ae = document.getElementById("apply-email");
+  if (an && !an.value) an.value = name;
+  if (ae && !ae.value) ae.value = email;
 }
 
-/* ── Patch publishPost() ───────────────────────────────────────────────────── */
+// ── Publish Post ──────────────────────────────────────────────────────────────
 window.publishPost = async function () {
-  const content = document.getElementById("post-content")?.value?.trim();
-  const mediaInput = document.getElementById("media-input");
-  const mediaFile = mediaInput?.files?.[0] || null;
+  var content = (document.getElementById("post-content") || {}).value || "";
+  content = content.trim();
+  var mediaInput = document.getElementById("media-input");
+  var mediaFile =
+    (mediaInput && mediaInput.files && mediaInput.files[0]) || null;
 
   if (!content && !mediaFile) {
-    showToast("✍️ Please write something or attach media before posting!");
+    showToast("✍️ Please write something or attach media!");
     return;
   }
 
-  const publishBtn = document.querySelector(".publish-btn");
-  if (publishBtn) {
-    publishBtn.disabled = true;
-    publishBtn.textContent = "Posting…";
+  var btn = document.querySelector(".publish-btn");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Posting…";
   }
 
   try {
-    const post = await huCreatePost({ content, mediaFile });
-
+    var post = await huCreatePost({ content: content, mediaFile: mediaFile });
     if (!post) throw new Error("No response");
 
     showToast("✅ Post published successfully!");
     closeModal();
 
-    // Prepend new post to feed UI
-    const container = document.getElementById("feed-container");
-    if (container) {
-      const card = buildBackendPostCard(post);
-      container.insertAdjacentHTML("afterbegin", card);
-    }
+    var container = document.getElementById("feed-container");
+    if (container)
+      container.insertAdjacentHTML("afterbegin", buildPostCard(post));
 
-    // Reset form
-    if (document.getElementById("post-content"))
-      document.getElementById("post-content").value = "";
+    var pc = document.getElementById("post-content");
+    if (pc) pc.value = "";
     if (mediaInput) mediaInput.value = "";
-    const preview = document.getElementById("preview-container");
-    if (preview) preview.innerHTML = "";
+    var prev = document.getElementById("preview-container");
+    if (prev) prev.innerHTML = "";
   } catch (err) {
-    showToast("❌ Failed to publish post: " + (err.message || "Unknown error"));
+    showToast("❌ " + (err.message || "Failed to publish"));
   } finally {
-    if (publishBtn) {
-      publishBtn.disabled = false;
-      publishBtn.textContent = "Post";
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Post";
     }
   }
 };
 
-/* ── Build post card from backend data ─────────────────────────────────────── */
-function buildBackendPostCard(post) {
-  const author = post.author || {};
-  const avatarSrc =
-    author.avatar ||
-    "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80&h=80&fit=crop&crop=face";
-  const timeAgo = "Just now";
-  const verified = author.verified ? '<span class="verified-dot"></span>' : "";
+// ── Build Post Card ───────────────────────────────────────────────────────────
+function buildPostCard(post) {
+  var author = post.author || {};
+  var name = author.name || "You";
+  var avatarSrc = getLetterAvatar(name, 80);
+  var verified = author.verified ? '<span class="verified-dot"></span>' : "";
+  var mediaHtml = "";
 
-  let mediaHtml = "";
   if (post.media_url) {
-    const fullUrl = HU_API + post.media_url;
+    var fullUrl = HU_API + post.media_url;
     mediaHtml =
       post.media_type === "video"
-        ? `<video class="post-media" src="${fullUrl}" controls></video>`
-        : `<img class="post-media" src="${fullUrl}" alt="Post media" style="width:100%;border-radius:12px;margin-top:10px;"/>`;
+        ? '<video src="' +
+          fullUrl +
+          '" controls style="width:100%;border-radius:12px;margin-top:10px;"></video>'
+        : '<img src="' +
+          fullUrl +
+          '" style="width:100%;border-radius:12px;margin-top:10px;"/>';
   }
 
-  return `
-  <div class="post-card" data-post-id="${post.id}">
-    <div class="post-header">
-      <img src="${avatarSrc}" alt="${author.name}" class="post-avatar"/>
-      <div class="post-meta">
-        <div class="post-author">${author.name || "You"} ${verified}</div>
-        <div class="post-role">${author.specialty || "Healthcare Professional"} · ${timeAgo}</div>
-      </div>
-      <div class="post-revenue">$0.00 earned</div>
-    </div>
-    <div class="post-body"><p>${post.content || ""}</p>${mediaHtml}</div>
-    <div class="post-actions">
-      <button class="action-btn" onclick="huLikePost('${post.id}').then(r=>r&&(this.querySelector('.action-count').textContent=r.likes))">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <span class="action-count">0</span>
-      </button>
-      <button class="action-btn">
-        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span class="action-count">0</span>
-      </button>
-      <button class="action-btn">
-        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-        Share
-      </button>
-    </div>
-  </div>`;
+  return (
+    '<div class="post-card" data-post-id="' +
+    post.id +
+    '">' +
+    '<div class="post-top">' +
+    '<img src="' +
+    avatarSrc +
+    '" style="width:44px;height:44px;border-radius:50%;"/>' +
+    '<div class="post-meta">' +
+    '<div class="post-name">' +
+    name +
+    " " +
+    verified +
+    "</div>" +
+    '<div class="post-role">' +
+    (author.specialty || "Healthcare Professional") +
+    " · Just now</div>" +
+    "</div>" +
+    "</div>" +
+    '<div class="post-body"><p>' +
+    (post.content || "") +
+    "</p>" +
+    mediaHtml +
+    "</div>" +
+    '<div class="post-actions">' +
+    '<button class="action-btn" onclick="huLikePost(\'' +
+    post.id +
+    "').then(function(r){if(r)this.querySelector('.action-count').textContent=r.likes}.bind(this))\">" +
+    '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+    '<span class="action-count">0</span>' +
+    "</button>" +
+    "</div>" +
+    "</div>"
+  );
 }
 
-/* ── Init on DOM ready ─────────────────────────────────────────────────────── */
-document.addEventListener("DOMContentLoaded", () => {
-  huPopulateUserUI();
-  huPatchLogout();
+// ── Patch logout ──────────────────────────────────────────────────────────────
+window.confirmLogout = function () {
+  var m = document.getElementById("logout-modal");
+  if (m) m.classList.add("open");
+};
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", function () {
+  applyUserToUI();
 });

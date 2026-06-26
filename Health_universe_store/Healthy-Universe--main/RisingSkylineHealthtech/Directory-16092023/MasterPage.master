@@ -1,0 +1,1002 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <!-- Title -->
+        <title></title>
+
+        <!-- Required Meta Tags Always Come First -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="Images/favicon.png">
+    <link rel="canonical" href="https://healthyuniverse.co.in/default.aspx/" />
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&display=swap" rel="stylesheet">
+
+        <!-- CSS Implementing Plugins -->
+        <link rel="stylesheet" href="assets/vendor/font-awesome/css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="assets/css/font-electro.css">
+
+        <link rel="stylesheet" href="assets/vendor/animate.css/animate.min.css">
+        <link rel="stylesheet" href="assets/vendor/hs-megamenu/src/hs.megamenu.css">
+        <link rel="stylesheet" href="assets/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+        <link rel="stylesheet" href="assets/vendor/fancybox/jquery.fancybox.css">
+        <link rel="stylesheet" href="assets/vendor/slick-carousel/slick/slick.css">
+        <link rel="stylesheet" href="assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css">
+
+        <!-- CSS Electro Template -->
+        <link rel="stylesheet" href="assets/css/theme.css">
+       
+
+  
+</head>
+<body>
+   
+    <form id="form1" runat="server" autocomplete="off">
+        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+    <!-- ========== HEADER ========== -->
+        <header id="header" class="u-header u-header-left-aligned-nav">
+            <div class="u-header__section">
+                <!-- Topbar -->
+                <div class="u-header-topbar py-2 d-none d-xl-block">
+                    <div class="container">
+                        <div class="d-flex align-items-left">
+                            <div class="topbar-left">
+                                <p class="text-gray-110 font-size-13 hover-on-dark" style="margin-bottom:0rem !important;"><b>Healthy Universe</b> | Health & Fitness Products, Medicines, Doctor Consultaion </p>
+                            </div>
+                            <div class="topbar-right ml-auto">
+                                <ul class="list-inline mb-0">
+                                       <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border">
+                                        <a href="Vendor-Login.aspx"  style="font-weight:600 !important;" class="u-header-topbar__nav-link"><i class="ec ec-user mr-1"></i> Seller Login</a>
+                                    </li>
+                                    <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border">
+                                        <a href="Contact.aspx"  style="font-weight:600 !important;" class="u-header-topbar__nav-link"><i class="ec ec-support mr-1"></i> Support</a>
+                                    </li>
+                               <%--      <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border">
+                                        <a href="https://healthyuniverse.co.in/Tests.aspx" style="font-weight:600 !important;" class="u-header-topbar__nav-link"><i class="ec ec-category-icon mr-1"></i> Book a Test</a>
+                                    </li>--%>
+                                    
+                                    <li class="list-inline-item mr-0 u-header-topbar__nav-item u-header-topbar__nav-item-border">
+                                        <!-- Account Sidebar Toggle Button -->
+                                        <a id="sidebarNavToggler" href="javascript:;" role="button"  style="font-weight:600 !important;" class="u-header-topbar__nav-link"
+                                            aria-controls="sidebarContent"
+                                            aria-haspopup="true"
+                                            aria-expanded="false"
+                                            data-unfold-event="click"
+                                            data-unfold-hide-on-scroll="false"
+                                            data-unfold-target="#sidebarContent"
+                                            data-unfold-type="css-animation"
+                                            data-unfold-animation-in="fadeInRight"
+                                            data-unfold-animation-out="fadeOutRight"
+                                            data-unfold-duration="500">
+                                            <i class="ec ec-user mr-1"></i> My Account
+                                        </a>
+                                        <!-- End Account Sidebar Toggle Button -->
+                                    </li>
+                                     
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Topbar -->
+
+                <!-- Logo-Search-header-icons -->
+                <div class="py-2 py-xl-5" style="padding-top:0.5rem !important;padding-bottom:0.5rem !important;">
+                    <div class="container my-0dot5 my-xl-0">
+                        <div class="row align-items-left">
+                            <!-- Logo-offcanvas-menu -->
+                            <div class="col-auto" style="padding-top:2px !important;">
+                                <!-- Nav -->
+                                <nav class="navbar navbar-expand u-header__navbar py-0 justify-content-xl-between max-width-270 min-width-270">
+                                    <!-- Logo -->
+                                    <a class="order-1 order-xl-0 navbar-brand u-header__navbar-brand u-header__navbar-brand-center" href="Default.aspx" aria-label="Electro">
+                                        <img style="height: 40px !important;width:auto !important;margin:auto !important;margin-top:1px !important;margin-left:-14px !important;" src="Images/Logo-Dark.png" />
+                                    </a>
+                                    <!-- End Logo -->
+
+                                    <!-- Fullscreen Toggle Button -->
+                                    <button id="sidebarHeaderInvokerMenu" type="button" class="navbar-toggler d-block btn u-hamburger mr-3 mr-xl-0"
+                                        aria-controls="sidebarHeader"
+                                        aria-haspopup="true"
+                                        aria-expanded="false"
+                                        data-unfold-event="click"
+                                        data-unfold-hide-on-scroll="false"
+                                        data-unfold-target="#sidebarHeader1"
+                                        data-unfold-type="css-animation"
+                                        data-unfold-animation-in="fadeInLeft"
+                                        data-unfold-animation-out="fadeOutLeft"
+                                        data-unfold-duration="500">
+                                        <span id="hamburgerTriggerMenu" class="u-hamburger__box">
+                                            <span class="u-hamburger__inner"></span>
+                                        </span>
+                                    </button>
+                                    <!-- End Fullscreen Toggle Button -->
+                                </nav>
+                                <!-- End Nav -->
+
+                                <!-- ========== HEADER SIDEBAR ========== -->
+                                <aside id="sidebarHeader1" class="u-sidebar u-sidebar--left" aria-labelledby="sidebarHeaderInvoker">
+                                    <div class="u-sidebar__scroller">
+                                        <div class="u-sidebar__container">
+                                            <div class="u-header-sidebar__footer-offset" style="padding-bottom:0rem !important;">
+                                                <!-- Toggle Button -->
+                                                <div class="position-absolute top-0 right-0 z-index-2 pt-4 pr-4 bg-white">
+                                                    <button type="button" class="close ml-auto"
+                                                        aria-controls="sidebarHeader"
+                                                        aria-haspopup="true"
+                                                        aria-expanded="false"
+                                                        data-unfold-event="click"
+                                                        data-unfold-hide-on-scroll="false"
+                                                        data-unfold-target="#sidebarHeader1"
+                                                        data-unfold-type="css-animation"
+                                                        data-unfold-animation-in="fadeInLeft"
+                                                        data-unfold-animation-out="fadeOutLeft"
+                                                        data-unfold-duration="500">
+                                                        <span aria-hidden="true"><i class="ec ec-close-remove text-gray-90 font-size-20"></i></span>
+                                                    </button>
+                                                </div>
+                                                <!-- End Toggle Button -->
+
+                                                <!-- Content -->
+                                                <div class="js-scrollbar u-sidebar__body">
+                                                    <div id="headerSidebarContent" class="u-sidebar__content u-header-sidebar__content">
+                                                        <!-- Logo -->
+                                                       <%-- <a class="navbar-brand u-header__navbar-brand u-header__navbar-brand-center mb-3" href="index.html" aria-label="Electro">
+                                                            <img style="height:25px !important;width:auto !important;margin:auto !important;" src="Images/Logo.png" />
+                                                        </a>--%>
+                                                        <!-- End Logo -->
+
+                                                        <!-- List -->
+                                                        <ul id="headerSidebarList" class="u-header-collapse__nav">
+                                                           
+                                                            <li class="" style="margin-bottom:10px !important;">
+                                                                <span style="font-weight:bold !important;text-transform:uppercase !important;font-size:13px !important;" class="u-header-collapse__nav-link" runat="server">Explore By Category</span>
+                                                                   <ul>
+                                                                           <asp:Repeater ID="Repeater1" runat="server">
+                                                <ItemTemplate>
+                                     <li><asp:linkbutton id="Linkbutton1" runat="server" PostBackUrl='<%#"subcategory.aspx?subcategoryid="+Eval("Id")%>' style="margin-left:0px !important;text-decoration:none !important;color:darkslateblue !important;font-weight:600 !important;"><asp:Label ID="Label5" Text='<%# Eval("Title") %>' runat="server"></asp:Label></asp:linkbutton></li>
+                                                    </ItemTemplate>
+                                                                               </asp:Repeater>
+                                                    </ul>      
+                                                            </li>
+                                                            <a href="Category.aspx" style="margin-left:45px !important">View more</a>
+                                                            <li class="" style="margin-bottom:20px !important;">
+                                                                <span style="font-weight:bold !important;text-transform:uppercase !important;font-size:13px !important;" class="u-header-collapse__nav-link" runat="server">Quick Links</span>
+                                                               
+                                                              <ul class="list-group list-group-flush list-group-borderless mb-0 list-group-transparent" style="margin-left:10px !important;">
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Default.aspx">Home</a></li>
+                                          <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">About Us</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Doctors.aspx">Doctor Consult</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Privacy-Policy.aspx">Privacy Policy</a></li>
+                                                                    <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Terms.aspx">Term & Conditions</a></li>
+                                    <%--    <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">Explore Department</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">Explore Category</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;"  href="#">Our Services</a></li>
+                                           <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">Our Product</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">Doctor Consultation</a></li>--%>
+                                   
+
+                                           <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="https://healthyuniverse.co.in/Services-Details.aspx?Serviceid=2">Health Insurance</a></li>
+                                           <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="https://healthyuniverse.co.in/Services-Details.aspx?Serviceid=1">Diagnostic Services</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Vendor-Login.aspx">Seller Login</a></li>
+                                                                      <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Doctor-Login.aspx">Doctor Login</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Contact.aspx">Contact Us</a></li>
+                                      
+                                          
+                                    </ul>
+                                                            </li>
+                                                           
+                                                            <li class="" style="margin-bottom:10px !important;">
+                                                              <a href="#" target="_blank" style="margin-right:5px !important;">
+                                            <img style="height:40px !important;width:auto !important;" src="Images/facebook.jpg" /></a>
+                                        <a href="#" target="_blank" style="margin-right:5px !important;">
+                                            <img style="height:40px !important;width:auto !important;" src="Images/instagram.jpg" /></a>
+                                                                 <a href="#" target="_blank" style="margin-right:5px !important;">
+                                            <img style="height:40px !important;width:auto !important;" src="Images/linkedin.png" /></a>
+                                                                </li>
+                                                                                                                 
+                                                           
+                                                        </ul>
+                                                        <!-- End List -->
+                                                    </div>
+                                                </div>
+                                                <!-- End Content -->
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </aside>
+                                <!-- ========== END HEADER SIDEBAR ========== -->
+                            </div>
+                            <!-- End Logo-offcanvas-menu -->
+                            <!-- Search Bar -->
+                            <div class="col d-none d-xl-block">
+                                <div class="js-focus-state">
+                                    <label class="sr-only" for="searchproduct">Advanced Search</label>
+                                       <asp:panel runat="server" DefaultButton="Button8">
+                                    <div class="input-group">
+                                      <asp:TextBox ID="TextBox2search" class="form-control py-2 pl-5 font-size-15 border-right-0 height-40 border-width-2 rounded-left-pill" placeholder="Search By Keywords..." style="background-color:#f2f2f2 !important;color:black !important;border-radius: 3px;" runat="server"></asp:TextBox>
+                                             
+                                        <div class="input-group-append">
+                                            
+                                            <asp:Button ID="Button8" runat="server" class="btn btn-dark height-35 py-2 px-3 rounded-right-pill" style="min-height:41px !important;border-radius: 3px;" Text="Search" OnClick="search2" />
+                                        </div>
+                                    </div>
+                                           </asp:panel>
+                                </div>
+                            </div>
+                            <!-- End Search Bar -->
+                            <!-- Header Icons -->
+                            <div class="col col-xl-auto text-right text-xl-left pl-0 pl-xl-3 position-static">
+                                <div class="d-inline-flex">
+                                    <ul class="d-flex list-unstyled mb-0 align-items-center" style="margin-top:2px !important;">
+                                        
+                                        <!-- Search -->
+                                        <li class="col d-xl-none px-2 px-sm-3 position-static">
+                                            <a id="searchClassicInvoker" class="font-size-22 text-gray-90 text-lh-1 btn-text-secondary" href="javascript:;" role="button"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Search"
+                                                aria-controls="searchClassic"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                                data-unfold-target="#searchClassic"
+                                                data-unfold-type="css-animation"
+                                                data-unfold-duration="300"
+                                                data-unfold-delay="300"
+                                                data-unfold-hide-on-scroll="true"
+                                                data-unfold-animation-in="slideInUp"
+                                                data-unfold-animation-out="fadeOut">
+                                                <span class="ec ec-search"></span>
+                                            </a>
+
+                                            <!-- Input -->
+                                            <asp:panel runat="server" DefaultButton="Button7">
+                                            <div id="searchClassic" class="dropdown-menu dropdown-unfold dropdown-menu-right left-0 mx-2" aria-labelledby="searchClassicInvoker">
+                                                <div class="js-focus-state input-group px-3">
+                                                   <asp:TextBox ID="TextBox1search" class="form-control" type="search" placeholder="Search by Keywords..." style="background-color:#f2f2f2 !important;color:black !important;border-radius: 3px;" runat="server"></asp:TextBox>
+                                                       
+                                                    <div class="input-group-append">
+<asp:Button ID="Button7" runat="server" class="btn btn-primary px-3" Text="Search" style="border-radius: 3px !important;" OnClick="search1" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                </asp:panel>
+                                            <!-- End Input -->
+                                        </li>
+                                        <!-- End Search -->
+                                      
+                                       <li class="col d-xl-none px-2 px-sm-3"><a class="text-gray-90" role="button"
+                                            aria-controls="sidebarContent"
+                                            aria-haspopup="true"
+                                            aria-expanded="false"
+                                            data-unfold-event="click"
+                                            data-unfold-hide-on-scroll="false"
+                                            data-unfold-target="#sidebarContent"
+                                            data-unfold-type="css-animation"
+                                            data-unfold-animation-in="fadeInRight"
+                                            data-unfold-animation-out="fadeOutRight"
+                                            data-unfold-duration="500"><i class="font-size-22 ec ec-user"></i></a></li>
+                                   
+                                        <li class="col pr-xl-0 px-2 px-sm-3 d-xl-none">
+                                            <a href="Cart.aspx" class="text-gray-90 position-relative d-flex" title="Cart">
+                                                <i class="font-size-22 ec ec-shopping-bag" style="color:#000 !important"></i>
+                                                <span class="bg-lg-down-black width-22 height-22 bg-red position-absolute d-flex align-items-center justify-content-center rounded-circle left-12 top-8 font-weight-bold font-size-12" style="color:white !important;"><asp:Label ID="Label1" runat="server"></asp:Label></span>
+                                                <span class="d-none d-xl-block font-weight-bold font-size-16 text-gray-90 ml-3" style="color:#000 !important">Checkout</span>
+                                            </a>
+                                        </li>
+                                        <li class="col pr-xl-0 px-2 px-sm-3 d-none d-xl-block" style="margin-top:0px !important;">
+                                             <a href="Cart.aspx" class="text-gray-90 position-relative d-flex" title="Cart">
+                                                <i class="font-size-22 ec ec-shopping-bag" style="color:#000 !important"></i>
+                                                <span class="bg-lg-down-black width-22 height-22 bg-red position-absolute d-flex align-items-center justify-content-center rounded-circle left-12 top-8 font-weight-bold font-size-12" style="color:white !important;"><asp:Label ID="Label4" runat="server"></asp:Label></span>
+                                                <span class="d-none d-xl-block font-weight-bold font-size-16 text-gray-90 ml-3" style="color:#000 !important">Checkout</span>
+                                            </a>
+                                            
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- End Header Icons -->
+                        </div>
+                    </div>
+                </div>
+                <!-- End Logo-Search-header-icons -->
+          <%--         <!-- Primary-menu-wide -->
+               <div class="d-none d-xl-block bg-dark" style="margin-top:6px !important;background-color:darkslateblue !important; ">
+                    <div class="container">
+                        <div class="min-height-45">
+
+
+                             <nav class="js-mega-menu navbar navbar-expand-md u-header__navbar u-header__navbar--no-space">
+                            <!-- Navigation -->
+                            <div id="navBar" class="collapse navbar-collapse u-header__navbar-collapse">
+                                <ul class="navbar-nav u-header__navbar-nav justify-content-left">
+                                    <!-- Home -->
+                                    <li class="nav-item hs-has-sub-menu u-header__nav-item"
+                                        data-event="hover"
+                                        data-animation-in="slideInUp"
+                                        data-animation-out="fadeOut">
+                                        <a id="HomeMegaMenu" class="nav-link u-header__nav-link" style="color:white !important;" href="https://healthyuniverse.co.in/Default.aspx" aria-haspopup="true" aria-expanded="false" aria-labelledby="HomeSubMenu"><i class="fa fa-home"></i></a>
+
+                                    </li>
+
+                                <asp:Repeater ID="Repeater3" runat="server" OnItemDataBound="Repeater3_ItemDataBound">
+          <ItemTemplate>		
+                <li class="nav-item hs-has-sub-menu u-header__nav-item"
+                                            data-event="hover"
+                                            data-animation-in="slideInUp"
+                                            data-animation-out="fadeOut">
+                     
+                     <a id="Linkbutton5" class="nav-link u-header__nav-link u-header__nav-link-toggle" href="javascript:;" style="color:white !important;font-weight:600 !important;padding-right: 0.7rem !important;padding-left: 0.7rem !important;" aria-haspopup="true" aria-expanded="false" aria-labelledby="HomeSubMenu"><%# Eval("Title") %></a>
+                                           
+                   
+                                    
+                                                                <ul id="HomeSubMenu" class="hs-sub-menu u-header__sub-menu animated fadeOut" aria-labelledby="HomeMegaMenu">
+                                                                    <li>
+                                                                          <asp:Repeater ID="rptOrders" runat="server">
+                                                                          <ItemTemplate>
+                                                                          <asp:linkbutton id="Linkbutton1" runat="server" class="nav-link u-header__sub-menu-nav-link">
+                                                                                <asp:Label ID="Label3" style="font-size:13px !important;" Text='<%# Eval("Title") %>' runat="server"></asp:Label>
+                                                                          </asp:linkbutton>
+                                                                          </ItemTemplate>
+                                                                          </asp:Repeater>
+                                                                    </li>
+                                                                </ul>
+                                                         
+                                             
+                           
+                   </li>
+                   <asp:HiddenField ID="hfCustomerId" runat="server" Value='<%# Eval("Id") %>' />
+                                                              
+                                                          
+              </ItemTemplate>
+              </asp:Repeater>
+                                    <!-- End Home -->
+
+                                <li class="nav-item u-header__nav-item"
+                                      
+                                        data-animation-in="slideInUp"
+                                        data-animation-out="fadeOut">
+                                        <a id="HomeMegaMenu1111" class="nav-link u-header__nav-link" style="color:white !important;font-weight:600 !important;padding-right: 0.7rem !important;padding-left: 0.7rem !important;" href="#" aria-haspopup="true" aria-expanded="false" aria-labelledby="HomeSubMenu">Explore</a>
+
+                                    </li>
+                                     <li class="nav-item u-header__nav-item"
+                                      
+                                        data-animation-in="slideInUp"
+                                        data-animation-out="fadeOut">
+                                        <a id="HomeMegaMenu2" class="nav-link u-header__nav-link" style="color:white !important;font-weight:600 !important;padding-right: 0.7rem !important;padding-left: 0.7rem !important;" href="#" aria-haspopup="true" aria-expanded="false" aria-labelledby="HomeSubMenu">Our Services</a>
+
+                                    </li>
+                                       <li class="nav-item u-header__nav-item"
+                                      
+                                        data-animation-in="slideInUp"
+                                        data-animation-out="fadeOut">
+                                        <a id="HomeMegaMenu3" class="nav-link u-header__nav-link" style="color:white !important;font-weight:600 !important;padding-right: 0.7rem !important;padding-left: 0.7rem !important;" href="#" aria-haspopup="true" aria-expanded="false" aria-labelledby="HomeSubMenu">Our Product</a>
+
+                                    </li>
+                                      <li class="nav-item u-header__nav-item"
+                                      
+                                        data-animation-in="slideInUp"
+                                        data-animation-out="fadeOut">
+                                        <a id="HomeMegaMenu31" class="nav-link u-header__nav-link" style="color:white !important;font-weight:600 !important;padding-right: 0.7rem !important;padding-left: 0.7rem !important;" href="#" aria-haspopup="true" aria-expanded="false" aria-labelledby="HomeSubMenu">Doctor Consultation</a>
+
+                                    </li>
+                                     <li class="nav-item u-header__nav-item"
+                                      
+                                        data-animation-in="slideInUp"
+                                        data-animation-out="fadeOut">
+                                        <a id="HomeMegaMenu111" class="nav-link u-header__nav-link" style="color:white !important;font-weight:600 !important;padding-right: 0.7rem !important;padding-left: 0.7rem !important;" href="#" aria-haspopup="true" aria-expanded="false" aria-labelledby="HomeSubMenu">Consultation</a>
+
+                                    </li>
+                                    </ul>
+                                </div>
+                                 </nav>
+
+
+                            <!-- Nav -->
+                            
+                            <!-- End Nav -->
+                        </div>
+                    </div>
+                </div>
+                <!-- End Primary-menu-wide -->--%>
+                  
+            </div>
+
+        </header>
+        <!-- ========== END HEADER ========== -->
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+     <!-- ========== FOOTER ========== -->
+        <footer style="margin-bottom:34px !important;">
+          
+           <div class="bg-primary py-3" style="background-color:darkslateblue !important;padding-top:0.5rem !important;padding-bottom:0.5rem !important;">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-7 mb-md-3 mb-lg-0">
+                            <div class="row align-items-center">
+                                <div class="col-auto flex-horizontal-center">
+                                    <i class="ec ec-newsletter font-size-40" style="color:white !important;"></i>
+                                    <h2 class="font-size-20 mb-0 ml-3" style="font-weight:bold !important;color:white !important;">Subscribe</h2>
+                                    <h5 class="font-size-15 ml-4 mb-0" style="color:white !important;margin-bottom:10px !important;margin-top: 10px !important;">...to never miss any<strong> health tips, advices and more.</strong></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <!-- Subscribe Form -->
+                            <div class="js-validate js-form-message">
+                                <label class="sr-only" for="subscribeSrEmail">Email address</label>
+                                <div class="input-group input-group-pill">
+                                <asp:TextBox ID="TextBox1" class="form-control border-0 height-40" style="border-top-left-radius: 0rem !important;
+    border-bottom-left-radius: 0rem !important;background-color:#fafafa !important;" runat="server" placeholder="Your Email address*" TextMode="Email"></asp:TextBox>
+
+                                    <div class="input-group-append">
+<asp:Button ID="Button5" runat="server" class="btn btn-dark btn-sm-wide height-40 py-2"  ValidationGroup="newsletter" OnClick="Button5_Click" Text="Subscribe" />
+                                    </div>
+                                    <asp:RequiredFieldValidator ID="RequiredFieldValidator6" ValidationGroup="newsletter" 
+                        style="display:none !important;"  runat="server" ControlToValidate="TextBox1"></asp:RequiredFieldValidator>
+                                </div>
+                            </div>
+                            <!-- End Subscribe Form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer-bottom-widgets -->
+            <div class="pt-8 pb-4 bg-gray-13" style="padding-top:1.5rem !important;padding-bottom:0rem !important;">
+                <div class="container mt-1">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-6" style="margin-bottom: 1rem !important;text-align:center !important;">
+                               <img src="Images/Logo1.png" style="width:auto !important;height:auto !important;margin:auto !important;max-width:200px !important;" />
+                                
+                            </div>
+                        </div>
+                          <div class="col-lg-3" style="margin-bottom:20px !important;">
+                                     <h6 class="mb-3 font-weight-bold"  style="margin-bottom: 0.4rem !important;">Explore Category</h6>
+                                    <!-- List Group -->
+                                     <ul class="list-group list-group-flush list-group-borderless mb-0 list-group-transparent" style="margin-left:10px !important;">
+
+                                    <asp:Repeater ID="Repeater2" runat="server">
+                                            <ItemTemplate>
+                                        <li>
+                                        <asp:linkbutton id="Linkbutton1" runat="server" PostBackUrl='<%#"subcategory.aspx?subcategoryid="+Eval("Id")%>' style="margin-left:0px !important;text-decoration:none !important;color:darkslateblue !important;font-weight:600 !important;">
+                                                      <asp:Label ID="Label3" Text='<%# Eval("Title") %>' style="font-size:14px !important;" runat="server"></asp:Label>
+                                             </asp:linkbutton>
+
+                                        </li>
+                                                </ItemTemplate>
+                                            </asp:Repeater>
+                                         <a href="Category.aspx">View All</a>
+                                    <!-- End List Group -->
+                                         </ul>
+                                </div>
+
+                                <div class="col-lg-2"  style="margin-bottom:20px !important;">
+                                    <h6 class="mb-3 font-weight-bold"  style="margin-bottom: 0.4rem !important;">Useful Links</h6>
+                                    <!-- List Group -->
+                                    <ul class="list-group list-group-flush list-group-borderless mb-0 list-group-transparent" style="margin-left:10px !important;">
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Default.aspx">Home</a></li>
+                                          <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">About Us</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Doctors.aspx">Doctor Consult</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Privacy-Policy.aspx">Privacy Policy</a></li>
+                                           <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Terms.aspx">Term & Conditions</a></li>
+                                    <%--    <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">Explore Department</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">Explore Category</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;"  href="#">Our Services</a></li>
+                                           <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">Our Product</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="#">Doctor Consultation</a></li>--%>
+                                        
+                                           <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="https://healthyuniverse.co.in/Services-Details.aspx?Serviceid=2">Health Insurance</a></li>
+                                           <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="https://healthyuniverse.co.in/Services-Details.aspx?Serviceid=1">Diagnostic Services</a></li>
+                                         <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Vendor-Login.aspx">Seller Login</a></li>
+                                           <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Doctor-Login.aspx">Doctor Login</a></li>
+                                        <li><a class="list-group-item list-group-item-action" style="padding-bottom: 0.1rem !important;" href="Contact.aspx">Contact Us</a></li>
+                                      
+                                          
+                                    </ul>
+                                    <!-- End List Group -->
+                                </div>
+                                <div class="col-lg-4"  style="margin-bottom:20px !important;">
+                                    
+                                    <div class="row no-gutters">
+                                    <div class="col-auto">
+                                        <i class="ec ec-support text-primary font-size-56"></i>
+                                    </div>
+                                    <div class="col pl-3" style="width:100% !important;">
+                                        <div class="font-size-13 font-weight-light">Got questions? Contact us 24/7!</div>
+
+                                        <a href="tel:+918317032790 " class="font-size-20 text-gray-90"><b style="letter-spacing:0.2px !important;">+91 83170-32790 </b></a>
+                                        <p style="margin-top:10px !important;margin-bottom:5px !important;"><b>Write to us</b><br/><a href="mailto:info@healthyuniverse.co.in" style="color:dimgrey !important;">info@healthyuniverse.co.in</a></p>
+                                        <p style="margin-bottom: 1rem !important;margin-top:10px !important;"><b>Corporate Address</b><br/>RISING SKYLINE HEALTHTECH PRIVATE LIMITED 521M/8, MAIJI KI BAGIYA, BARA CHAND GANJ, LUCKNOW, Uttar Pradesh, India, 226006</p>
+
+
+                                         <a href="#" target="_blank" style="margin-right:5px !important;">
+                                            <img style="height:40px !important;width:auto !important;" src="Images/facebook.jpg" /></a>
+                                        <a href="#" target="_blank" style="margin-right:5px !important;">
+                                            <img style="height:40px !important;width:auto !important;" src="Images/instagram.jpg" /></a>
+                                         <a href="#" target="_blank" style="margin-right:5px !important;">
+                                            <img style="height:40px !important;width:auto !important;" src="Images/linkedin.png" /></a>
+
+
+                                    </div>                                
+                                </div>
+                                    <!-- End List Group -->
+                                </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- End Footer-bottom-widgets -->
+            <!-- Footer-copy-right -->
+            <div class="bg-gray-14 py-2">
+                <div class="container">
+                    <div class="flex-center-between d-block d-md-flex">
+                        <div class="mb-3 mb-md-0">© <a href="#" class="font-weight-bold text-gray-90">Healthy Universe Pvt. Ltd. 2023</a> - All rights Reserved</div>
+                        <div class="text-md-right">
+                            <img style="height:30px !important;width:auto !important;margin:auto !important;" src="Images/card-icons-png.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Footer-copy-right -->
+        </footer>
+         <div class="footer-btm" style="padding-top:4px !important;padding-bottom:4px !important;position: fixed !important;left: 0 !important;bottom: 0 !important;width: 100% !important;z-index: 999 !important;background-color:#212F3D !important;">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<ul class="list-inline footer-socials text-center mb-0" style="font-family:Calibri !important;">
+                    <li class="list-inline-item">
+                    	<a style="color:white !important;margin-right:0px !important;font-weight:bold !important;font-size:16px !important;font-family:Calibri !important;" href="https://wa.me/+918317032790"><img style="height:20px !important;width:auto !important;margin:auto !important;display:inline-block !important;margin-right:3px !important;" src="Images/whatsapp.png" /> Book On Whatsapp</a>
+                    </li>
+                </ul>
+			</div>
+			
+		</div>
+	</div>
+</div>
+        <!-- ========== END FOOTER ========== -->
+
+        <!-- ========== SECONDARY CONTENTS ========== -->
+        <!-- Account Sidebar Navigation -->
+        <aside id="sidebarContent" class="u-sidebar u-sidebar__lg" aria-labelledby="sidebarNavToggler">
+            <div class="u-sidebar__scroller">
+                <div class="u-sidebar__container">
+                    <div class="js-scrollbar u-header-sidebar__footer-offset pb-3">
+                        <!-- Toggle Button -->
+                        <div class="d-flex align-items-center pt-4 px-7">
+                            <button type="button" class="close ml-auto"
+                                aria-controls="sidebarContent"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                data-unfold-event="click"
+                                data-unfold-hide-on-scroll="false"
+                                data-unfold-target="#sidebarContent"
+                                data-unfold-type="css-animation"
+                                data-unfold-animation-in="fadeInRight"
+                                data-unfold-animation-out="fadeOutRight"
+                                data-unfold-duration="500">
+                                <i class="ec ec-close-remove"></i>
+                            </button>
+                        </div>
+                        <!-- End Toggle Button -->
+
+                        <!-- Content -->
+                        <div class="js-scrollbar u-sidebar__body">
+                            <div class="u-sidebar__content u-header-sidebar__content">
+                                <div class="js-validate">
+                                    <!-- Login -->
+
+  <asp:UpdatePanel ID="update1" runat="server">
+       <ContentTemplate>
+               <p id="success" runat="server" style="padding:5px !important;background-color:green !important;color:white !important;padding-left:15px !important;"><i class="fa fa-success"></i> &nbsp; <b>Link sent!</b> Please check your inbox.</p>
+               <p id="error1" runat="server" style="padding:5px !important;background-color:red !important;color:white !important;padding-left:15px !important;"><i class="fa fa-warning"></i> &nbsp; <b>Sorry!</b> Account was not found.</p>
+               <p id="error2" runat="server" style="padding:5px !important;background-color:red !important;color:white !important;padding-left:15px !important;"><i class="fa fa-warning"></i> &nbsp; <b>Sorry!</b> Email address OR Contact No. is already registered.</p>
+               <p id="error3" runat="server" style="padding:5px !important;background-color:red !important;color:white !important;padding-left:15px !important;"><i class="fa fa-warning"></i> &nbsp; <b>Sorry!</b> Some Error Occoured.</p>
+               <p id="error5" runat="server" style="padding:5px !important;background-color:red !important;color:white !important;padding-left:15px !important;"><i class="fa fa-warning"></i> &nbsp; <b>Sorry!</b> Email address not found.</p>
+        </ContentTemplate>
+    </asp:UpdatePanel>
+                                    <div id="notlogin" runat="server">
+
+                                    <div id="login" data-target-group="idForm">
+                                        <!-- Title -->
+                                        <header class="text-center mb-7">
+                                        <h2 class="h4 mb-0" style="font-weight:bold !important;">Welcome Back!</h2>
+                                        <p>Login now to access your account.<br/><a class="js-animation-link small text-dark" href="javascript:;"
+                                               data-target="#signup"
+                                               data-link-group="idForm"
+                                               data-animation-in="slideInUp" style="font-weight:bold !important;color:darkblue !important;">Create An Account
+                                            </a> | <a class="js-animation-link small link-muted" href="javascript:;"
+                                               data-target="#forgotPassword"
+                                               data-link-group="idForm"
+                                               data-animation-in="slideInUp">Forgot Password?</a></p>
+                                        </header>
+                                        <!-- End Title -->
+
+                                        <!-- Form Group -->
+                                        <div class="form-group">
+                                            <div class="js-form-message js-focus-state">
+                                                <label class="sr-only" for="signinEmail">Email</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"  style="border-radius:3px !important;" id="signinEmailLabel">
+                                                            <span class="fas fa-user"></span>
+                                                        </span>
+                                                    </div>
+                                                    <asp:TextBox ID="TextBox1l" TextMode="Email" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="signinEmailLabel" style="background-color:#fafafa !important;border-radius:3px !important;" runat="server"></asp:TextBox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Form Group -->
+
+                                        <!-- Form Group -->
+                                        <div class="form-group">
+                                            <div class="js-form-message js-focus-state">
+                                              <label class="sr-only" for="signinPassword">Password</label>
+                                              <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text"  style="border-radius:3px !important;" id="signinPasswordLabel">
+                                                        <span class="fas fa-lock"></span>
+                                                    </span>
+                                                </div>
+                                                     <asp:TextBox class="form-control" TextMode="Password" name="password" placeholder="Password" aria-label="Password" aria-describedby="signinPasswordLabel" ID="TextBox2l" style="background-color:#fafafa !important;border-radius:3px !important;" runat="server"></asp:TextBox>
+                                              </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Form Group -->
+
+                                        <div class="mb-2">
+                                           <asp:Button ID="Button1" ValidationGroup="one" OnClick="Button1_Click" class="btn btn-block btn-sm btn-outline-black transition-3d-hover" runat="server" style="border-radius:3px !important;" Text="Login Now" />
+                                       
+               <br/><asp:RequiredFieldValidator ID="RequiredFieldValidator5" ValidationGroup="one" 
+                        style="font-size:13px !important;color:red !important;"  runat="server"
+                         Text="Email cannot be left blank"
+                         ForeColor="Red" ControlToValidate="TextBox1l"></asp:RequiredFieldValidator>
+              <br/><asp:RequiredFieldValidator ID="RequiredFieldValidator1" ValidationGroup="one" 
+                        style="font-size:13px !important;color:red !important;"  runat="server"
+                         Text="Password cannot be left blank"
+                         ForeColor="Red" ControlToValidate="TextBox2l"></asp:RequiredFieldValidator>
+                                        
+                                        </div>
+
+                                    
+                                    </div>
+
+                                    <!-- Signup -->
+                                    <div id="signup" style="display: none; opacity: 0;" data-target-group="idForm">
+                                        <!-- Title -->
+                                        <header class="text-center mb-7">
+                                        <h2 class="h4 mb-0"  style="font-weight:bold !important;">Create An Account</h2>
+                                        <p>Fill out the form to get started.<br/><a class="js-animation-link small link-muted" href="javascript:;"
+                                                data-target="#login"
+                                                data-link-group="idForm"
+                                                data-animation-in="slideInUp" style="font-weight:bold !important;color:darkblue !important;">Login Now
+                                            </a></p>
+                                        </header>
+                                        <!-- End Title -->
+
+                                        <!-- Form Group -->
+                                        <div class="form-group">
+                                            <div class="js-form-message js-focus-state">
+                                                <label class="sr-only" for="signupEmail">Email</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"  style="border-radius:3px !important;" id="signupEmailLabel">
+                                                            <span class="fas fa-user"></span>
+                                                        </span>
+                                                    </div>
+                                                    <asp:TextBox ID="TextBox1s" TextMode="Email" class="form-control" name="email" placeholder="Email" aria-label="Email" aria-describedby="signupEmailLabel" style="background-color:#fafafa !important;border-radius:3px !important;" runat="server"></asp:TextBox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Input -->
+
+                                        <!-- Form Group -->
+                                        <div class="form-group">
+                                            <div class="js-form-message js-focus-state">
+                                                <label class="sr-only" for="signupPassword">Password</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"  style="border-radius:3px !important;" id="signupPasswordLabel">
+                                                            <span class="fas fa-lock"></span>
+                                                        </span>
+                                                    </div>
+                                                    <asp:TextBox class="form-control" TextMode="Password" name="password" placeholder="Password" aria-label="Password" aria-describedby="signupPasswordLabel" ID="TextBox2s" style="background-color:#fafafa !important;border-radius:3px !important;" runat="server"></asp:TextBox>
+                                                   
+                                                </div>
+                                              
+                                            </div>
+                                        </div>
+                                        <!-- End Input -->
+
+                                          <!-- Form Group -->
+                                        <div class="form-group">
+                                            <div class="js-form-message js-focus-state">
+                                                <label class="sr-only" for="signupEmail">Contact No.</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"  style="border-radius:3px !important;" id="signupEmailLabel1">
+                                                            <span class="fas fa-phone"></span>
+                                                        </span>
+                                                    </div>
+                                                     <script type="text/javascript">
+                                                         function isNumberKey(evt) {
+                                                             var charCode = (evt.which) ? evt.which : evt.keyCode;
+                                                             if (charCode > 31 && (charCode < 48 || charCode > 57))
+                                                                 return false;
+                                                             return true;
+                                                         }
+                                                    </script>
+                                                    <asp:TextBox ID="TextBox2" class="form-control" onkeypress="return isNumberKey(event)" MaxLength="10" placeholder="10 Digit No." style="background-color:#fafafa !important;border-radius:3px !important;" runat="server"></asp:TextBox>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Input -->
+                                       
+
+                                        <div class="mb-2">
+                                                <asp:Button ID="Button2" ValidationGroup="two" OnClick="Button2_Click" class="btn btn-block btn-sm btn-outline-black transition-3d-hover" runat="server"  style="border-radius:3px !important;" Text="Get Started" />
+                                           <br/><asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" 
+                          ErrorMessage="Please Note: Password must contain atleast 1 lowercase letter, 1 uppercase letter, 1 special character & 1 digit. Min. 8 characters long."  
+                                     ValidationGroup="two"  ForeColor="Red"  style="font-size:13px !important;color:red !important;"
+        ValidationExpression="^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$"  
+        ControlToValidate="TextBox2s"></asp:RegularExpressionValidator>
+              <br/><asp:RequiredFieldValidator ID="RequiredFieldValidator2" ValidationGroup="two" 
+                        style="font-size:13px !important;color:red !important;"  runat="server"
+                         Text="Email cannot be left blank"
+                         ForeColor="Red" ControlToValidate="TextBox1s"></asp:RequiredFieldValidator>
+              <br/><asp:RequiredFieldValidator ID="RequiredFieldValidator3" ValidationGroup="two" 
+                        style="font-size:13px !important;color:red !important;"  runat="server"
+                         Text="Password cannot be left blank"
+                         ForeColor="Red" ControlToValidate="TextBox2s"></asp:RequiredFieldValidator>
+
+                                             <br/><asp:RequiredFieldValidator ID="RequiredFieldValidator7" ValidationGroup="two" 
+                        style="font-size:13px !important;color:red !important;"  runat="server" Text="Contact No. cannot be left blank"
+                         ForeColor="Red" ControlToValidate="TextBox2"></asp:RequiredFieldValidator>
+
+            <br/><asp:RegularExpressionValidator ID="RegularExpressionValidator3" runat="server" ControlToValidate="TextBox2"
+                ValidationGroup="two"
+                             ErrorMessage="Contact No. must be exactly 10 digits." 
+                                 style="font-size:13px !important;color:red !important;" 
+                             ValidationExpression="^\d{10}$"></asp:RegularExpressionValidator>
+                                        </div>
+
+                                       
+                                       
+                                    </div>
+                                    <!-- End Signup -->
+
+                                    <!-- Forgot Password -->
+                                    <div id="forgotPassword" style="display: none; opacity: 0;" data-target-group="idForm">
+                                        <!-- Title -->
+                                        <header class="text-center mb-7">
+                                            <h2 class="h4 mb-0"  style="font-weight:bold !important;">Recover Account</h2>
+                                            <p>Enter your registered email address.<br/><a class="js-animation-link small link-muted" href="javascript:;"
+                                               data-target="#login"
+                                               data-link-group="idForm"
+                                               data-animation-in="slideInUp" style="font-weight:bold !important;color:darkblue !important;">Login Now
+                                            </a></p>
+                                        </header>
+                                        <!-- End Title -->
+
+                                        <!-- Form Group -->
+                                        <div class="form-group">
+                                            <div class="js-form-message js-focus-state">
+                                                <label class="sr-only" for="recoverEmail">Reg. Email Address</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"  style="border-radius:3px !important;" id="recoverEmailLabel">
+                                                            <span class="fas fa-user"></span>
+                                                        </span>
+                                                    </div>
+                                                    <asp:TextBox ID="TextBox1f" class="form-control" TextMode="Email" name="email" placeholder="Your email" aria-label="Your email" aria-describedby="recoverEmailLabel" style="background-color:#fafafa !important;border-radius:3px !important;" runat="server"></asp:TextBox>
+                                               
+                                                    
+                                                     </div>
+                                            </div>
+                                        </div>
+                                        <!-- End Form Group -->
+
+                                        <div class="mb-2">
+                                            <asp:Button ID="Button3" ValidationGroup="three" OnClick="Button3_Click" class="btn btn-block btn-sm btn-outline-black transition-3d-hover" runat="server"  style="border-radius:3px !important;" Text="Recover Password" />
+                                             <br/><asp:RequiredFieldValidator ID="RequiredFieldValidator4" ValidationGroup="three" 
+                        style="font-size:13px !important;color:red !important;"  runat="server"
+                         Text="Email cannot be left blank"
+                         ForeColor="Red" ControlToValidate="TextBox1f"></asp:RequiredFieldValidator>
+                                             </div>
+
+                                       
+                                    </div>
+                                    <!-- End Forgot Password -->
+
+                                    </div>
+                                    <div id="alreadylogin" runat="server">
+
+                                          <header class="text-center mb-7" style="margin-bottom:1rem !important;">
+                                        <h2 class="h4 mb-0" style="font-weight:bold !important;margin-bottom:10px !important;">Welcome Back!</h2>
+                                        <p>You are currently signed in to your account. You can use the following link to access your dashboard.</p>
+                                        </header>
+                                        <div class="mb-2">
+                                            <a id="Button4" style="border-radius:3px !important;" class="btn btn-dark" runat="server" href="My-Account.aspx">Manage Account</a>
+                                             <asp:Button id="A1" OnClick="A1_Click" style="border-radius:3px !important;border:solid silver thin !important;float:right !important;" class="btn btn-light" runat="server" Text="Logout" />
+                                             </div>
+                                         <p style="margin-top:20px !important;color:black !important;"><b>You are signed as:</b> <asp:Label style="color:#0174DF!important;" ID="Label2" runat="server"></asp:Label></p>
+                             
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Content -->
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- End Account Sidebar Navigation -->
+        <!-- ========== END SECONDARY CONTENTS ========== -->
+
+        <!-- Go to Top -->
+        <a class="js-go-to u-go-to" href="#"
+            data-position='{"bottom": 45, "right": 15 }'
+            data-type="fixed"
+            data-offset-top="400"
+            data-compensation="#header"
+            data-show-effect="slideInUp"
+            data-hide-effect="slideOutDown">
+            <span class="fas fa-arrow-up u-go-to__inner"></span>
+        </a>
+        <!-- End Go to Top -->
+      
+        
+
+   
+    </form>
+
+    <script src="https://healthyuniverse.co.in/assets/vendor/jquery/dist/jquery.min.js"></script>
+   <script src="https://healthyuniverse.co.in/assets/vendor/jquery-migrate/dist/jquery-migrate.min.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/popper.js/dist/umd/popper.min.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/bootstrap/bootstrap.min.js"></script>
+
+       
+        <script src="https://healthyuniverse.co.in/assets/vendor/appear.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/jquery.countdown.min.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/hs-megamenu/src/hs.megamenu.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/svg-injector/dist/svg-injector.min.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/fancybox/jquery.fancybox.min.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/typed.js/lib/typed.min.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/slick-carousel/slick/slick.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+       <script src="https://healthyuniverse.co.in/assets/js/hs.core.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.countdown.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.header.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.hamburgers.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.unfold.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.focus-state.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.malihu-scrollbar.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.validation.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.fancybox.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.onscroll-animation.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.slick-carousel.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.show-animation.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.svg-injector.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.go-to.js"></script>
+        <script src="https://healthyuniverse.co.in/assets/js/components/hs.selectpicker.js"></script>
+
+        <!-- JS Plugins Init. -->
+
+    <script>
+        $(window).on('load', function () {
+            // initialization of HSMegaMenu component
+            $('.js-mega-menu').HSMegaMenu({
+                event: 'hover',
+                direction: 'horizontal',
+                pageContainer: $('.container'),
+                breakpoint: 767.98,
+                hideTimeOut: 0
+            });
+
+            // initialization of svg injector module
+            $.HSCore.components.HSSVGIngector.init('.js-svg-injector');
+        });
+
+        $(document).on('ready', function () {
+            // initialization of header
+            $.HSCore.components.HSHeader.init($('#header'));
+
+            // initialization of animation
+            $.HSCore.components.HSOnScrollAnimation.init('[data-animation]');
+
+            // initialization of unfold component
+            $.HSCore.components.HSUnfold.init($('[data-unfold-target]'), {
+                afterOpen: function () {
+                    $(this).find('input[type="search"]').focus();
+                }
+            });
+
+            // initialization of popups
+            $.HSCore.components.HSFancyBox.init('.js-fancybox');
+
+            // initialization of countdowns
+            var countdowns = $.HSCore.components.HSCountdown.init('.js-countdown', {
+                yearsElSelector: '.js-cd-years',
+                monthsElSelector: '.js-cd-months',
+                daysElSelector: '.js-cd-days',
+                hoursElSelector: '.js-cd-hours',
+                minutesElSelector: '.js-cd-minutes',
+                secondsElSelector: '.js-cd-seconds'
+            });
+
+            // initialization of malihu scrollbar
+            $.HSCore.components.HSMalihuScrollBar.init($('.js-scrollbar'));
+
+            // initialization of forms
+            $.HSCore.components.HSFocusState.init();
+
+            // initialization of form validation
+            $.HSCore.components.HSValidation.init('.js-validate', {
+                rules: {
+                    confirmPassword: {
+                        equalTo: '#signupPassword'
+                    }
+                }
+            });
+
+            // initialization of show animations
+            $.HSCore.components.HSShowAnimation.init('.js-animation-link');
+
+            // initialization of fancybox
+            $.HSCore.components.HSFancyBox.init('.js-fancybox');
+
+            // initialization of slick carousel
+            $.HSCore.components.HSSlickCarousel.init('.js-slick-carousel');
+
+            // initialization of go to
+            $.HSCore.components.HSGoTo.init('.js-go-to');
+
+            // initialization of hamburgers
+            $.HSCore.components.HSHamburgers.init('#hamburgerTrigger');
+
+            // initialization of unfold component
+            $.HSCore.components.HSUnfold.init($('[data-unfold-target]'), {
+                beforeClose: function () {
+                    $('#hamburgerTrigger').removeClass('is-active');
+                },
+                afterClose: function () {
+                    $('#headerSidebarList .collapse.show').collapse('hide');
+                }
+            });
+
+            $('#headerSidebarList [data-toggle="collapse"]').on('click', function (e) {
+                e.preventDefault();
+
+                var target = $(this).data('target');
+
+                if ($(this).attr('aria-expanded') === "true") {
+                    $(target).collapse('hide');
+                } else {
+                    $(target).collapse('show');
+                }
+            });
+
+            // initialization of unfold component
+            $.HSCore.components.HSUnfold.init($('[data-unfold-target]'));
+
+            // initialization of select picker
+            $.HSCore.components.HSSelectPicker.init('.js-select');
+        });
+        </script>
+
+     
+
+     <!-- JS Global Compulsory -->
+     
+</body>
+</html>

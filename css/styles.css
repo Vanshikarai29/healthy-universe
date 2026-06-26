@@ -629,3 +629,32 @@ body.dark-mode .booking-success-box h2 { color: var(--text); }
 
 /* Scrollbar for dark mode */
 body.dark-mode ::-webkit-scrollbar-thumb { background: #3d4148; }
+
+
+/* ── Letter Avatar fix — paste at BOTTOM of styles.css ── */
+
+/* Remove old broken rules first, then add these: */
+
+.sidebar-avatar,
+.profile-avatar,
+.settings-avatar,
+#modal-user-avatar,
+.post-avatar {
+  border-radius: 50% !important;
+  object-fit: cover;
+  background: #22c55e;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Sidebar avatar size */
+.sidebar-avatar   { width: 36px !important; height: 36px !important; }
+
+/* Profile page avatar */
+.profile-avatar   { width: 90px !important; height: 90px !important; }
+
+/* Settings avatar */
+.settings-avatar  { width: 72px !important; height: 72px !important; }
+
+/* Modal avatar */
+#modal-user-avatar { width: 42px !important; height: 42px !important; }

@@ -1,0 +1,325 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html>
+
+<html  style="background-color:white !important;" xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+      <meta charset="UTF-8">
+    <title>System Administration v1.1 | Healthy Universe</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <link rel="icon" href="Images/hand-with-pen.png">
+    <link rel="stylesheet" href="font/iconsmind-s/css/iconsminds.css" />
+    <link rel="stylesheet" href="font/simple-line-icons/css/simple-line-icons.css" />
+
+    <link rel="stylesheet" href="css/vendor/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/vendor/bootstrap.rtl.only.min.css" />
+    <link rel="stylesheet" href="css/vendor/component-custom-switch.min.css" />
+    <link rel="stylesheet" href="css/vendor/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    
+    <style>
+        .theme-colors .theme-button {
+            display: none !important;
+        }
+        </style>
+         <script type = "text/javascript">
+       function DisableButtons() {
+           var inputs = document.getElementsByTagName("INPUT");
+           for (var i in inputs) {
+               if (inputs[i].type == "button" || inputs[i].type == "submit") {
+                   inputs[i].disabled = true;
+               }
+           }
+       }
+       window.onbeforeunload = DisableButtons;
+         </script>
+
+</head>
+<body id="app-container" class="menu-default show-spinner" style="background-color:white !important;padding-bottom: 50px !important;">
+    <form id="form1" runat="server" autocomplete="off">
+    <nav class="navbar fixed-top" style="padding: 0.5rem 0 0.5rem 0 !important;height:70px !important;">
+        <div class="d-flex align-items-center navbar-left">
+            <a href="#" class="menu-button d-none d-md-block">
+                <svg class="main" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 17">
+                    <rect x="0.48" y="0.5" width="7" height="1" />
+                    <rect x="0.48" y="7.5" width="7" height="1" />
+                    <rect x="0.48" y="15.5" width="7" height="1" />
+                </svg>
+                <svg class="sub" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 17">
+                    <rect x="1.56" y="0.5" width="16" height="1" />
+                    <rect x="1.56" y="7.5" width="16" height="1" />
+                    <rect x="1.56" y="15.5" width="16" height="1" />
+                </svg>
+            </a>
+
+            <a href="#" class="menu-button-mobile d-xs-block d-sm-block d-md-none">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 17">
+                    <rect x="0.5" y="0.5" width="25" height="1" />
+                    <rect x="0.5" y="7.5" width="25" height="1" />
+                    <rect x="0.5" y="15.5" width="25" height="1" />
+                </svg>
+            </a>
+
+<img style="height:45px !important;width:auto;display:inline-block !important;margin-left:15px !important;" src="Images/logo-dark.PNG" />
+
+           <%-- <a class="btn btn-sm btn-outline-primary ml-3 d-none d-md-inline-block"
+                href="Open-Jobs.aspx">&nbsp;Reg. Sellers (<asp:Label ID="Label1" style="font-weight:bold !important;" runat="server"></asp:Label>)&nbsp;</a>--%>
+        </div>
+
+
+     
+
+        <div class="navbar-right">
+            
+
+            <div class="user d-inline-block">
+                <button class="btn btn-sm btn-outline-primary ml-3 d-none d-md-inline-block" style="background-color: #00365a !important;color: white !important;border-radius: 0px !important;" type="button" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                 
+                    <span style="font-size:13px !important;">
+                       <i class="simple-icon-settings" style="font-size:12px !important;"></i> &nbsp;Settings
+                    </span>
+                </button>
+
+                <div class="dropdown-menu dropdown-menu-right mt-3">
+                    <a class="dropdown-item" href="Security.aspx">Manage Credentials</a>
+                     <a class="dropdown-item" id="logout" runat="server">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="menu" style="padding-top:70px !important;">
+        <div class="main-menu">
+            <div class="scroll">
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="#dashboard" style="max-height:70px !important;font-weight:bold !important;">
+                            <i class="iconsminds-home-3" style="font-size: 28px !important;line-height: 32px !important;"></i> Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#menu1" style="max-height:70px !important;font-weight:bold !important;">
+                            <i class="iconsminds-balloon" style="font-size: 28px !important;line-height: 32px !important;"></i> Display
+                        </a>
+                    </li>
+                     <li>
+                        <a href="#applications1" style="max-height:70px !important;font-weight:bold !important;">
+                            <i class="iconsminds-medicine-3" style="font-size: 28px !important;line-height: 32px !important;"></i> Products
+                        </a>
+                    </li>
+                      <li>
+                        <a href="#LAB" style="max-height:70px !important;font-weight:bold !important;">
+                            <i class="iconsminds-test-tube" style="font-size: 28px !important;line-height: 32px !important;"></i> Diagnostic Tests
+                        </a>
+                    </li>
+                      <li>
+                        <a href="#applications2" style="max-height:70px !important;font-weight:bold !important;">
+                            <i class="iconsminds-doctor" style="font-size: 28px !important;line-height: 32px !important;"></i> Doctors
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#applications" style="max-height:70px !important;font-weight:bold !important;">
+                            <i class="iconsminds-ambulance" style="font-size: 28px !important;line-height: 32px !important;"></i> Services
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#menu2" style="max-height:70px !important;font-weight:bold !important;">
+                            <i class="iconsminds-book" style="font-size: 28px !important;line-height: 32px !important;"></i> Meetings
+                        </a>
+                    </li>
+                     <li>
+                        <a href="#menu3" style="max-height:70px !important;font-weight:bold !important;">
+                            <i class="iconsminds-download" style="font-size: 28px !important;line-height: 32px !important;"></i> Export
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sub-menu">
+            <div class="scroll">
+                <ul class="list-unstyled" data-link="dashboard">
+                    <li style="margin-left: 10px !important;">
+                        <a href="Dashboard.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Dashboard <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Security.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">System Security <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <%-- <li style="margin-left: 10px !important;">
+                        <a href="#" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Agent Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:red !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>--%>
+                   <li style="margin-left: 10px !important;">
+                        <a href="Departments.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Department Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                     <li style="margin-left: 10px !important;">
+                        <a href="Categories.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Category Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Sub-Category.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Sub Category Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                </ul>
+                 <ul class="list-unstyled" data-link="applications2">
+                    <li style="margin-left: 10px !important;">
+                        <a href="Doctors.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Doctor Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Appointments.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Appointments Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                </ul>
+                     <ul class="list-unstyled" data-link="LAB">
+                           <li style="margin-left: 10px !important;">
+                        <a href="Lab-Departments.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Create Departments <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                      <li style="margin-left: 10px !important;">
+                        <a href="Lab-Tests.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Add Diagnostic Tests <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                      <li style="margin-left: 10px !important;">
+                        <a href="Lab-Tests.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Manage Tests<span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                 
+                </ul>
+                <ul class="list-unstyled" data-link="applications">
+                      <li style="margin-left: 10px !important;">
+                        <a href="New-Registration.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">New Registration <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                      <li style="margin-left: 10px !important;">
+                        <a href="Inactive-Accounts.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Inactive Accounts<span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Services.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Services Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Service-Provider.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Service Provider Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="list-unstyled" data-link="applications1">
+                   <li style="margin-left: 10px !important;">
+                        <a href="Products.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Products Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Orders.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Orders Management <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="list-unstyled" data-link="menu1">
+                   <li style="margin-left: 10px !important;">
+                        <a href="Banners.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Head Banners <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Additional-Banners.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Footer Banners <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Featured.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Featured Listings <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="Bestsellers.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Bestseller Listings <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="list-unstyled" data-link="menu2">
+                   <li style="margin-left: 10px !important;">
+                        <a href="Complete-Appoinments.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Complete Appointments <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                     <li style="margin-left: 10px !important;">
+                        <a href="Appointments.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Pending Appointmemts <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="list-unstyled" data-link="menu3">
+                     <li style="margin-left: 10px !important;">
+                        <a href="Export.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Export Customer DB <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                     <li style="margin-left: 10px !important;">
+                        <a href="Export.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Export Products DB <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                     <li style="margin-left: 10px !important;">
+                        <a href="Export.aspx" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Export Service Providers DB <span style="float:right !important;width:10px !important;height:10px !important;background-color: green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                    <li style="margin-left: 10px !important;">
+                        <a href="#" style="padding:0px !important;">
+                            <span class="d-inline-block" style="width:100% !important;">Export Doctors DB <span style="float:right !important;width:10px !important;height:10px !important;background-color:green !important;margin-right:12px !important;border-radius:50% !important;margin-top:5px !important;"></span></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+    <footer class="page-footer" style="padding-top:1rem !important;padding-bottom: 1rem !important;height:50px !important;">
+        <div class="footer-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <p class="mb-0 text-muted">&copy; <b>Healthy Universe</b> 2022 | Best viewed on Desktop</p>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/vendor/jquery-3.3.1.min.js"></script>
+    <script src="js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="js/vendor/perfect-scrollbar.min.js"></script>
+    <script src="js/vendor/mousetrap.min.js"></script>
+    <script src="js/dore.script.js"></script>
+    <script src="js/scripts.js"></script>
+         <script src="js/vendor/progressbar.min.js"></script>
+    </form>
+</body>
+</html>
