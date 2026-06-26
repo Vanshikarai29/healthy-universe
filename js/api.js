@@ -1,5 +1,6 @@
 // ─── api.js — Healthy Universe ───────────────────────────────────────────────
-const HU_API = "http://localhost:8000";
+//const HU_API = "http://localhost:8000";
+const HU_API = "https://VanshikaR.pythonanywhere.com";
 
 // ── Letter Avatar Generator ───────────────────────────────────────────────────
 function getLetterAvatar(name, size) {
