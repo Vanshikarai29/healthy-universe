@@ -15,7 +15,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://postgres:Tk851LKvAEN7sYws@db.uhtfkxkjuwigwfldpkdx.supabase.co:5432/postgres"
+    ""
 )
 
 ALLOWED_IMAGES = {"image/jpeg","image/png","image/gif","image/webp"}
