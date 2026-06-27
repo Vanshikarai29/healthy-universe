@@ -158,6 +158,14 @@ def init_db():
     finally:
         conn.close()
 
+# ─── STARTUP ───────────────────────────────────────────────────────────────────
+with app.app_context():
+    try:
+        init_db()
+        print("✅ DB initialized on startup")
+    except Exception as e:
+        print(f"⚠️ DB init error: {e}")
+        
 # ─── SERVE UPLOADS ─────────────────────────────────────────────────────────────
 @app.route("/uploads/<path:filename>")
 def serve_upload(filename):
