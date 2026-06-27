@@ -3,26 +3,20 @@ from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from dotenv import load_dotenv
-import os, uuid, bcrypt, jwt, pymysql, pymysql.cursors
+import os, uuid, bcrypt, jwt, psycopg2, psycopg2.extras
 
 load_dotenv()
 
 # ─── CONFIG ────────────────────────────────────────────────────────────────────
-SECRET_KEY        = os.getenv("SECRET_KEY", "hu-mysql-super-secret-key-change-in-prod-2024")
+SECRET_KEY        = os.getenv("SECRET_KEY", "hu-super-secret-key-change-in-prod-2024")
 TOKEN_EXPIRE_DAYS = int(os.getenv("TOKEN_EXPIRE_DAYS", 7))
 UPLOAD_DIR        = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-DB_CONFIG = {
-    "host":     os.getenv("DB_HOST",     "localhost"),
-    "port":     int(os.getenv("DB_PORT", "3306")),
-    "database": os.getenv("DB_NAME",     "healthy_universe"),
-    "user":     os.getenv("DB_USER",     "root"),
-    "password": os.getenv("DB_PASSWORD", ""),      # ← your MySQL password
-    "charset":  "utf8mb4",
-    "cursorclass": pymysql.cursors.DictCursor,
-    "autocommit": False,
-}
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://postgres:Tk851LKvAEN7sYws@db.uhtfkxkjuwigwfldpkdx.supabase.co:5432/postgres"
+)
 
 ALLOWED_IMAGES = {"image/jpeg","image/png","image/gif","image/webp"}
 ALLOWED_VIDEOS = {"video/mp4","video/webm","video/quicktime"}
@@ -34,19 +28,25 @@ CORS(app, origins=os.getenv("ALLOWED_ORIGINS","*").split(","))
 
 # ─── DB HELPERS ────────────────────────────────────────────────────────────────
 def get_db():
-    return pymysql.connect(**DB_CONFIG)
+    return psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
 
 def db_one(sql, params=()):
-    with get_db() as conn:
+    conn = get_db()
+    try:
         with conn.cursor() as cur:
             cur.execute(sql, params)
             return cur.fetchone()
+    finally:
+        conn.close()
 
 def db_all(sql, params=()):
-    with get_db() as conn:
+    conn = get_db()
+    try:
         with conn.cursor() as cur:
             cur.execute(sql, params)
             return cur.fetchall()
+    finally:
+        conn.close()
 
 def db_run(sql, params=()):
     conn = get_db()
@@ -60,7 +60,7 @@ def db_run(sql, params=()):
     finally:
         conn.close()
 
-def safe_user(u: dict) -> dict:
+def safe_user(u) -> dict:
     if not u: return {}
     u = dict(u)
     u.pop("password", None)
@@ -69,7 +69,7 @@ def safe_user(u: dict) -> dict:
             u[k] = v.isoformat()
     return u
 
-def post_with_author(post: dict) -> dict:
+def post_with_author(post) -> dict:
     if not post: return {}
     post = dict(post)
     for k, v in post.items():
@@ -77,11 +77,11 @@ def post_with_author(post: dict) -> dict:
     a = db_one("SELECT id,name,specialty,avatar_url,is_verified FROM users WHERE id=%s",
                (post.get("user_id"),)) or {}
     post["author"] = {
-        "id":        a.get("id",""),
+        "id":        str(a.get("id","")),
         "name":      a.get("name","Unknown"),
         "specialty": a.get("specialty",""),
         "avatar":    a.get("avatar_url",""),
-        "verified":  bool(a.get("is_verified", 0)),
+        "verified":  bool(a.get("is_verified", False)),
     }
     return post
 
@@ -124,7 +124,7 @@ def init_db():
         with conn.cursor() as cur:
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS users (
-                    id          CHAR(36)      NOT NULL PRIMARY KEY,
+                    id          VARCHAR(36)   NOT NULL PRIMARY KEY,
                     name        VARCHAR(120)  NOT NULL,
                     email       VARCHAR(180)  NOT NULL UNIQUE,
                     password    VARCHAR(255)  NOT NULL,
@@ -132,33 +132,29 @@ def init_db():
                     hospital    VARCHAR(150)  DEFAULT '',
                     bio         TEXT,
                     avatar_url  VARCHAR(500)  DEFAULT '',
-                    is_verified TINYINT(1)    DEFAULT 0,
-                    balance     DECIMAL(10,2) DEFAULT 0.00,
+                    is_verified BOOLEAN       DEFAULT FALSE,
+                    balance     NUMERIC(10,2) DEFAULT 0.00,
                     hu_coins    INT           DEFAULT 500,
-                    created_at  DATETIME      DEFAULT CURRENT_TIMESTAMP,
-                    updated_at  DATETIME      DEFAULT CURRENT_TIMESTAMP
-                                ON UPDATE CURRENT_TIMESTAMP
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                    created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+                    updated_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+                );
             """)
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS posts (
-                    id          CHAR(36)      NOT NULL PRIMARY KEY,
-                    user_id     CHAR(36)      NOT NULL,
+                    id          VARCHAR(36)   NOT NULL PRIMARY KEY,
+                    user_id     VARCHAR(36)   NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                     content     TEXT          NOT NULL,
                     media_url   VARCHAR(500)  DEFAULT '',
                     media_type  VARCHAR(20)   DEFAULT '',
                     category    VARCHAR(80)   DEFAULT 'General Wellness',
                     likes       INT           DEFAULT 0,
                     views       INT           DEFAULT 0,
-                    revenue     DECIMAL(10,2) DEFAULT 0.00,
-                    created_at  DATETIME      DEFAULT CURRENT_TIMESTAMP,
-                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                    INDEX idx_user_id  (user_id),
-                    INDEX idx_created  (created_at DESC)
-                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+                    revenue     NUMERIC(10,2) DEFAULT 0.00,
+                    created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+                );
             """)
         conn.commit()
-        print("✅ MySQL tables ready")
+        print("✅ PostgreSQL tables ready")
     finally:
         conn.close()
 
@@ -168,6 +164,7 @@ def serve_upload(filename):
     return send_from_directory(UPLOAD_DIR, filename)
 
 # ─── HEALTH CHECK ──────────────────────────────────────────────────────────────
+@app.route("/")
 @app.route("/api/health")
 def health():
     try:
@@ -195,7 +192,6 @@ def signup():
     specialty =  data.get("specialty") or "General User"
     hospital  =  data.get("hospital")  or ""
 
-    # Validation
     if not name:
         return jsonify({"detail": "Full name is required"}), 400
     if not email or "@" not in email:
@@ -261,7 +257,7 @@ def get_me():
 def update_profile():
     data      = request.get_json(force=True) or {}
     uid       = str(request.current_user["id"])
-    name      = (data.get("name")      or "").strip()
+    name      = (data.get("name") or "").strip()
     specialty =  data.get("specialty") or request.current_user.get("specialty","")
     hospital  =  data.get("hospital")  or ""
     bio       =  data.get("bio")       or ""
@@ -388,10 +384,10 @@ if __name__ == "__main__":
     print("\n" + "="*50)
     print("  🏥  Healthy Universe API  v2.0  ")
     print("="*50)
-    print("🐬 Connecting to MySQL...")
+    print("🐘 Connecting to PostgreSQL (Supabase)...")
     try:
         init_db()
-        port = int(os.getenv("PORT", 8000))
+        port  = int(os.getenv("PORT", 8000))
         debug = os.getenv("FLASK_ENV", "development") == "development"
         print(f"📡 Running on http://localhost:{port}")
         print(f"🔧 Debug mode: {'ON' if debug else 'OFF'}")
@@ -399,4 +395,4 @@ if __name__ == "__main__":
         app.run(host="0.0.0.0", port=port, debug=debug)
     except Exception as e:
         print(f"\n❌ Startup failed: {e}")
-        print("👉 Check MySQL is running and DB_PASSWORD is correct in .env\n")
+        print("👉 Check DATABASE_URL is correct in .env\n")
