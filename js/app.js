@@ -1175,3 +1175,8 @@ navigate = function(pageId, clickedBtn) {
   originalNavigate(pageId, clickedBtn);
   if (pageId === 'wallet') renderWallet();
 };
+
+function toggleSidebar() {
+  document.querySelector(".sidebar").classList.toggle("open");
+  document.getElementById("sidebar-overlay").classList.toggle("show");
+}
