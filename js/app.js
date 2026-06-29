@@ -399,58 +399,78 @@ document.getElementById("media-input").addEventListener("change", function (e) {
   reader.readAsDataURL(file);
 });
 
-// PUBLISH POST
-function publishPost() {
-  const text = document.getElementById("post-content").value;
+// // PUBLISH POST
+// function publishPost() {
+//   const text = document.getElementById("post-content").value;
 
-  if (!text && !uploadedMedia) {
-    alert("Add content or media!");
-    return;
-  }
+//   if (!text && !uploadedMedia) {
+//     alert("Add content or media!");
+//     return;
+//   }
 
-  const newPost = {
-    id: Date.now(),
-    name: "Dr. Michael Chen",
-    avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80",
-    role: "Healthcare Professional",
-    time: "Just now",
-    title: "New Medical Post",
-    text: text,
-    media: uploadedMedia,
-    type: mediaType,
-    trusted: false,
-    likes: 0,
-    comments: 0,
-    shares: 0,
-    views: 0,
-    tags: ["New"],
-    liked: false,
-    saved: false,
-  };
+//   const newPost = {
+//     id: Date.now(),
+//     name: "Dr. Michael Chen",
+//     avatar: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=80",
+//     role: "Healthcare Professional",
+//     time: "Just now",
+//     title: "New Medical Post",
+//     text: text,
+//     media: uploadedMedia,
+//     type: mediaType,
+//     trusted: false,
+//     likes: 0,
+//     comments: 0,
+//     shares: 0,
+//     views: 0,
+//     tags: ["New"],
+//     liked: false,
+//     saved: false,
+//   };
 
-  // IMPORTANT: add to top
-  POSTS.unshift(newPost);
+//   // IMPORTANT: add to top
+//   POSTS.unshift(newPost);
 
-  // RE-RENDER
-  renderFeed();
+//   // RE-RENDER
+//   renderFeed();
 
-  // RESET
-  document.getElementById("post-content").value = "";
-  uploadedMedia = "";
+//   // RESET
+//   document.getElementById("post-content").value = "";
+//   uploadedMedia = "";
 
-  closeModal();
-}
-
+//   closeModal();
+// }
+// PUBLISH POST - handled by api.js (saves to database)
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") { closeModal(); closeBookingModal(); closeApplyModal(); }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
+//   applyStoredTheme();
+//   renderFeed();
+//   renderNotifications();
+//   renderProfileGrid();
+//   renderSuggestedUsers();
+// });
+document.addEventListener("DOMContentLoaded", async () => {
   applyStoredTheme();
+
+  // Render fake posts first
   renderFeed();
   renderNotifications();
   renderProfileGrid();
   renderSuggestedUsers();
+
+  // Load real posts from database and show on top
+  try {
+    const realPosts = await huGetFeed(20, 0);
+    if (realPosts && realPosts.length > 0) {
+      const container = document.getElementById("feed-container");
+      realPosts.forEach((post) => {
+        container.insertAdjacentHTML("afterbegin", buildPostCard(post));
+      });
+    }
+  } catch (e) {}
 });
 
 /* Feed Tabs */
