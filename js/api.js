@@ -313,6 +313,17 @@ function buildPostCard(post) {
           '" style="width:100%;border-radius:12px;margin-top:10px;"/>';
   }
 
+  // ── Check if current user is the author ──
+  var currentUser = huGetUser();
+  var isOwner =
+    currentUser &&
+    (currentUser.id === author.id || currentUser.name === author.name);
+  var deleteBtn = isOwner
+    ? "<button onclick=\"deletePost('" +
+      post.id +
+      '\', this)" style="background:none;border:none;color:#e11d48;font-size:13px;cursor:pointer;margin-left:auto;">🗑️ Delete</button>'
+    : "";
+
   return (
     '<div class="post-card" data-post-id="' +
     post.id +
@@ -331,22 +342,85 @@ function buildPostCard(post) {
     (author.specialty || "Healthcare Professional") +
     " · Just now</div>" +
     "</div>" +
+    deleteBtn +
     "</div>" +
     '<div class="post-body"><p>' +
     (post.content || "") +
     "</p>" +
     mediaHtml +
     "</div>" +
-    '<div class="post-actions">' +
-    '<button class="action-btn" onclick="huLikePost(\'' +
-    post.id +
-    "').then(function(r){if(r)this.querySelector('.action-count').textContent=r.likes}.bind(this))\">" +
-    '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
-    '<span class="action-count">0</span>' +
-    "</button>" +
-    "</div>" +
     "</div>"
   );
+}
+// function buildPostCard(post) {
+//   var author = post.author || {};
+//   var name = author.name || "You";
+//   var avatarSrc = getLetterAvatar(name, 80);
+//   var verified = author.verified ? '<span class="verified-dot"></span>' : "";
+//   var mediaHtml = "";
+
+//   if (post.media_url) {
+//     var fullUrl = HU_API + post.media_url;
+//     mediaHtml =
+//       post.media_type === "video"
+//         ? '<video src="' +
+//           fullUrl +
+//           '" controls style="width:100%;border-radius:12px;margin-top:10px;"></video>'
+//         : '<img src="' +
+//           fullUrl +
+//           '" style="width:100%;border-radius:12px;margin-top:10px;"/>';
+//   }
+
+//   return (
+//     '<div class="post-card" data-post-id="' +
+//     post.id +
+//     '">' +
+//     '<div class="post-top">' +
+//     '<img src="' +
+//     avatarSrc +
+//     '" style="width:44px;height:44px;border-radius:50%;"/>' +
+//     '<div class="post-meta">' +
+//     '<div class="post-name">' +
+//     name +
+//     " " +
+//     verified +
+//     "</div>" +
+//     '<div class="post-role">' +
+//     (author.specialty || "Healthcare Professional") +
+//     " · Just now</div>" +
+//     "</div>" +
+//     "</div>" +
+//     '<div class="post-body"><p>' +
+//     (post.content || "") +
+//     "</p>" +
+//     mediaHtml +
+//     "</div>" +
+//     '<div class="post-actions">' +
+//     '<button class="action-btn" onclick="huLikePost(\'' +
+//     post.id +
+//     "').then(function(r){if(r)this.querySelector('.action-count').textContent=r.likes}.bind(this))\">" +
+//     '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+//     '<span class="action-count">0</span>' +
+//     "</button>" +
+//     "</div>" +
+//     "</div>"
+//   );
+// }
+async function deletePost(postId, btn) {
+  if (!confirm("Delete this post?")) return;
+  try {
+    var res = await huFetch("/api/posts/" + postId, { method: "DELETE" });
+    if (!res || !res.ok) {
+      showToast("❌ Could not delete post");
+      return;
+    }
+    // Remove post card from DOM
+    var card = btn.closest(".post-card");
+    if (card) card.remove();
+    showToast("🗑️ Post deleted!");
+  } catch (e) {
+    showToast("❌ Error deleting post");
+  }
 }
 
 // ── Patch logout ──────────────────────────────────────────────────────────────
