@@ -911,7 +911,8 @@ if __name__ == "__main__":
         print(f"🔧 Debug mode: {'ON' if debug else 'OFF'}")
         print("="*50 + "\n")
         # app.run(host="0.0.0.0", port=port, debug=debug)
-        socketio.run(app, host="0.0.0.0", port=port, debug=debug)
+        # socketio.run(app, host="0.0.0.0", port=port, debug=debug)
+        socketio.run(app, host="0.0.0.0", port=port, debug=debug, allow_unsafe_werkzeug=True)
         
     except Exception as e:
         print(f"\n❌ Startup failed: {e}")
