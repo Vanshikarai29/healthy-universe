@@ -1,5 +1,5 @@
-import eventlet
-eventlet.monkey_patch()
+# import eventlet
+# eventlet.monkey_patch()
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
@@ -29,7 +29,8 @@ MAX_FILE_BYTES = 50 * 1024 * 1024
 app = Flask(__name__)
 CORS(app, origins=os.getenv("ALLOWED_ORIGINS","*").split(","))
 
-socketio = SocketIO(app, cors_allowed_origins=os.getenv("ALLOWED_ORIGINS","*").split(","), async_mode="eventlet")
+# socketio = SocketIO(app, cors_allowed_origins=os.getenv("ALLOWED_ORIGINS","*").split(","), async_mode="eventlet")
+socketio = SocketIO(app, cors_allowed_origins=os.getenv("ALLOWED_ORIGINS","*").split(","), async_mode="threading")
 
 # in-memory presence tracking (single-instance; resets on restart)
 online_users = {}   # user_id -> True
