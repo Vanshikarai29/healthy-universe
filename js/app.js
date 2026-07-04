@@ -501,7 +501,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         container.insertAdjacentHTML("afterbegin", buildPostCard(post));
       });
     }
-  } catch (e) {}
+  } catch (e) { }
+  injectSponsoredAd();
 });
 
 /* Feed Tabs */
@@ -1488,9 +1489,187 @@ navigate = function (pageId, clickedBtn) {
 };
 
 function toggleSidebar() {
+
   document.querySelector(".sidebar").classList.toggle("open");
   document.getElementById("sidebar-overlay").classList.toggle("show");
 }
+
+/* ============================================
+   ADS MANAGER LOGIC
+   ============================================ */
+async function renderAdsManager() {
+  const list = document.getElementById('ads-campaigns-list');
+  if (!list) return;
+  list.innerHTML = '<p style="color:var(--muted);padding:20px 0;">Loading campaigns…</p>';
+
+  const campaigns = await huGetMyCampaigns();
+
+  if (!campaigns || campaigns.length === 0) {
+    list.innerHTML = '<div class="no-jobs-msg"><h3>No campaigns yet</h3><p>Create your first ad campaign to reach the Healthy Universe community</p></div>';
+    updateAdsStats([]);
+    return;
+  }
+
+  updateAdsStats(campaigns);
+
+  list.innerHTML = campaigns.map(c => {
+    const creative = c.creative || {};
+    const img = creative.image_url ? (HU_API + creative.image_url) : '';
+    const pct = c.budget > 0 ? Math.min(100, Math.round((c.spent / c.budget) * 100)) : 0;
+    return `
+      <div class="campaign-card">
+        <div class="campaign-card-top">
+          ${img ? `<img src="${img}" class="campaign-thumb"/>` : '<div class="campaign-thumb"></div>'}
+          <div class="campaign-info">
+            <div class="campaign-name">${c.name}</div>
+            <div class="campaign-headline">${creative.headline || ''}</div>
+            <div class="campaign-badges">
+              <span class="campaign-badge ${c.status}">${c.status === 'active' ? '● Active' : '⏸ Paused'}</span>
+              <span class="campaign-badge objective">${c.objective}</span>
+            </div>
+          </div>
+          <div class="campaign-actions">
+            <button class="campaign-action-btn" onclick="toggleCampaignStatus('${c.id}','${c.status === 'active' ? 'paused' : 'active'}')">${c.status === 'active' ? 'Pause' : 'Resume'}</button>
+            <button class="campaign-action-btn danger" onclick="removeCampaign('${c.id}')">Delete</button>
+          </div>
+        </div>
+        <div class="campaign-metrics">
+          <div class="campaign-metric"><strong>${formatNum(c.impressions)}</strong><span>Impressions</span></div>
+          <div class="campaign-metric"><strong>${formatNum(c.clicks)}</strong><span>Clicks</span></div>
+          <div class="campaign-metric"><strong>${c.ctr}%</strong><span>CTR</span></div>
+          <div class="campaign-metric"><strong>$${parseFloat(c.spent).toFixed(2)}</strong><span>Spent</span></div>
+          <div class="campaign-metric"><strong>$${c.remaining.toFixed(2)}</strong><span>Remaining</span></div>
+        </div>
+        <div class="campaign-progress"><div class="campaign-progress-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateAdsStats(campaigns) {
+  const totalImp = campaigns.reduce((s, c) => s + (c.impressions || 0), 0);
+  const totalClk = campaigns.reduce((s, c) => s + (c.clicks || 0), 0);
+  const totalSpent = campaigns.reduce((s, c) => s + parseFloat(c.spent || 0), 0);
+  document.getElementById('ads-total-campaigns').textContent = campaigns.length;
+  document.getElementById('ads-total-impressions').textContent = formatNum(totalImp);
+  document.getElementById('ads-total-clicks').textContent = formatNum(totalClk);
+  document.getElementById('ads-total-spent').textContent = '$' + totalSpent.toFixed(2);
+}
+
+async function toggleCampaignStatus(id, newStatus) {
+  await huSetCampaignStatus(id, newStatus);
+  showToast(newStatus === 'active' ? '▶️ Campaign resumed' : '⏸ Campaign paused');
+  renderAdsManager();
+}
+
+async function removeCampaign(id) {
+  if (!confirm('Delete this campaign? This cannot be undone.')) return;
+  await huDeleteCampaign(id);
+  showToast('🗑️ Campaign deleted');
+  renderAdsManager();
+}
+
+function openNewCampaignModal() {
+  ['camp-name','camp-headline','camp-body-text','camp-cta-link','camp-location'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  const budget = document.getElementById('camp-budget'); if (budget) budget.value = '';
+  const img = document.getElementById('camp-image'); if (img) img.value = '';
+  document.getElementById('campaign-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCampaignModal() {
+  document.getElementById('campaign-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function submitCampaign() {
+  const name = document.getElementById('camp-name').value.trim();
+  const headline = document.getElementById('camp-headline').value.trim();
+  const budget = document.getElementById('camp-budget').value;
+
+  if (!name) { showToast('⚠️ Campaign name required'); return; }
+  if (!headline) { showToast('⚠️ Ad headline required'); return; }
+  if (!budget || parseFloat(budget) <= 0) { showToast('⚠️ Enter a valid budget'); return; }
+
+  const btn = document.getElementById('camp-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Launching…';
+
+  try {
+    await huCreateCampaign({
+      name: name,
+      objective: document.getElementById('camp-objective').value,
+      budget: budget,
+      bidAmount: document.getElementById('camp-bid').value,
+      targetSpecialty: document.getElementById('camp-specialty').value,
+      targetLocation: document.getElementById('camp-location').value,
+      endDate: document.getElementById('camp-end-date').value,
+      headline: headline,
+      bodyText: document.getElementById('camp-body-text').value,
+      ctaText: document.getElementById('camp-cta-text').value,
+      ctaLink: document.getElementById('camp-cta-link').value,
+      imageFile: (document.getElementById('camp-image').files || [])[0] || null,
+    });
+    showToast('🚀 Campaign launched!');
+    closeCampaignModal();
+    renderAdsManager();
+  } catch (err) {
+    showToast('❌ ' + (err.message || 'Failed to create campaign'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Launch Campaign';
+  }
+}
+
+/* ============================================
+   SPONSORED AD INJECTION INTO FEED
+   ============================================ */
+async function injectSponsoredAd() {
+  const ad = await huServeAd();
+  if (!ad || !ad.creative_id) return;
+
+  const container = document.getElementById('feed-container');
+  if (!container) return;
+
+  const img = ad.image_url ? (HU_API + ad.image_url) : '';
+  const html = `
+    <article class="post-card sponsored-post" data-campaign-id="${ad.id}" data-creative-id="${ad.creative_id}">
+      <div class="post-top">
+        <img src="${getLetterAvatar(ad.advertiser_name, 80)}" alt="${ad.advertiser_name}"/>
+        <div class="post-meta">
+          <div class="post-name">${ad.advertiser_name}</div>
+          <div class="post-role">Sponsored</div>
+        </div>
+        <span class="sponsored-label">Sponsored</span>
+      </div>
+      <div class="post-body">
+        <div class="post-title">${ad.headline}</div>
+        <div class="post-text">${ad.body_text || ''}</div>
+      </div>
+      ${img ? `<div class="post-image-wrap"><img src="${img}" class="post-image"/></div>` : ''}
+      <div style="padding:14px 16px;">
+        <button class="sponsored-cta-btn" onclick="handleAdClick('${ad.id}','${ad.creative_id}','${ad.cta_link || ''}')">${ad.cta_text || 'Learn More'}</button>
+      </div>
+    </article>
+  `;
+
+  const posts = container.querySelectorAll('.post-card');
+  if (posts.length >= 3) {
+    posts[2].insertAdjacentHTML('afterend', html);
+  } else {
+    container.insertAdjacentHTML('beforeend', html);
+  }
+
+  huLogAdImpression(ad.id, ad.creative_id);
+}
+
+function handleAdClick(campaignId, creativeId, link) {
+  huLogAdClick(campaignId, creativeId);
+  if (link) window.open(link, '_blank');
+}
+
 function calculateHealthScore() {
   const hEl = document.getElementById("hs-height");
   const wEl = document.getElementById("hs-weight");
