@@ -29,6 +29,8 @@ function navigate(pageId, clickedBtn) {
   if (pageId === "explore") renderCreators();
   if (pageId === "consultations") renderDoctors();
   if (pageId === "jobs") renderJobs();
+  if (pageId === "ads") renderAdsManager();
+
 }
 
 // function renderFeed(posts) {

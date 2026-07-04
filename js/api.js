@@ -429,6 +429,73 @@ window.confirmLogout = function () {
   if (m) m.classList.add("open");
 };
 
+// ── ADS ENGINE ────────────────────────────────────────────────────────────────
+async function huCreateCampaign(opts) {
+  var fd = new FormData();
+  fd.append("name", opts.name || "");
+  fd.append("objective", opts.objective || "awareness");
+  fd.append("budget", opts.budget || 0);
+  fd.append("bid_amount", opts.bidAmount || 2.0);
+  fd.append("target_specialty", opts.targetSpecialty || "All");
+  fd.append("target_location", opts.targetLocation || "All");
+  if (opts.endDate) fd.append("end_date", opts.endDate);
+  fd.append("headline", opts.headline || "");
+  fd.append("body_text", opts.bodyText || "");
+  fd.append("cta_text", opts.ctaText || "Learn More");
+  fd.append("cta_link", opts.ctaLink || "");
+  if (opts.imageFile) fd.append("image", opts.imageFile);
+
+  var res = await huFetch("/api/ads/campaigns", { method: "POST", body: fd });
+  if (!res) return null;
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.detail || "Failed to create campaign");
+  return data;
+}
+
+async function huGetMyCampaigns() {
+  var res = await huFetch("/api/ads/campaigns/mine");
+  if (!res || !res.ok) return [];
+  return await res.json();
+}
+
+async function huSetCampaignStatus(campaignId, status) {
+  var res = await huFetch("/api/ads/campaigns/" + campaignId + "/status", {
+    method: "PUT",
+    body: JSON.stringify({ status: status }),
+  });
+  if (!res) return null;
+  return await res.json();
+}
+
+async function huDeleteCampaign(campaignId) {
+  var res = await huFetch("/api/ads/campaigns/" + campaignId, { method: "DELETE" });
+  if (!res) return null;
+  return await res.json();
+}
+
+async function huServeAd() {
+  var res = await huFetch("/api/ads/serve");
+  if (!res || !res.ok) return null;
+  return await res.json();
+}
+
+async function huLogAdImpression(campaignId, creativeId) {
+  try {
+    await huFetch("/api/ads/impression", {
+      method: "POST",
+      body: JSON.stringify({ campaign_id: campaignId, creative_id: creativeId }),
+    });
+  } catch (e) {}
+}
+
+async function huLogAdClick(campaignId, creativeId) {
+  try {
+    await huFetch("/api/ads/click", {
+      method: "POST",
+      body: JSON.stringify({ campaign_id: campaignId, creative_id: creativeId }),
+    });
+  } catch (e) {}
+}
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", function () {
   applyUserToUI();
