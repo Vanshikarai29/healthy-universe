@@ -1,9 +1,12 @@
+import eventlet
+eventlet.monkey_patch()
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from dotenv import load_dotenv
 import os, uuid, bcrypt, jwt, psycopg2, psycopg2.extras
+from flask_socketio import SocketIO, emit, join_room
 
 load_dotenv()
 
@@ -25,6 +28,12 @@ MAX_FILE_BYTES = 50 * 1024 * 1024
 # ─── APP ───────────────────────────────────────────────────────────────────────
 app = Flask(__name__)
 CORS(app, origins=os.getenv("ALLOWED_ORIGINS","*").split(","))
+
+socketio = SocketIO(app, cors_allowed_origins=os.getenv("ALLOWED_ORIGINS","*").split(","), async_mode="eventlet")
+
+# in-memory presence tracking (single-instance; resets on restart)
+online_users = {}   # user_id -> True
+sid_to_user  = {}   # socket session id -> user_id
 
 # ─── DB HELPERS ────────────────────────────────────────────────────────────────
 def get_db():
@@ -239,6 +248,26 @@ def init_db():
                     creative_id VARCHAR(36) NOT NULL,
                     user_id     VARCHAR(36),
                     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            # ── NEW: MESSAGING TABLES ────────────────────────────────────────
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS conversations (
+                    id          VARCHAR(36) NOT NULL PRIMARY KEY,
+                    user_a_id   VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    user_b_id   VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE (user_a_id, user_b_id)
+                );
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS messages (
+                    id              VARCHAR(36) NOT NULL PRIMARY KEY,
+                    conversation_id VARCHAR(36) NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+                    sender_id       VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    content         TEXT NOT NULL,
+                    read_at         TIMESTAMP,
+                    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """)
             # ── END NEW TABLES ───────────────────────────────────────────────
@@ -679,6 +708,194 @@ def log_click():
 
     return jsonify({"message": "logged", "spent": new_spent})
 
+# ══════════════════════════════════════════════════════════════════════════════
+#  MESSAGING ENGINE — REST routes
+# ══════════════════════════════════════════════════════════════════════════════
+
+def get_or_create_conversation(uid_a, uid_b):
+    a, b = sorted([str(uid_a), str(uid_b)])
+    conv = db_one("SELECT * FROM conversations WHERE user_a_id=%s AND user_b_id=%s", (a, b))
+    if conv:
+        return conv
+    cid = str(uuid.uuid4())
+    db_run("INSERT INTO conversations (id, user_a_id, user_b_id) VALUES (%s,%s,%s)", (cid, a, b))
+    return db_one("SELECT * FROM conversations WHERE id=%s", (cid,))
+
+
+@app.route("/api/users")
+@require_auth
+def search_users():
+    q = (request.args.get("q") or "").strip()
+    uid = str(request.current_user["id"])
+    if q:
+        rows = db_all(
+            """SELECT id, name, specialty, avatar_url FROM users
+               WHERE id != %s AND name ILIKE %s LIMIT 20""",
+            (uid, f"%{q}%")
+        )
+    else:
+        rows = db_all(
+            "SELECT id, name, specialty, avatar_url FROM users WHERE id != %s LIMIT 20",
+            (uid,)
+        )
+    return jsonify([dict(r) for r in rows])
+
+
+@app.route("/api/messages/conversations")
+@require_auth
+def list_conversations():
+    uid = str(request.current_user["id"])
+    rows = db_all(
+        "SELECT * FROM conversations WHERE user_a_id=%s OR user_b_id=%s ORDER BY created_at DESC",
+        (uid, uid)
+    )
+    result = []
+    for c in rows:
+        c = dict(c)
+        other_id = c["user_b_id"] if str(c["user_a_id"]) == uid else c["user_a_id"]
+        other = db_one("SELECT id, name, specialty, avatar_url FROM users WHERE id=%s", (other_id,)) or {}
+        last_msg = db_one(
+            "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at DESC LIMIT 1",
+            (c["id"],)
+        )
+        unread = db_one(
+            "SELECT COUNT(*) AS n FROM messages WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
+            (c["id"], uid)
+        )
+        result.append({
+            "id": c["id"],
+            "other_user": {
+                "id": str(other.get("id","")),
+                "name": other.get("name","Unknown"),
+                "specialty": other.get("specialty",""),
+                "avatar": other.get("avatar_url",""),
+                "online": online_users.get(str(other.get("id","")), False),
+            },
+            "last_message": (dict(last_msg)["content"] if last_msg else ""),
+            "last_time": (dict(last_msg)["created_at"].isoformat() if last_msg else ""),
+            "unread_count": unread["n"] if unread else 0,
+        })
+    return jsonify(result)
+
+
+@app.route("/api/messages/conversations/start", methods=["POST"])
+@require_auth
+def start_conversation():
+    data = request.get_json(force=True) or {}
+    other_id = data.get("other_user_id")
+    uid = str(request.current_user["id"])
+    if not other_id or other_id == uid:
+        return jsonify({"detail": "Invalid user"}), 400
+    if not db_one("SELECT id FROM users WHERE id=%s", (other_id,)):
+        return jsonify({"detail": "User not found"}), 404
+    conv = get_or_create_conversation(uid, other_id)
+    return jsonify({"conversation_id": conv["id"]})
+
+
+@app.route("/api/messages/conversations/<conv_id>/messages")
+@require_auth
+def get_messages(conv_id):
+    uid = str(request.current_user["id"])
+    conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
+    if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
+        return jsonify({"detail": "Conversation not found"}), 404
+
+    rows = db_all(
+        "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at ASC", (conv_id,)
+    )
+    db_run(
+        "UPDATE messages SET read_at=CURRENT_TIMESTAMP WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
+        (conv_id, uid)
+    )
+    out = []
+    for m in rows:
+        m = dict(m)
+        for k, v in m.items():
+            if isinstance(v, datetime): m[k] = v.isoformat()
+        out.append(m)
+    return jsonify(out)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  MESSAGING ENGINE — Socket.IO events
+# ══════════════════════════════════════════════════════════════════════════════
+
+@socketio.on("connect")
+def ws_connect():
+    token = request.args.get("token")
+    uid = decode_token(token) if token else None
+    if not uid:
+        return False  # reject connection
+    uid = str(uid)
+    join_room(uid)  # personal room for this user
+    online_users[uid] = True
+    sid_to_user[request.sid] = uid
+    emit("presence", {"user_id": uid, "online": True}, broadcast=True)
+
+
+@socketio.on("disconnect")
+def ws_disconnect():
+    uid = sid_to_user.pop(request.sid, None)
+    if uid:
+        online_users.pop(uid, None)
+        emit("presence", {"user_id": uid, "online": False}, broadcast=True)
+
+
+@socketio.on("join_conversation")
+def ws_join_conversation(data):
+    conv_id = data.get("conversation_id")
+    if conv_id:
+        join_room("conv_" + conv_id)
+
+
+@socketio.on("send_message")
+def ws_send_message(data):
+    conv_id = data.get("conversation_id")
+    content = (data.get("content") or "").strip()
+    uid = sid_to_user.get(request.sid)
+    if not uid or not conv_id or not content:
+        return
+
+    conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
+    if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
+        return
+
+    mid = str(uuid.uuid4())
+    db_run(
+        "INSERT INTO messages (id, conversation_id, sender_id, content) VALUES (%s,%s,%s,%s)",
+        (mid, conv_id, uid, content)
+    )
+    msg = db_one("SELECT * FROM messages WHERE id=%s", (mid,))
+    msg = dict(msg)
+    for k, v in msg.items():
+        if isinstance(v, datetime): msg[k] = v.isoformat()
+
+    other_id = str(conv["user_b_id"]) if str(conv["user_a_id"]) == uid else str(conv["user_a_id"])
+
+    emit("new_message", msg, room="conv_" + conv_id)
+    emit("conversation_update", {"conversation_id": conv_id}, room=other_id)
+
+
+@socketio.on("typing")
+def ws_typing(data):
+    conv_id = data.get("conversation_id")
+    uid = sid_to_user.get(request.sid)
+    if conv_id and uid:
+        emit("typing", {"conversation_id": conv_id, "user_id": uid}, room="conv_" + conv_id, include_self=False)
+
+
+@socketio.on("mark_read")
+def ws_mark_read(data):
+    conv_id = data.get("conversation_id")
+    uid = sid_to_user.get(request.sid)
+    if not conv_id or not uid:
+        return
+    db_run(
+        "UPDATE messages SET read_at=CURRENT_TIMESTAMP WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
+        (conv_id, uid)
+    )
+    emit("messages_read", {"conversation_id": conv_id, "reader_id": uid}, room="conv_" + conv_id)
+
 # ─── RUN ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     print("\n" + "="*50)
@@ -692,7 +909,9 @@ if __name__ == "__main__":
         print(f"📡 Running on http://localhost:{port}")
         print(f"🔧 Debug mode: {'ON' if debug else 'OFF'}")
         print("="*50 + "\n")
-        app.run(host="0.0.0.0", port=port, debug=debug)
+        # app.run(host="0.0.0.0", port=port, debug=debug)
+        socketio.run(app, host="0.0.0.0", port=port, debug=debug)
+        
     except Exception as e:
         print(f"\n❌ Startup failed: {e}")
         print("👉 Check DATABASE_URL is correct in .env\n")
