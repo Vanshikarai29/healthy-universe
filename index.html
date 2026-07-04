@@ -572,14 +572,40 @@
 
 <!-- RIGHT PANEL -->
 <aside class="right-panel">
-  <div class="rp-widget health-score-widget">
+  <!-- <div class="rp-widget health-score-widget">
     <div class="rp-widget-title">Your Health Score</div>
     <div class="health-score-row">
       <div class="health-score-circle"><span class="hs-num">87</span></div>
       <div class="health-score-info"><strong>Excellent</strong><span>+3 from last week</span></div>
     </div>
     <div class="hs-bar-track"><div class="hs-bar-fill" style="width:87%"></div></div>
+  </div> -->
+  <div class="rp-widget health-score-widget">
+  <div class="rp-widget-title">Your Health Score</div>
+  <div class="health-score-row">
+    <div class="health-score-circle"><span class="hs-num" id="hs-num">--</span></div>
+    <div class="health-score-info"><strong id="hs-label">Enter your details</strong><span id="hs-sub">BMI shown once calculated</span></div>
   </div>
+  <div class="hs-bar-track"><div class="hs-bar-fill" id="hs-bar-fill" style="width:0%"></div></div>
+
+  <div class="hs-calc-inputs">
+    <div class="hs-input-row">
+      <label for="hs-height">Height</label>
+      <input type="number" id="hs-height" min="100" max="230" value="170"/>
+      <span>cm</span>
+    </div>
+    <div class="hs-input-row">
+      <label for="hs-weight">Weight</label>
+      <input type="number" id="hs-weight" min="30" max="200" value="65"/>
+      <span>kg</span>
+    </div>
+    <div class="hs-input-row">
+      <label for="hs-age">Age</label>
+      <input type="number" id="hs-age" min="10" max="100" value="30"/>
+      <span>yrs</span>
+    </div>
+  </div>
+</div>
   <div class="rp-widget">
     <div class="rp-widget-title">HU Coins 🪙</div>
     <div class="hu-coins-row">

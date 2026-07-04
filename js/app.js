@@ -17,10 +17,14 @@ function showToast(msg) {
 }
 
 function navigate(pageId, clickedBtn) {
-  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+  document
+    .querySelectorAll(".page")
+    .forEach((p) => p.classList.remove("active"));
   const target = document.getElementById("page-" + pageId);
   if (target) target.classList.add("active");
-  document.querySelectorAll(".nav-link").forEach((n) => n.classList.remove("active"));
+  document
+    .querySelectorAll(".nav-link")
+    .forEach((n) => n.classList.remove("active"));
   if (clickedBtn) clickedBtn.classList.add("active");
   if (pageId === "explore") renderCreators();
   if (pageId === "consultations") renderDoctors();
@@ -202,16 +206,17 @@ function toggleSave(postId, btn) {
 }
 
 const ICONS = {
-  heart:   `<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+  heart: `<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
   comment: `<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
-  follow:  `<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-  share:   `<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,
+  follow: `<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  share: `<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>`,
 };
 
 function renderNotifications() {
   const list = document.getElementById("notif-list");
   if (!list) return;
-  list.innerHTML = NOTIFICATIONS.map((n) => `
+  list.innerHTML = NOTIFICATIONS.map(
+    (n) => `
     <div class="notif-row ${n.unread ? "unread" : ""}" id="notif-${n.id}" onclick="readNotif(${n.id})">
       <img src="${n.avatar}" alt="${n.name}" loading="lazy"/>
       <div class="notif-body">
@@ -223,7 +228,8 @@ function renderNotifications() {
         ${ICONS[n.iconType]}
       </div>
     </div>
-  `).join("");
+  `,
+  ).join("");
 }
 
 function readNotif(id) {
@@ -235,33 +241,49 @@ function readNotif(id) {
 
 function markAllRead() {
   NOTIFICATIONS.forEach((n) => (n.unread = false));
-  document.querySelectorAll(".notif-row.unread").forEach((el) => el.classList.remove("unread"));
+  document
+    .querySelectorAll(".notif-row.unread")
+    .forEach((el) => el.classList.remove("unread"));
   showToast("✓ All notifications marked as read");
 }
 
 function setFilter(btn) {
-  document.querySelectorAll(".filter-tab").forEach((b) => b.classList.remove("active"));
+  document
+    .querySelectorAll(".filter-tab")
+    .forEach((b) => b.classList.remove("active"));
   btn.classList.add("active");
 }
 
 function selectTopic(card) {
-  document.querySelectorAll(".topic-card").forEach((c) => c.classList.remove("active"));
+  document
+    .querySelectorAll(".topic-card")
+    .forEach((c) => c.classList.remove("active"));
   card.classList.add("active");
 }
 
 function toggleFollow(btn) {
   const isFollowing = btn.classList.contains("following");
-  if (isFollowing) { btn.classList.remove("following"); btn.textContent = "Follow"; }
-  else { btn.classList.add("following"); btn.textContent = "✓ Following"; showToast("✓ Now following!"); }
+  if (isFollowing) {
+    btn.classList.remove("following");
+    btn.textContent = "Follow";
+  } else {
+    btn.classList.add("following");
+    btn.textContent = "✓ Following";
+    showToast("✓ Now following!");
+  }
 }
 
 function setProfileTab(btn) {
-  document.querySelectorAll(".profile-tab").forEach((b) => b.classList.remove("active"));
+  document
+    .querySelectorAll(".profile-tab")
+    .forEach((b) => b.classList.remove("active"));
   btn.classList.add("active");
 }
 
 function setViewToggle(btn) {
-  document.querySelectorAll(".view-toggle").forEach((b) => b.classList.remove("active"));
+  document
+    .querySelectorAll(".view-toggle")
+    .forEach((b) => b.classList.remove("active"));
   btn.classList.add("active");
 }
 
@@ -276,7 +298,9 @@ function closeModal() {
 }
 
 function selectChip(btn) {
-  document.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
+  document
+    .querySelectorAll(".chip")
+    .forEach((c) => c.classList.remove("active"));
   btn.classList.add("active");
 }
 
@@ -442,7 +466,11 @@ document.getElementById("media-input").addEventListener("change", function (e) {
 // }
 // PUBLISH POST - handled by api.js (saves to database)
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") { closeModal(); closeBookingModal(); closeApplyModal(); }
+  if (e.key === "Escape") {
+    closeModal();
+    closeBookingModal();
+    closeApplyModal();
+  }
 });
 
 // document.addEventListener("DOMContentLoaded", () => {
@@ -460,6 +488,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderNotifications();
   renderProfileGrid();
   renderSuggestedUsers();
+  calculateHealthScore();
 
   // Load real posts from database and show on top
   try {
@@ -475,11 +504,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 /* Feed Tabs */
 function switchFeedTab(tab, btn) {
-  document.querySelectorAll(".feed-tab").forEach((b) => b.classList.remove("active"));
+  document
+    .querySelectorAll(".feed-tab")
+    .forEach((b) => b.classList.remove("active"));
   btn.classList.add("active");
-  if (tab === "trending") renderFeed([...POSTS].sort((a, b) => b.likes - a.likes));
-  else if (tab === "following") { renderFeed([POSTS[0], POSTS[3]]); showToast("Showing posts from people you follow"); }
-  else renderFeed();
+  if (tab === "trending")
+    renderFeed([...POSTS].sort((a, b) => b.likes - a.likes));
+  else if (tab === "following") {
+    renderFeed([POSTS[0], POSTS[3]]);
+    showToast("Showing posts from people you follow");
+  } else renderFeed();
 }
 
 /* Revenue Badge */
@@ -489,7 +523,9 @@ function claimRevenue(postId, btn) {
   if (!post) return;
   btn.classList.add("claimed");
   btn.textContent = "✓ Claimed!";
-  const bal = parseFloat(document.getElementById("user-balance").textContent) + (post.earnings || 0);
+  const bal =
+    parseFloat(document.getElementById("user-balance").textContent) +
+    (post.earnings || 0);
   document.getElementById("user-balance").textContent = bal.toFixed(2);
   const mob = document.getElementById("mobile-user-balance");
   if (mob) mob.textContent = bal.toFixed(2);
@@ -500,7 +536,8 @@ function claimRevenue(postId, btn) {
 function renderCreators() {
   const grid = document.getElementById("creators-grid");
   if (!grid || typeof CREATORS === "undefined") return;
-  grid.innerHTML = CREATORS.map((c) => `
+  grid.innerHTML = CREATORS.map(
+    (c) => `
     <div class="creator-card">
       <img src="${c.avatar}" alt="${c.name}" loading="lazy"/>
       <h3>${c.name}${c.verified ? '<span class="verified-dot"></span>' : ""}</h3>
@@ -508,25 +545,29 @@ function renderCreators() {
       <div class="creator-followers">${c.followers}</div>
       <button class="follow-btn" onclick="toggleFollow(this)">Follow</button>
     </div>
-  `).join("");
+  `,
+  ).join("");
 }
 
 /* Profile Grid */
 function renderProfileGrid() {
   const grid = document.getElementById("posts-grid");
   if (!grid) return;
-  grid.innerHTML = POSTS.map((p) => `
+  grid.innerHTML = POSTS.map(
+    (p) => `
     <div class="grid-post">
       <img src="${p.image}" alt="${p.title}" loading="lazy" onclick="showToast('📄 Opening post...')"/>
     </div>
-  `).join("");
+  `,
+  ).join("");
 }
 
 /* Right Panel — Suggested Users */
 function renderSuggestedUsers() {
   const list = document.getElementById("rp-suggested-list");
   if (!list || typeof SUGGESTED_USERS === "undefined") return;
-  list.innerHTML = SUGGESTED_USERS.map((u) => `
+  list.innerHTML = SUGGESTED_USERS.map(
+    (u) => `
     <div class="rp-suggested-row">
       <img src="${u.avatar}" alt="${u.name}" loading="lazy"/>
       <div>
@@ -535,131 +576,238 @@ function renderSuggestedUsers() {
       </div>
       <button class="rp-follow-btn" onclick="rpToggleFollow(this)">Follow</button>
     </div>
-  `).join("");
+  `,
+  ).join("");
 }
 
 function rpToggleFollow(btn) {
   const isFollowing = btn.classList.contains("following");
-  if (isFollowing) { btn.classList.remove("following"); btn.textContent = "Follow"; }
-  else { btn.classList.add("following"); btn.textContent = "✓"; showToast("✓ Now following!"); }
+  if (isFollowing) {
+    btn.classList.remove("following");
+    btn.textContent = "Follow";
+  } else {
+    btn.classList.add("following");
+    btn.textContent = "✓";
+    showToast("✓ Now following!");
+  }
 }
 
 /* ============================================
    CONSULTATION LOGIC
    ============================================ */
-const BookingState = { doctor:null, type:'video', date:null, dateLabel:null, time:null, payment:'coins' };
+const BookingState = {
+  doctor: null,
+  type: "video",
+  date: null,
+  dateLabel: null,
+  time: null,
+  payment: "coins",
+};
 
 function renderDoctors(list) {
-  const grid = document.getElementById('doctors-grid');
+  const grid = document.getElementById("doctors-grid");
   if (!grid) return;
   const data = list || DOCTORS;
-  if (!data || data.length === 0) { grid.innerHTML = '<div class="no-doctors-msg"><h3>No doctors found</h3><p>Try adjusting your search or specialty filter</p></div>'; return; }
-  grid.innerHTML = data.map((doc, idx) => `
-    <div class="doctor-card" style="animation-delay:${idx*0.05}s">
+  if (!data || data.length === 0) {
+    grid.innerHTML =
+      '<div class="no-doctors-msg"><h3>No doctors found</h3><p>Try adjusting your search or specialty filter</p></div>';
+    return;
+  }
+  grid.innerHTML = data
+    .map(
+      (doc, idx) => `
+    <div class="doctor-card" style="animation-delay:${idx * 0.05}s">
       <div class="doc-card-top">
         <div class="doc-avatar-wrap">
           <img src="${doc.avatar}" alt="${doc.name}" class="doc-avatar" loading="lazy"/>
           <span class="doc-online-dot ${doc.status}"></span>
-          ${doc.experience >= 10 ? `<span class="doc-exp-badge">${doc.experience}yr</span>` : ''}
+          ${doc.experience >= 10 ? `<span class="doc-exp-badge">${doc.experience}yr</span>` : ""}
         </div>
         <div class="doc-card-info">
-          <div class="doc-name">${doc.name}${doc.verified ? '<span class="verified-dot"></span>' : ''}</div>
+          <div class="doc-name">${doc.name}${doc.verified ? '<span class="verified-dot"></span>' : ""}</div>
           <div class="doc-specialty">${doc.specialty}</div>
           <div class="doc-hospital">🏥 ${doc.hospital}</div>
-          <div class="doc-rating"><span class="stars">★★★★${doc.rating>=4.8?'★':'☆'}</span>${doc.rating}<small>(${doc.reviews})</small></div>
+          <div class="doc-rating"><span class="stars">★★★★${doc.rating >= 4.8 ? "★" : "☆"}</span>${doc.rating}<small>(${doc.reviews})</small></div>
         </div>
       </div>
-      <div class="doc-tags">${doc.tags.map(t=>`<span class="doc-tag">${t}</span>`).join('')}</div>
+      <div class="doc-tags">${doc.tags.map((t) => `<span class="doc-tag">${t}</span>`).join("")}</div>
       <div class="doc-meta-row">
         <div class="doc-meta-item">🩺 <strong>${formatNum(doc.consultations)}</strong> consults</div>
         <div class="doc-meta-item">⏱ <strong>${doc.experience} yrs</strong> exp</div>
-        <span class="doc-status-badge ${doc.status}">${doc.status==='online'?'● Online':doc.status==='busy'?'● In Session':'○ Offline'}</span>
+        <span class="doc-status-badge ${doc.status}">${doc.status === "online" ? "● Online" : doc.status === "busy" ? "● In Session" : "○ Offline"}</span>
       </div>
       <div class="doc-price-row">
         <div><span class="doc-price-amount">₹${doc.price}</span><span class="doc-price-coins">or ${doc.coins} HU Coins</span></div>
-        <button class="doc-book-btn" onclick="openBookingModal('${doc.id}')" ${doc.status==='offline'?'disabled':''}>${doc.status==='offline'?'Unavailable':'Book Now'}</button>
+        <button class="doc-book-btn" onclick="openBookingModal('${doc.id}')" ${doc.status === "offline" ? "disabled" : ""}>${doc.status === "offline" ? "Unavailable" : "Book Now"}</button>
       </div>
       <div class="doc-next-slot">🕐 Next: ${doc.nextSlot}</div>
     </div>
-  `).join('');
-  const c = document.getElementById('doc-count');
+  `,
+    )
+    .join("");
+  const c = document.getElementById("doc-count");
   if (c) c.textContent = data.length;
 }
 
 function filterDoctors(q) {
   const query = q.toLowerCase();
-  renderDoctors(DOCTORS.filter(d => !query || d.name.toLowerCase().includes(query) || d.specialty.toLowerCase().includes(query) || d.tags.some(t=>t.toLowerCase().includes(query))));
+  renderDoctors(
+    DOCTORS.filter(
+      (d) =>
+        !query ||
+        d.name.toLowerCase().includes(query) ||
+        d.specialty.toLowerCase().includes(query) ||
+        d.tags.some((t) => t.toLowerCase().includes(query)),
+    ),
+  );
 }
 
 function filterBySpecialty(spec, btn) {
-  document.querySelectorAll('.specialty-pill').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  renderDoctors(spec==='All' ? DOCTORS : DOCTORS.filter(d=>d.specialty.includes(spec)));
+  document
+    .querySelectorAll(".specialty-pill")
+    .forEach((p) => p.classList.remove("active"));
+  btn.classList.add("active");
+  renderDoctors(
+    spec === "All"
+      ? DOCTORS
+      : DOCTORS.filter((d) => d.specialty.includes(spec)),
+  );
 }
 
 function sortDoctors(by) {
-  renderDoctors([...DOCTORS].sort((a,b)=>by==='rating'?b.rating-a.rating:by==='price_low'?a.price-b.price:by==='price_high'?b.price-a.price:b.experience-a.experience));
+  renderDoctors(
+    [...DOCTORS].sort((a, b) =>
+      by === "rating"
+        ? b.rating - a.rating
+        : by === "price_low"
+          ? a.price - b.price
+          : by === "price_high"
+            ? b.price - a.price
+            : b.experience - a.experience,
+    ),
+  );
 }
 
 function openBookingModal(docId) {
-  const doc = DOCTORS.find(d=>d.id===docId);
+  const doc = DOCTORS.find((d) => d.id === docId);
   if (!doc) return;
-  BookingState.doctor=doc; BookingState.type='video'; BookingState.date=null; BookingState.dateLabel=null; BookingState.time=null; BookingState.payment='coins';
-  document.getElementById('booking-step-1').style.display='block';
-  document.getElementById('booking-step-2').style.display='none';
-  document.getElementById('booking-doc-info').innerHTML=`
+  BookingState.doctor = doc;
+  BookingState.type = "video";
+  BookingState.date = null;
+  BookingState.dateLabel = null;
+  BookingState.time = null;
+  BookingState.payment = "coins";
+  document.getElementById("booking-step-1").style.display = "block";
+  document.getElementById("booking-step-2").style.display = "none";
+  document.getElementById("booking-doc-info").innerHTML = `
     <img src="${doc.avatar}" alt="${doc.name}"/>
     <div><strong>${doc.name}</strong><span>${doc.specialty} · ${doc.hospital}</span></div>
     <div class="booking-doc-price"><strong>₹${doc.price}</strong><span>★ ${doc.rating}</span></div>
   `;
-  document.querySelectorAll('.consult-type-card').forEach((c,i)=>c.classList.toggle('active',i===0));
-  renderDateScroll(); renderTimeSlots();
-  document.getElementById('booking-modal').classList.add('open');
-  document.body.style.overflow='hidden';
+  document
+    .querySelectorAll(".consult-type-card")
+    .forEach((c, i) => c.classList.toggle("active", i === 0));
+  renderDateScroll();
+  renderTimeSlots();
+  document.getElementById("booking-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
 }
 
-function closeBookingModal() { document.getElementById('booking-modal').classList.remove('open'); document.body.style.overflow=''; }
+function closeBookingModal() {
+  document.getElementById("booking-modal").classList.remove("open");
+  document.body.style.overflow = "";
+}
 
 function renderDateScroll() {
-  const container = document.getElementById('date-scroll');
+  const container = document.getElementById("date-scroll");
   if (!container) return;
-  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const today=new Date();
-  container.innerHTML = Array.from({length:10},(_,i)=>{
-    const d=new Date(today); d.setDate(today.getDate()+i);
-    const ds=d.toISOString().split('T')[0];
-    return `<div class="date-chip ${i===0?'today active':''}" onclick="selectDate(this,'${ds}','${d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})}')">
-      <span class="date-day">${i===0?'Today':days[d.getDay()]}</span>
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const today = new Date();
+  container.innerHTML = Array.from({ length: 10 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const ds = d.toISOString().split("T")[0];
+    return `<div class="date-chip ${i === 0 ? "today active" : ""}" onclick="selectDate(this,'${ds}','${d.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}')">
+      <span class="date-day">${i === 0 ? "Today" : days[d.getDay()]}</span>
       <span class="date-num">${d.getDate()}</span>
-      <span class="date-avail">${Math.floor(Math.random()*5)+3} slots</span>
+      <span class="date-avail">${Math.floor(Math.random() * 5) + 3} slots</span>
     </div>`;
-  }).join('');
-  BookingState.date=today.toISOString().split('T')[0];
-  BookingState.dateLabel=today.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  }).join("");
+  BookingState.date = today.toISOString().split("T")[0];
+  BookingState.dateLabel = today.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+  });
 }
 
-function selectDate(el,ds,label) {
-  document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active'); BookingState.date=ds; BookingState.dateLabel=label; renderTimeSlots();
+function selectDate(el, ds, label) {
+  document
+    .querySelectorAll(".date-chip")
+    .forEach((c) => c.classList.remove("active"));
+  el.classList.add("active");
+  BookingState.date = ds;
+  BookingState.dateLabel = label;
+  renderTimeSlots();
 }
 
 function renderTimeSlots() {
-  const grid=document.getElementById('time-slots-grid');
+  const grid = document.getElementById("time-slots-grid");
   if (!grid) return;
-  const slots=['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM'];
-  const booked=[1,4,7,10];
-  grid.innerHTML=slots.map((s,i)=>`<div class="time-slot ${booked.includes(i)?'booked':''}" onclick="${booked.includes(i)?'':`selectTimeSlot(this,'${s}')`}">${s}</div>`).join('');
-  BookingState.time=null;
+  const slots = [
+    "9:00 AM",
+    "9:30 AM",
+    "10:00 AM",
+    "10:30 AM",
+    "11:00 AM",
+    "11:30 AM",
+    "2:00 PM",
+    "2:30 PM",
+    "3:00 PM",
+    "3:30 PM",
+    "4:00 PM",
+    "4:30 PM",
+    "5:00 PM",
+    "5:30 PM",
+    "6:00 PM",
+    "6:30 PM",
+  ];
+  const booked = [1, 4, 7, 10];
+  grid.innerHTML = slots
+    .map(
+      (s, i) =>
+        `<div class="time-slot ${booked.includes(i) ? "booked" : ""}" onclick="${booked.includes(i) ? "" : `selectTimeSlot(this,'${s}')`}">${s}</div>`,
+    )
+    .join("");
+  BookingState.time = null;
 }
 
-function selectTimeSlot(el,time) { document.querySelectorAll('.time-slot:not(.booked)').forEach(s=>s.classList.remove('active')); el.classList.add('active'); BookingState.time=time; }
-function selectConsultType(el,type) { document.querySelectorAll('.consult-type-card').forEach(c=>c.classList.remove('active')); el.classList.add('active'); BookingState.type=type; }
+function selectTimeSlot(el, time) {
+  document
+    .querySelectorAll(".time-slot:not(.booked)")
+    .forEach((s) => s.classList.remove("active"));
+  el.classList.add("active");
+  BookingState.time = time;
+}
+function selectConsultType(el, type) {
+  document
+    .querySelectorAll(".consult-type-card")
+    .forEach((c) => c.classList.remove("active"));
+  el.classList.add("active");
+  BookingState.type = type;
+}
 
 function goToBookingStep2() {
-  if (!BookingState.time) { showToast('⚠️ Please select a time slot'); return; }
-  const doc=BookingState.doctor;
-  const typeLabel={video:'Video Call 📹',audio:'Audio Call 📞',chat:'Chat 💬'}[BookingState.type];
-  document.getElementById('booking-summary').innerHTML=`
+  if (!BookingState.time) {
+    showToast("⚠️ Please select a time slot");
+    return;
+  }
+  const doc = BookingState.doctor;
+  const typeLabel = {
+    video: "Video Call 📹",
+    audio: "Audio Call 📞",
+    chat: "Chat 💬",
+  }[BookingState.type];
+  document.getElementById("booking-summary").innerHTML = `
     <div class="booking-summary-row"><span>Doctor</span><strong>${doc.name}</strong></div>
     <div class="booking-summary-row"><span>Specialty</span><strong>${doc.specialty}</strong></div>
     <div class="booking-summary-row"><span>Type</span><strong>${typeLabel}</strong></div>
@@ -667,38 +815,69 @@ function goToBookingStep2() {
     <div class="booking-summary-row"><span>Duration</span><strong>30 minutes</strong></div>
   `;
   updatePaymentDisplay();
-  document.getElementById('booking-step-1').style.display='none';
-  document.getElementById('booking-step-2').style.display='block';
+  document.getElementById("booking-step-1").style.display = "none";
+  document.getElementById("booking-step-2").style.display = "block";
 }
 
-function goToBookingStep1() { document.getElementById('booking-step-1').style.display='block'; document.getElementById('booking-step-2').style.display='none'; }
+function goToBookingStep1() {
+  document.getElementById("booking-step-1").style.display = "block";
+  document.getElementById("booking-step-2").style.display = "none";
+}
 
 function updatePaymentDisplay() {
-  const doc=BookingState.doctor; if (!doc) return;
-  const method=(document.querySelector('input[name="payment"]:checked')||{value:'coins'}).value;
-  BookingState.payment=method;
-  const base=doc.price;
-  let html='';
-  if (method==='coins') { const disc=Math.round(base*0.1); html=`<div class="price-row"><span>Consultation Fee</span><strong>₹${base}</strong></div><div class="price-row discount"><span>HU Coins Discount (10%)</span><strong>-₹${disc}</strong></div><div class="price-row total"><span>You Pay</span><strong>${doc.coins} HU Coins</strong></div>`; }
-  else if (method==='wallet') { html=`<div class="price-row"><span>Consultation Fee</span><strong>₹${base}</strong></div><div class="price-row"><span>Platform Fee</span><strong>₹0</strong></div><div class="price-row total"><span>Total from Wallet</span><strong>₹${base}</strong></div>`; }
-  else { const gst=Math.round(base*0.18); html=`<div class="price-row"><span>Consultation Fee</span><strong>₹${base}</strong></div><div class="price-row"><span>GST (18%)</span><strong>₹${gst}</strong></div><div class="price-row total"><span>Total</span><strong>₹${base+gst}</strong></div>`; }
-  document.getElementById('price-breakdown').innerHTML=html;
-  document.querySelectorAll('.payment-option').forEach(opt=>{ const checked=opt.querySelector('input').checked; opt.style.borderColor=checked?'var(--green)':''; opt.style.background=checked?'var(--green-bg)':''; });
+  const doc = BookingState.doctor;
+  if (!doc) return;
+  const method = (
+    document.querySelector('input[name="payment"]:checked') || {
+      value: "coins",
+    }
+  ).value;
+  BookingState.payment = method;
+  const base = doc.price;
+  let html = "";
+  if (method === "coins") {
+    const disc = Math.round(base * 0.1);
+    html = `<div class="price-row"><span>Consultation Fee</span><strong>₹${base}</strong></div><div class="price-row discount"><span>HU Coins Discount (10%)</span><strong>-₹${disc}</strong></div><div class="price-row total"><span>You Pay</span><strong>${doc.coins} HU Coins</strong></div>`;
+  } else if (method === "wallet") {
+    html = `<div class="price-row"><span>Consultation Fee</span><strong>₹${base}</strong></div><div class="price-row"><span>Platform Fee</span><strong>₹0</strong></div><div class="price-row total"><span>Total from Wallet</span><strong>₹${base}</strong></div>`;
+  } else {
+    const gst = Math.round(base * 0.18);
+    html = `<div class="price-row"><span>Consultation Fee</span><strong>₹${base}</strong></div><div class="price-row"><span>GST (18%)</span><strong>₹${gst}</strong></div><div class="price-row total"><span>Total</span><strong>₹${base + gst}</strong></div>`;
+  }
+  document.getElementById("price-breakdown").innerHTML = html;
+  document.querySelectorAll(".payment-option").forEach((opt) => {
+    const checked = opt.querySelector("input").checked;
+    opt.style.borderColor = checked ? "var(--green)" : "";
+    opt.style.background = checked ? "var(--green-bg)" : "";
+  });
 }
 
 function confirmBooking() {
-  const doc=BookingState.doctor;
-  const typeLabel={video:'Video Call 📹',audio:'Audio Call 📞',chat:'Chat 💬'}[BookingState.type];
+  const doc = BookingState.doctor;
+  const typeLabel = {
+    video: "Video Call 📹",
+    audio: "Audio Call 📞",
+    chat: "Chat 💬",
+  }[BookingState.type];
   closeBookingModal();
-  document.getElementById('success-details').innerHTML=`Your <strong>${typeLabel}</strong> with <strong>${doc.name}</strong> is confirmed for <strong>${BookingState.dateLabel} at ${BookingState.time}</strong>. You'll get a reminder 15 minutes before.`;
-  document.getElementById('booking-success-modal').classList.add('open');
-  if (BookingState.payment==='wallet') {
-    const bal=parseFloat(document.getElementById('user-balance').textContent)-(doc.price/80);
-    document.getElementById('user-balance').textContent=Math.max(0,bal).toFixed(2);
+  document.getElementById("success-details").innerHTML =
+    `Your <strong>${typeLabel}</strong> with <strong>${doc.name}</strong> is confirmed for <strong>${BookingState.dateLabel} at ${BookingState.time}</strong>. You'll get a reminder 15 minutes before.`;
+  document.getElementById("booking-success-modal").classList.add("open");
+  if (BookingState.payment === "wallet") {
+    const bal =
+      parseFloat(document.getElementById("user-balance").textContent) -
+      doc.price / 80;
+    document.getElementById("user-balance").textContent = Math.max(
+      0,
+      bal,
+    ).toFixed(2);
   }
 }
 
-function closeSuccessModal() { document.getElementById('booking-success-modal').classList.remove('open'); document.body.style.overflow=''; }
+function closeSuccessModal() {
+  document.getElementById("booking-success-modal").classList.remove("open");
+  document.body.style.overflow = "";
+}
 
 /* ============================================
    ✨ JOBS MARKETPLACE LOGIC
@@ -706,13 +885,19 @@ function closeSuccessModal() { document.getElementById('booking-success-modal').
 const ApplyState = { job: null, cvUploaded: false };
 
 function renderJobs(list) {
-  const container = document.getElementById('jobs-list');
+  const container = document.getElementById("jobs-list");
   if (!container) return;
   const data = list || JOBS;
-  if (!data || data.length === 0) { container.innerHTML = '<div class="no-jobs-msg"><h3>No jobs found</h3><p>Try adjusting your search or filters</p></div>'; return; }
-  container.innerHTML = data.map((job, idx) => `
-    <div class="job-card ${job.featured ? 'featured' : ''}" id="job-${job.id}" style="animation-delay:${idx*0.05}s">
-      ${job.featured ? '<div class="job-featured-badge">⭐ FEATURED</div>' : ''}
+  if (!data || data.length === 0) {
+    container.innerHTML =
+      '<div class="no-jobs-msg"><h3>No jobs found</h3><p>Try adjusting your search or filters</p></div>';
+    return;
+  }
+  container.innerHTML = data
+    .map(
+      (job, idx) => `
+    <div class="job-card ${job.featured ? "featured" : ""}" id="job-${job.id}" style="animation-delay:${idx * 0.05}s">
+      ${job.featured ? '<div class="job-featured-badge">⭐ FEATURED</div>' : ""}
       <div class="job-card-top">
         <img src="${job.companyLogo}" alt="${job.company}" class="job-company-logo" loading="lazy"/>
         <div class="job-card-info">
@@ -726,7 +911,7 @@ function renderJobs(list) {
         </div>
       </div>
       <div class="job-description">${job.description}</div>
-      <div class="job-tags">${job.tags.map(t=>`<span class="job-tag">${t}</span>`).join('')}</div>
+      <div class="job-tags">${job.tags.map((t) => `<span class="job-tag">${t}</span>`).join("")}</div>
       <div class="job-card-footer">
         <div class="job-footer-left">
           <div class="job-salary">${job.salary}</div>
@@ -737,81 +922,100 @@ function renderJobs(list) {
         </div>
         <div class="job-footer-right">
           <span class="job-applicants">👥 ${job.applicants} applied</span>
-          <button class="job-save-btn ${job.saved ? 'saved' : ''}" onclick="toggleJobSave('${job.id}', this)" title="${job.saved ? 'Unsave' : 'Save job'}">🔖</button>
-          <button class="job-apply-btn ${job.applied ? 'applied' : ''}" onclick="${job.applied ? '' : `openApplyModal('${job.id}')`}">
-            ${job.applied ? '✓ Applied' : 'Apply Now'}
+          <button class="job-save-btn ${job.saved ? "saved" : ""}" onclick="toggleJobSave('${job.id}', this)" title="${job.saved ? "Unsave" : "Save job"}">🔖</button>
+          <button class="job-apply-btn ${job.applied ? "applied" : ""}" onclick="${job.applied ? "" : `openApplyModal('${job.id}')`}">
+            ${job.applied ? "✓ Applied" : "Apply Now"}
           </button>
         </div>
       </div>
     </div>
-  `).join('');
-  const countEl = document.getElementById('jobs-count');
+  `,
+    )
+    .join("");
+  const countEl = document.getElementById("jobs-count");
   if (countEl) countEl.textContent = data.length;
 }
 
 function getTypePillClass(type) {
-  if (type === 'Full-Time')  return 'type-full';
-  if (type === 'Part-Time')  return 'type-part';
-  if (type === 'Internship') return 'type-intern';
-  if (type === 'Residency')  return 'type-residency';
-  return '';
+  if (type === "Full-Time") return "type-full";
+  if (type === "Part-Time") return "type-part";
+  if (type === "Internship") return "type-intern";
+  if (type === "Residency") return "type-residency";
+  return "";
 }
 
 function searchJobs(q) {
   const query = q.toLowerCase();
-  renderJobs(JOBS.filter(j => !query || j.title.toLowerCase().includes(query) || j.company.toLowerCase().includes(query) || j.specialty.toLowerCase().includes(query) || j.location.toLowerCase().includes(query) || j.tags.some(t=>t.toLowerCase().includes(query))));
+  renderJobs(
+    JOBS.filter(
+      (j) =>
+        !query ||
+        j.title.toLowerCase().includes(query) ||
+        j.company.toLowerCase().includes(query) ||
+        j.specialty.toLowerCase().includes(query) ||
+        j.location.toLowerCase().includes(query) ||
+        j.tags.some((t) => t.toLowerCase().includes(query)),
+    ),
+  );
 }
 
 function filterJobsByType(type, btn) {
-  document.querySelectorAll('.job-type-pill').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  renderJobs(type==='All' ? JOBS : JOBS.filter(j=>j.type===type));
+  document
+    .querySelectorAll(".job-type-pill")
+    .forEach((p) => p.classList.remove("active"));
+  btn.classList.add("active");
+  renderJobs(type === "All" ? JOBS : JOBS.filter((j) => j.type === type));
 }
 
 function filterJobsBySpecialty(val) {
-  renderJobs(val==='All' ? JOBS : JOBS.filter(j=>j.specialty===val));
+  renderJobs(val === "All" ? JOBS : JOBS.filter((j) => j.specialty === val));
 }
 
 function filterJobsByLocation(val) {
-  renderJobs(val==='All' ? JOBS : JOBS.filter(j=>j.location.includes(val)));
+  renderJobs(
+    val === "All" ? JOBS : JOBS.filter((j) => j.location.includes(val)),
+  );
 }
 
 function toggleJobSave(jobId, btn) {
-  const job = JOBS.find(j=>j.id===jobId);
+  const job = JOBS.find((j) => j.id === jobId);
   if (!job) return;
   job.saved = !job.saved;
-  btn.classList.toggle('saved', job.saved);
-  showToast(job.saved ? '🔖 Job saved!' : 'Job removed from saved');
+  btn.classList.toggle("saved", job.saved);
+  showToast(job.saved ? "🔖 Job saved!" : "Job removed from saved");
 }
 
 function switchJobsTab(tab, btn) {
-  document.querySelectorAll('.jobs-tab').forEach(b=>b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  const jobsList = document.getElementById('jobs-list');
-  const appsList = document.getElementById('applications-list');
-  if (tab === 'browse') {
-    if (jobsList) jobsList.style.display='';
-    if (appsList) appsList.style.display='none';
+  document
+    .querySelectorAll(".jobs-tab")
+    .forEach((b) => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  const jobsList = document.getElementById("jobs-list");
+  const appsList = document.getElementById("applications-list");
+  if (tab === "browse") {
+    if (jobsList) jobsList.style.display = "";
+    if (appsList) appsList.style.display = "none";
     renderJobs();
-  } else if (tab === 'saved') {
-    if (jobsList) jobsList.style.display='';
-    if (appsList) appsList.style.display='none';
-    renderJobs(JOBS.filter(j=>j.saved));
-  } else if (tab === 'applications') {
-    if (jobsList) jobsList.style.display='none';
-    if (appsList) appsList.style.display='';
+  } else if (tab === "saved") {
+    if (jobsList) jobsList.style.display = "";
+    if (appsList) appsList.style.display = "none";
+    renderJobs(JOBS.filter((j) => j.saved));
+  } else if (tab === "applications") {
+    if (jobsList) jobsList.style.display = "none";
+    if (appsList) appsList.style.display = "";
     renderMyApplications();
   }
 }
 
 function renderMyApplications() {
-  const container = document.getElementById('applications-list');
+  const container = document.getElementById("applications-list");
   if (!container) return;
   if (!MY_APPLICATIONS || MY_APPLICATIONS.length === 0) {
     container.innerHTML = `<div class="no-jobs-msg"><h3>No applications yet</h3><p>Start applying to jobs and track your progress here</p></div>`;
     return;
   }
-  container.innerHTML = MY_APPLICATIONS.map(app => `
+  container.innerHTML = MY_APPLICATIONS.map(
+    (app) => `
     <div class="application-card">
       <img src="${app.logo}" alt="${app.company}"/>
       <div class="application-info">
@@ -820,35 +1024,37 @@ function renderMyApplications() {
       </div>
       <span class="application-status ${app.statusClass}">${app.status}</span>
     </div>
-  `).join('');
+  `,
+  ).join("");
 }
 
 function openApplyModal(jobId) {
-  const job = JOBS.find(j=>j.id===jobId);
+  const job = JOBS.find((j) => j.id === jobId);
   if (!job) return;
   ApplyState.job = job;
   ApplyState.cvUploaded = false;
-  document.getElementById('apply-job-title').textContent = job.title;
-  document.getElementById('apply-job-company').textContent = job.company + ' · ' + job.location;
-  document.getElementById('apply-job-logo').src = job.companyLogo;
-  const nameInput = document.getElementById('apply-name');
-  const emailInput = document.getElementById('apply-email');
-  const coverInput = document.getElementById('apply-cover');
-  if (nameInput) nameInput.value = 'Dr. Michael Chen';
-  if (emailInput) emailInput.value = 'michael.chen@email.com';
-  if (coverInput) coverInput.value = '';
+  document.getElementById("apply-job-title").textContent = job.title;
+  document.getElementById("apply-job-company").textContent =
+    job.company + " · " + job.location;
+  document.getElementById("apply-job-logo").src = job.companyLogo;
+  const nameInput = document.getElementById("apply-name");
+  const emailInput = document.getElementById("apply-email");
+  const coverInput = document.getElementById("apply-cover");
+  if (nameInput) nameInput.value = "Dr. Michael Chen";
+  if (emailInput) emailInput.value = "michael.chen@email.com";
+  if (coverInput) coverInput.value = "";
   renderCvZone(false);
-  document.getElementById('apply-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.getElementById("apply-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
 }
 
 function closeApplyModal() {
-  document.getElementById('apply-modal').classList.remove('open');
-  document.body.style.overflow = '';
+  document.getElementById("apply-modal").classList.remove("open");
+  document.body.style.overflow = "";
 }
 
 function renderCvZone(uploaded) {
-  const zone = document.getElementById('cv-upload-zone');
+  const zone = document.getElementById("cv-upload-zone");
   if (!zone) return;
   if (uploaded) {
     zone.innerHTML = `<div class="cv-uploaded"><span>📄 Resume_MichaelChen.pdf</span><button class="cv-remove-btn" onclick="renderCvZone(false); ApplyState.cvUploaded=false;">✕</button></div>`;
@@ -866,25 +1072,37 @@ function renderCvZone(uploaded) {
 function simulateCvUpload() {
   ApplyState.cvUploaded = true;
   renderCvZone(true);
-  showToast('📄 CV uploaded successfully!');
+  showToast("📄 CV uploaded successfully!");
 }
 
 function submitApplication() {
   const job = ApplyState.job;
   if (!job) return;
-  if (!ApplyState.cvUploaded) { showToast('⚠️ Please upload your CV first'); return; }
+  if (!ApplyState.cvUploaded) {
+    showToast("⚠️ Please upload your CV first");
+    return;
+  }
   job.applied = true;
   job.applicants += 1;
-  MY_APPLICATIONS.unshift({ id:job.id, title:job.title, company:job.company, logo:job.companyLogo, appliedDate:'Just now', status:'Under Review', statusClass:'under-review' });
+  MY_APPLICATIONS.unshift({
+    id: job.id,
+    title: job.title,
+    company: job.company,
+    logo: job.companyLogo,
+    appliedDate: "Just now",
+    status: "Under Review",
+    statusClass: "under-review",
+  });
   closeApplyModal();
-  document.getElementById('apply-success-job').textContent = job.title + ' at ' + job.company;
-  document.getElementById('apply-success-modal').classList.add('open');
+  document.getElementById("apply-success-job").textContent =
+    job.title + " at " + job.company;
+  document.getElementById("apply-success-modal").classList.add("open");
   renderJobs();
 }
 
 function closeApplySuccess() {
-  document.getElementById('apply-success-modal').classList.remove('open');
-  document.body.style.overflow = '';
+  document.getElementById("apply-success-modal").classList.remove("open");
+  document.body.style.overflow = "";
 }
 
 /* ============================================================
@@ -893,166 +1111,214 @@ function closeApplySuccess() {
 
 /* Switch settings tab */
 function switchSettingsTab(tab, btn) {
-  document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-  const target = document.getElementById('stab-' + tab);
-  if (target) target.classList.add('active');
+  document
+    .querySelectorAll(".settings-nav-item")
+    .forEach((b) => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  document
+    .querySelectorAll(".settings-tab")
+    .forEach((t) => t.classList.remove("active"));
+  const target = document.getElementById("stab-" + tab);
+  if (target) target.classList.add("active");
 }
 
 /* Toggle a settings switch */
 function toggleSettingSwitch(id, labelId, onMsg, offMsg) {
   const btn = document.getElementById(id);
   if (!btn) return;
-  const isOn = btn.classList.toggle('on');
+  const isOn = btn.classList.toggle("on");
   if (labelId) {
     const label = document.getElementById(labelId);
-    if (label) label.textContent = isOn ? 'On' : 'Off';
+    if (label) label.textContent = isOn ? "On" : "Off";
   }
-  showToast(isOn ? (onMsg || '✓ Saved!') : (offMsg || '✓ Saved!'));
+  showToast(isOn ? onMsg || "✓ Saved!" : offMsg || "✓ Saved!");
 }
 
 /* Save settings section */
 function saveSettings(section) {
   // Update sidebar name if profile saved
-  if (section === 'Profile') {
-    const nameVal = document.getElementById('sf-name');
+  if (section === "Profile") {
+    const nameVal = document.getElementById("sf-name");
     if (nameVal && nameVal.value) {
-      const sidebarName = document.querySelector('.sidebar-user-name');
-      if (sidebarName) sidebarName.textContent = nameVal.value.length > 14 ? nameVal.value.slice(0,13)+'...' : nameVal.value;
+      const sidebarName = document.querySelector(".sidebar-user-name");
+      if (sidebarName)
+        sidebarName.textContent =
+          nameVal.value.length > 14
+            ? nameVal.value.slice(0, 13) + "..."
+            : nameVal.value;
     }
-    const specialtyVal = document.getElementById('sf-specialty');
+    const specialtyVal = document.getElementById("sf-specialty");
     if (specialtyVal) {
-      const sidebarRole = document.querySelector('.sidebar-user-role');
+      const sidebarRole = document.querySelector(".sidebar-user-role");
       if (sidebarRole) sidebarRole.textContent = specialtyVal.value;
     }
   }
-  showToast('✓ ' + section + ' settings saved!');
+  showToast("✓ " + section + " settings saved!");
 }
 
 /* Select theme — REAL implementation */
 function selectTheme(theme, el) {
-  document.querySelectorAll('.settings-theme-card').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
+  document
+    .querySelectorAll(".settings-theme-card")
+    .forEach((c) => c.classList.remove("active"));
+  el.classList.add("active");
 
-  if (theme === 'dark') {
-    document.body.classList.add('dark-mode');
-    localStorage.setItem('hu-theme', 'dark');
-    showToast('🌙 Dark mode enabled!');
-  } else if (theme === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.body.classList.toggle('dark-mode', prefersDark);
-    localStorage.setItem('hu-theme', 'system');
-    showToast('💻 System theme applied!');
+  if (theme === "dark") {
+    document.body.classList.add("dark-mode");
+    localStorage.setItem("hu-theme", "dark");
+    showToast("🌙 Dark mode enabled!");
+  } else if (theme === "system") {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    document.body.classList.toggle("dark-mode", prefersDark);
+    localStorage.setItem("hu-theme", "system");
+    showToast("💻 System theme applied!");
   } else {
-    document.body.classList.remove('dark-mode');
-    localStorage.setItem('hu-theme', 'light');
-    showToast('☀️ Light mode enabled!');
+    document.body.classList.remove("dark-mode");
+    localStorage.setItem("hu-theme", "light");
+    showToast("☀️ Light mode enabled!");
   }
 }
 
 /* Apply saved theme on load */
 function applyStoredTheme() {
-  const saved = localStorage.getItem('hu-theme') || 'light';
-  if (saved === 'dark') {
-    document.body.classList.add('dark-mode');
-    const card = document.getElementById('theme-dark');
-    if (card) { document.querySelectorAll('.settings-theme-card').forEach(c=>c.classList.remove('active')); card.classList.add('active'); }
-  } else if (saved === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.body.classList.toggle('dark-mode', prefersDark);
-    const card = document.getElementById('theme-system');
-    if (card) { document.querySelectorAll('.settings-theme-card').forEach(c=>c.classList.remove('active')); card.classList.add('active'); }
+  const saved = localStorage.getItem("hu-theme") || "light";
+  if (saved === "dark") {
+    document.body.classList.add("dark-mode");
+    const card = document.getElementById("theme-dark");
+    if (card) {
+      document
+        .querySelectorAll(".settings-theme-card")
+        .forEach((c) => c.classList.remove("active"));
+      card.classList.add("active");
+    }
+  } else if (saved === "system") {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    document.body.classList.toggle("dark-mode", prefersDark);
+    const card = document.getElementById("theme-system");
+    if (card) {
+      document
+        .querySelectorAll(".settings-theme-card")
+        .forEach((c) => c.classList.remove("active"));
+      card.classList.add("active");
+    }
   }
 }
 
 /* Confirm logout */
 function confirmLogout() {
-  document.getElementById('logout-modal').classList.add('open');
+  document.getElementById("logout-modal").classList.add("open");
 }
 
 /* ============================================================
    ✨ SETTINGS PAGE LOGIC
    ============================================================ */
- 
+
 /* Switch settings tab */
 function switchSettingsTab(tab, btn) {
-  document.querySelectorAll('.settings-nav-item').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
-  const target = document.getElementById('stab-' + tab);
-  if (target) target.classList.add('active');
+  document
+    .querySelectorAll(".settings-nav-item")
+    .forEach((b) => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  document
+    .querySelectorAll(".settings-tab")
+    .forEach((t) => t.classList.remove("active"));
+  const target = document.getElementById("stab-" + tab);
+  if (target) target.classList.add("active");
 }
- 
+
 /* Toggle a settings switch */
 function toggleSettingSwitch(id, labelId, onMsg, offMsg) {
   const btn = document.getElementById(id);
   if (!btn) return;
-  const isOn = btn.classList.toggle('on');
+  const isOn = btn.classList.toggle("on");
   if (labelId) {
     const label = document.getElementById(labelId);
-    if (label) label.textContent = isOn ? 'On' : 'Off';
+    if (label) label.textContent = isOn ? "On" : "Off";
   }
-  showToast(isOn ? (onMsg || '✓ Saved!') : (offMsg || '✓ Saved!'));
+  showToast(isOn ? onMsg || "✓ Saved!" : offMsg || "✓ Saved!");
 }
- 
+
 /* Save settings section */
 function saveSettings(section) {
   // Update sidebar name if profile saved
-  if (section === 'Profile') {
-    const nameVal = document.getElementById('sf-name');
+  if (section === "Profile") {
+    const nameVal = document.getElementById("sf-name");
     if (nameVal && nameVal.value) {
-      const sidebarName = document.querySelector('.sidebar-user-name');
-      if (sidebarName) sidebarName.textContent = nameVal.value.length > 14 ? nameVal.value.slice(0,13)+'...' : nameVal.value;
+      const sidebarName = document.querySelector(".sidebar-user-name");
+      if (sidebarName)
+        sidebarName.textContent =
+          nameVal.value.length > 14
+            ? nameVal.value.slice(0, 13) + "..."
+            : nameVal.value;
     }
-    const specialtyVal = document.getElementById('sf-specialty');
+    const specialtyVal = document.getElementById("sf-specialty");
     if (specialtyVal) {
-      const sidebarRole = document.querySelector('.sidebar-user-role');
+      const sidebarRole = document.querySelector(".sidebar-user-role");
       if (sidebarRole) sidebarRole.textContent = specialtyVal.value;
     }
   }
-  showToast('✓ ' + section + ' settings saved!');
+  showToast("✓ " + section + " settings saved!");
 }
- 
+
 /* Select theme — REAL implementation */
 function selectTheme(theme, el) {
-  document.querySelectorAll('.settings-theme-card').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
- 
-  if (theme === 'dark') {
-    document.body.classList.add('dark-mode');
-    localStorage.setItem('hu-theme', 'dark');
-    showToast('🌙 Dark mode enabled!');
-  } else if (theme === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.body.classList.toggle('dark-mode', prefersDark);
-    localStorage.setItem('hu-theme', 'system');
-    showToast('💻 System theme applied!');
+  document
+    .querySelectorAll(".settings-theme-card")
+    .forEach((c) => c.classList.remove("active"));
+  el.classList.add("active");
+
+  if (theme === "dark") {
+    document.body.classList.add("dark-mode");
+    localStorage.setItem("hu-theme", "dark");
+    showToast("🌙 Dark mode enabled!");
+  } else if (theme === "system") {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    document.body.classList.toggle("dark-mode", prefersDark);
+    localStorage.setItem("hu-theme", "system");
+    showToast("💻 System theme applied!");
   } else {
-    document.body.classList.remove('dark-mode');
-    localStorage.setItem('hu-theme', 'light');
-    showToast('☀️ Light mode enabled!');
+    document.body.classList.remove("dark-mode");
+    localStorage.setItem("hu-theme", "light");
+    showToast("☀️ Light mode enabled!");
   }
 }
- 
+
 /* Apply saved theme on load */
 function applyStoredTheme() {
-  const saved = localStorage.getItem('hu-theme') || 'light';
-  if (saved === 'dark') {
-    document.body.classList.add('dark-mode');
-    const card = document.getElementById('theme-dark');
-    if (card) { document.querySelectorAll('.settings-theme-card').forEach(c=>c.classList.remove('active')); card.classList.add('active'); }
-  } else if (saved === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.body.classList.toggle('dark-mode', prefersDark);
-    const card = document.getElementById('theme-system');
-    if (card) { document.querySelectorAll('.settings-theme-card').forEach(c=>c.classList.remove('active')); card.classList.add('active'); }
+  const saved = localStorage.getItem("hu-theme") || "light";
+  if (saved === "dark") {
+    document.body.classList.add("dark-mode");
+    const card = document.getElementById("theme-dark");
+    if (card) {
+      document
+        .querySelectorAll(".settings-theme-card")
+        .forEach((c) => c.classList.remove("active"));
+      card.classList.add("active");
+    }
+  } else if (saved === "system") {
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    document.body.classList.toggle("dark-mode", prefersDark);
+    const card = document.getElementById("theme-system");
+    if (card) {
+      document
+        .querySelectorAll(".settings-theme-card")
+        .forEach((c) => c.classList.remove("active"));
+      card.classList.add("active");
+    }
   }
 }
- 
+
 /* Confirm logout */
 function confirmLogout() {
-  document.getElementById('logout-modal').classList.add('open');
+  document.getElementById("logout-modal").classList.add("open");
 }
 
 /* ============================================
@@ -1064,30 +1330,37 @@ function renderWallet() {
   renderEarningsLegend();
 }
 
-function renderTransactions(filter = 'all') {
-  const container = document.getElementById('transactions-list');
-  if (!container || typeof TRANSACTIONS === 'undefined') return;
-  
-  const filtered = filter === 'all' 
-    ? TRANSACTIONS 
-    : TRANSACTIONS.filter(t => t.type === filter);
-  
+function renderTransactions(filter = "all") {
+  const container = document.getElementById("transactions-list");
+  if (!container || typeof TRANSACTIONS === "undefined") return;
+
+  const filtered =
+    filter === "all"
+      ? TRANSACTIONS
+      : TRANSACTIONS.filter((t) => t.type === filter);
+
   if (filtered.length === 0) {
-    container.innerHTML = '<div class="no-jobs-msg"><h3>No transactions found</h3><p>Try a different filter</p></div>';
+    container.innerHTML =
+      '<div class="no-jobs-msg"><h3>No transactions found</h3><p>Try a different filter</p></div>';
     return;
   }
-  
-  container.innerHTML = filtered.map(t => {
-    const amountClass = t.amount >= 0 
-      ? (t.currency === 'coins' ? 'coins' : 'positive') 
-      : 'negative';
-    const amountPrefix = t.amount >= 0 ? '+' : '';
-    const amountSuffix = t.currency === 'coins' ? ' coins' : '';
-    const amountDisplay = t.currency === 'coins' 
-      ? `${amountPrefix}${t.amount.toLocaleString()}${amountSuffix}`
-      : `${amountPrefix}$${Math.abs(t.amount).toFixed(2)}`;
-    
-    return `
+
+  container.innerHTML = filtered
+    .map((t) => {
+      const amountClass =
+        t.amount >= 0
+          ? t.currency === "coins"
+            ? "coins"
+            : "positive"
+          : "negative";
+      const amountPrefix = t.amount >= 0 ? "+" : "";
+      const amountSuffix = t.currency === "coins" ? " coins" : "";
+      const amountDisplay =
+        t.currency === "coins"
+          ? `${amountPrefix}${t.amount.toLocaleString()}${amountSuffix}`
+          : `${amountPrefix}$${Math.abs(t.amount).toFixed(2)}`;
+
+      return `
       <div class="transaction-row" onclick="showToast('📄 Transaction details coming soon!')">
         <div class="txn-icon ${t.type}">${t.icon}</div>
         <div class="txn-info">
@@ -1097,18 +1370,20 @@ function renderTransactions(filter = 'all') {
         <div class="txn-meta">
           <span class="txn-amount ${amountClass}">${amountDisplay}</span>
           <span class="txn-date">${t.date} · ${t.time}</span>
-          ${t.status === 'pending' ? '<span class="txn-status pending">⏳ Pending</span>' : ''}
+          ${t.status === "pending" ? '<span class="txn-status pending">⏳ Pending</span>' : ""}
         </div>
       </div>
     `;
-  }).join('');
+    })
+    .join("");
 }
 
 function renderEarningsLegend() {
-  const container = document.getElementById('earnings-legend');
-  if (!container || typeof EARNING_SOURCES === 'undefined') return;
-  
-  container.innerHTML = EARNING_SOURCES.map(s => `
+  const container = document.getElementById("earnings-legend");
+  if (!container || typeof EARNING_SOURCES === "undefined") return;
+
+  container.innerHTML = EARNING_SOURCES.map(
+    (s) => `
     <div class="earnings-legend-item">
       <div class="legend-color" style="background:${s.color}"></div>
       <div class="legend-info">
@@ -1117,38 +1392,41 @@ function renderEarningsLegend() {
       </div>
       <span class="legend-amount">$${s.amount.toFixed(2)}</span>
     </div>
-  `).join('');
+  `,
+  ).join("");
 }
 
 function filterTransactions(filter, btn) {
-  document.querySelectorAll('.txn-filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document
+    .querySelectorAll(".txn-filter-btn")
+    .forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
   renderTransactions(filter);
 }
 
 function openWithdrawModal() {
-  document.getElementById('withdraw-amount').value = '';
+  document.getElementById("withdraw-amount").value = "";
   updateWithdrawDisplay(0);
-  document.getElementById('withdraw-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.getElementById("withdraw-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
 }
 
 function closeWithdrawModal() {
-  document.getElementById('withdraw-modal').classList.remove('open');
-  document.body.style.overflow = '';
+  document.getElementById("withdraw-modal").classList.remove("open");
+  document.body.style.overflow = "";
 }
 
 function setWithdrawAmount(amount) {
-  document.getElementById('withdraw-amount').value = amount;
+  document.getElementById("withdraw-amount").value = amount;
   validateWithdrawAmount();
 }
 
 function validateWithdrawAmount() {
-  const input = document.getElementById('withdraw-amount');
-  const btn = document.getElementById('withdraw-confirm-btn');
+  const input = document.getElementById("withdraw-amount");
+  const btn = document.getElementById("withdraw-confirm-btn");
   const amount = parseFloat(input.value) || 0;
-  const maxBalance = 124.50;
-  
+  const maxBalance = 124.5;
+
   if (amount >= 10 && amount <= maxBalance) {
     btn.disabled = false;
     updateWithdrawDisplay(amount);
@@ -1159,44 +1437,102 @@ function validateWithdrawAmount() {
 }
 
 function updateWithdrawDisplay(amount) {
-  document.getElementById('withdraw-display-amount').textContent = `$${amount.toFixed(2)}`;
-  document.getElementById('withdraw-receive-amount').textContent = `$${amount.toFixed(2)}`;
+  document.getElementById("withdraw-display-amount").textContent =
+    `$${amount.toFixed(2)}`;
+  document.getElementById("withdraw-receive-amount").textContent =
+    `$${amount.toFixed(2)}`;
 }
 
 function confirmWithdrawal() {
-  const amount = parseFloat(document.getElementById('withdraw-amount').value) || 0;
-  const method = document.querySelector('input[name="withdraw-method"]:checked').value;
-  const methodLabels = { bank: '2-3 business days', upi: 'within minutes', paypal: '1-2 business days' };
-  
+  const amount =
+    parseFloat(document.getElementById("withdraw-amount").value) || 0;
+  const method = document.querySelector(
+    'input[name="withdraw-method"]:checked',
+  ).value;
+  const methodLabels = {
+    bank: "2-3 business days",
+    upi: "within minutes",
+    paypal: "1-2 business days",
+  };
+
   closeWithdrawModal();
-  
+
   // Update balance
-  const currentBal = parseFloat(document.getElementById('wallet-balance').textContent);
+  const currentBal = parseFloat(
+    document.getElementById("wallet-balance").textContent,
+  );
   const newBal = Math.max(0, currentBal - amount);
-  document.getElementById('wallet-balance').textContent = newBal.toFixed(2);
-  document.getElementById('user-balance').textContent = newBal.toFixed(2);
-  const mobBal = document.getElementById('mobile-user-balance');
+  document.getElementById("wallet-balance").textContent = newBal.toFixed(2);
+  document.getElementById("user-balance").textContent = newBal.toFixed(2);
+  const mobBal = document.getElementById("mobile-user-balance");
   if (mobBal) mobBal.textContent = newBal.toFixed(2);
-  
+
   // Show success
-  document.getElementById('withdraw-success-details').innerHTML = 
+  document.getElementById("withdraw-success-details").innerHTML =
     `Your withdrawal of <strong>$${amount.toFixed(2)}</strong> has been initiated. You'll receive it ${methodLabels[method]}.`;
-  document.getElementById('withdraw-success-modal').classList.add('open');
+  document.getElementById("withdraw-success-modal").classList.add("open");
 }
 
 function closeWithdrawSuccess() {
-  document.getElementById('withdraw-success-modal').classList.remove('open');
-  document.body.style.overflow = '';
+  document.getElementById("withdraw-success-modal").classList.remove("open");
+  document.body.style.overflow = "";
 }
 
 // Update navigate function to include wallet
 const originalNavigate = navigate;
-navigate = function(pageId, clickedBtn) {
+navigate = function (pageId, clickedBtn) {
   originalNavigate(pageId, clickedBtn);
-  if (pageId === 'wallet') renderWallet();
+  if (pageId === "wallet") renderWallet();
 };
 
 function toggleSidebar() {
   document.querySelector(".sidebar").classList.toggle("open");
   document.getElementById("sidebar-overlay").classList.toggle("show");
 }
+function calculateHealthScore() {
+  const hEl = document.getElementById("hs-height");
+  const wEl = document.getElementById("hs-weight");
+  const aEl = document.getElementById("hs-age");
+  if (!hEl || !wEl || !aEl) return;
+
+  const h = parseFloat(hEl.value);
+  const w = parseFloat(wEl.value);
+  const age = parseFloat(aEl.value);
+  if (!h || !w || h <= 0) return;
+
+  const hm = h / 100;
+  const bmi = w / (hm * hm);
+  const bmiR = Math.round(bmi * 10) / 10;
+
+  let bmiScore;
+  if (bmi < 18.5) bmiScore = 60 + (bmi - 15) * 4;
+  else if (bmi <= 24.9) bmiScore = 95;
+  else if (bmi <= 29.9) bmiScore = 90 - (bmi - 25) * 6;
+  else bmiScore = 60 - (bmi - 30) * 2;
+
+  const ageFactor = age < 40 ? 0 : age < 60 ? -3 : -6;
+  const score = Math.max(10, Math.min(99, Math.round(bmiScore + ageFactor)));
+
+  let category;
+  if (bmi < 18.5) category = "underweight";
+  else if (bmi <= 24.9) category = "normal range";
+  else if (bmi <= 29.9) category = "overweight";
+  else category = "obese range";
+
+  let label;
+  if (score >= 85) label = "Excellent";
+  else if (score >= 70) label = "Good";
+  else if (score >= 50) label = "Fair";
+  else label = "Needs attention";
+
+  document.getElementById("hs-num").textContent = score;
+  document.getElementById("hs-label").textContent = label;
+  document.getElementById("hs-sub").textContent =
+    "BMI " + bmiR.toFixed(1) + " · " + category;
+  document.getElementById("hs-bar-fill").style.width = score + "%";
+}
+
+["hs-height", "hs-weight", "hs-age"].forEach(function (id) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", calculateHealthScore);
+});
