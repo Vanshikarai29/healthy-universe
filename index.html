@@ -735,6 +735,8 @@
       <div class="upload-icons">📷 🎥</div>
       <strong>Click to upload Image / Video</strong>
     </div>
+    <button type="button" class="open-camera-btn" onclick="openCameraModal()">📸
+       Open Camera — Take Photo or Record Reel</button>
     <div id="preview-container"></div>
     <div class="modal-footer">
       <button class="publish-btn" onclick="publishPost()">Post</button>
@@ -829,6 +831,44 @@
       <input type="text" id="new-msg-user-search" placeholder="Search by name..." oninput="searchUsersForChat(this.value)"/>
     </div>
     <div id="new-msg-users-list" class="new-msg-users-list"></div>
+  </div>
+</div>
+
+<!-- CAMERA MODAL -->
+<div class="camera-modal-overlay" id="camera-modal">
+  <div class="camera-modal-box">
+    <button class="camera-close-btn" onclick="closeCameraModal()">✕</button>
+
+    <div class="camera-stage">
+      <video id="camera-video" autoplay playsinline muted></video>
+      <canvas id="camera-canvas" style="display:none;"></canvas>
+      <img id="camera-photo-preview" style="display:none;"/>
+      <video id="camera-video-preview" style="display:none;" controls playsinline></video>
+
+      <div class="camera-rec-timer" id="camera-rec-timer" style="display:none;">
+        <span class="camera-rec-dot"></span><span id="camera-rec-time">00:00</span>
+      </div>
+
+      <button class="camera-switch-btn" id="camera-switch-btn" onclick="switchCamera()">🔄</button>
+    </div>
+
+    <div class="camera-filters-strip" id="camera-filters-strip"></div>
+
+    <div class="camera-mode-toggle">
+      <button class="camera-mode-btn active" id="mode-photo-btn" onclick="setCameraMode('photo')">PHOTO</button>
+      <button class="camera-mode-btn" id="mode-video-btn" onclick="setCameraMode('video')">REEL</button>
+    </div>
+
+    <div class="camera-controls" id="camera-controls-live">
+      <div class="camera-controls-spacer"></div>
+      <button class="camera-capture-btn" id="camera-capture-btn" onclick="handleCaptureButton()"></button>
+      <div class="camera-controls-spacer"></div>
+    </div>
+
+    <div class="camera-controls" id="camera-controls-review" style="display:none;">
+      <button class="camera-retake-btn" onclick="retakeCapture()">↺ Retake</button>
+      <button class="camera-use-btn" onclick="useCapturedMedia()">✓ Use This</button>
+    </div>
   </div>
 </div>
 
@@ -1010,6 +1050,7 @@
 <script src="js/app.js"></script>
 <script src="js/chatbot.js"></script>
 <script src="js/chat.js"></script>
+<script src="js/camera.js"></script>
 
 <script>
 // ── Save Profile to Backend ───────────────────────────────────────────────────
