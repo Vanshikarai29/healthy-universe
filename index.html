@@ -181,6 +181,11 @@
             <strong id="chat-header-name">Name</strong>
             <span id="chat-header-status">Offline</span>
           </div>
+
+          <div class="chat-header-actions">
+  <button class="chat-call-btn" onclick="startCall('audio')" title="Voice call">📞</button>
+  <button class="chat-call-btn" onclick="startCall('video')" title="Video call">🎥</button>
+</div>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
         <!-- <div id="chat-typing-indicator" class="chat-typing-indicator" style="display:none;">typing…</div>
@@ -839,6 +844,48 @@
   </div>
 </div>
 
+
+<!-- OUTGOING CALL SCREEN -->
+<div class="call-overlay" id="outgoing-call-screen">
+  <div class="call-center">
+    <img id="outgoing-call-avatar" src="" alt=""/>
+    <h2 id="outgoing-call-name">Calling...</h2>
+    <p id="outgoing-call-status">Ringing…</p>
+  </div>
+  <div class="call-bottom-controls">
+    <button class="call-end-btn" onclick="cancelOutgoingCall()">📞</button>
+  </div>
+</div>
+
+<!-- INCOMING CALL SCREEN -->
+<div class="call-overlay" id="incoming-call-screen">
+  <div class="call-center">
+    <img id="incoming-call-avatar" src="" alt=""/>
+    <h2 id="incoming-call-name">Someone</h2>
+    <p id="incoming-call-type">Incoming voice call…</p>
+  </div>
+  <div class="call-bottom-controls incoming">
+    <button class="call-decline-btn" onclick="declineIncomingCall()">📞</button>
+    <button class="call-accept-btn" onclick="acceptIncomingCall()">📞</button>
+  </div>
+</div>
+
+<!-- ACTIVE CALL SCREEN -->
+<div class="call-overlay active-call" id="active-call-screen">
+  <video id="remote-call-video" autoplay playsinline></video>
+  <div class="active-call-audio-avatar" id="active-call-audio-avatar" style="display:none;">
+    <img id="active-call-avatar-img" src="" alt=""/>
+    <h2 id="active-call-name">Name</h2>
+  </div>
+  <video id="local-call-video" autoplay playsinline muted></video>
+  <div class="call-duration" id="call-duration">00:00</div>
+  <div class="call-bottom-controls">
+    <button class="call-control-btn" id="mute-btn" onclick="toggleMute()">🎙️</button>
+    <button class="call-control-btn" id="camera-toggle-btn" onclick="toggleCamera()">📷</button>
+    <button class="call-end-btn" onclick="endActiveCall()">📞</button>
+  </div>
+</div>
+
 <!-- NEW MESSAGE MODAL -->
 <div class="modal-overlay" id="new-message-modal" onclick="closeNewMessageModal()">
   <div class="new-msg-modal-box" onclick="event.stopPropagation()">
@@ -1068,6 +1115,7 @@
 <script src="js/chatbot.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/camera.js"></script>
+<script src="js/call.js"></script>
 
 <script>
 // ── Save Profile to Backend ───────────────────────────────────────────────────

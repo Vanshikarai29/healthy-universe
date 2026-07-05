@@ -1138,3 +1138,49 @@ body.dark-mode .new-msg-modal-box { background:#1e2128; }
 .chat-msg.mine .chat-msg-caption { color:var(--text); }
 
 body.dark-mode .chat-emoji-bar button { background:#272b33; }
+
+
+/* ============================================
+   VOICE / VIDEO CALLING
+   ============================================ */
+.chat-header-actions { display:flex; gap:8px; margin-left:auto; }
+.chat-call-btn { background:var(--green-bg); border:none; border-radius:50%; width:38px; height:38px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+.chat-call-btn:hover { background:var(--green-line); }
+
+.call-overlay { position:fixed; inset:0; background:#0b0f14; display:none; flex-direction:column; align-items:center; justify-content:center; z-index:1000; color:white; }
+.call-overlay.open { display:flex; }
+
+.call-center { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.call-center img { width:120px; height:120px; border-radius:50%; object-fit:cover; margin-bottom:8px; box-shadow:0 0 0 6px rgba(255,255,255,0.08); }
+.call-center h2 { font-size:22px; font-weight:700; }
+.call-center p { font-size:14px; color:rgba(255,255,255,0.7); }
+
+.call-bottom-controls { position:absolute; bottom:60px; display:flex; gap:28px; align-items:center; }
+.call-bottom-controls.incoming { gap:60px; }
+
+.call-end-btn, .call-accept-btn, .call-decline-btn, .call-control-btn {
+  width:60px; height:60px; border-radius:50%; border:none; font-size:24px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform .15s;
+}
+.call-end-btn:hover, .call-accept-btn:hover, .call-decline-btn:hover, .call-control-btn:hover { transform:scale(1.08); }
+
+.call-end-btn { background:#ef4444; color:white; transform:rotate(135deg); }
+.call-decline-btn { background:#ef4444; color:white; transform:rotate(135deg); }
+.call-accept-btn { background:#22c55e; color:white; }
+.call-control-btn { background:rgba(255,255,255,0.15); color:white; }
+.call-control-btn.active { background:white; color:#111; }
+
+.call-overlay.active-call { background:#000; }
+#remote-call-video { width:100%; height:100%; object-fit:cover; }
+.active-call-audio-avatar { display:flex; flex-direction:column; align-items:center; gap:14px; }
+.active-call-audio-avatar img { width:130px; height:130px; border-radius:50%; object-fit:cover; }
+.active-call-audio-avatar h2 { font-size:22px; font-weight:700; }
+
+#local-call-video { position:absolute; top:24px; right:16px; width:110px; height:150px; object-fit:cover; border-radius:14px; box-shadow:0 4px 16px rgba(0,0,0,.5); border:2px solid rgba(255,255,255,0.2); }
+
+.call-duration { position:absolute; top:24px; left:20px; font-size:14px; font-weight:600; background:rgba(0,0,0,0.4); padding:5px 14px; border-radius:99px; }
+
+@media (max-width:600px) {
+  .call-center img { width:100px; height:100px; }
+  #local-call-video { width:84px; height:114px; }
+}

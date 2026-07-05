@@ -931,6 +931,70 @@ def ws_typing(data):
         emit("typing", {"conversation_id": conv_id, "user_id": uid}, room="conv_" + conv_id, include_self=False)
 
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  VOICE/VIDEO CALLING — WebRTC signaling relay
+# ══════════════════════════════════════════════════════════════════════════════
+
+@socketio.on("call_offer")
+def handle_call_offer(data):
+    to_user = data.get("to_user_id")
+    from_user = sid_to_user.get(request.sid)
+    if not from_user or not to_user:
+        return
+    caller = db_one("SELECT name, avatar_url FROM users WHERE id=%s", (from_user,)) or {}
+    emit("call_offer", {
+        "from_user_id": from_user,
+        "from_name": caller.get("name", "Unknown"),
+        "call_type": data.get("call_type"),
+        "offer": data.get("offer"),
+    }, room=to_user)
+
+
+@socketio.on("call_answer")
+def handle_call_answer(data):
+    to_user = data.get("to_user_id")
+    from_user = sid_to_user.get(request.sid)
+    if not from_user or not to_user:
+        return
+    emit("call_answer", {"from_user_id": from_user, "answer": data.get("answer")}, room=to_user)
+
+
+@socketio.on("call_ice_candidate")
+def handle_call_ice_candidate(data):
+    to_user = data.get("to_user_id")
+    from_user = sid_to_user.get(request.sid)
+    if not from_user or not to_user:
+        return
+    emit("call_ice_candidate", {"from_user_id": from_user, "candidate": data.get("candidate")}, room=to_user)
+
+
+@socketio.on("call_reject")
+def handle_call_reject(data):
+    to_user = data.get("to_user_id")
+    from_user = sid_to_user.get(request.sid)
+    if not from_user or not to_user:
+        return
+    emit("call_reject", {"from_user_id": from_user}, room=to_user)
+
+
+@socketio.on("call_end")
+def handle_call_end(data):
+    to_user = data.get("to_user_id")
+    from_user = sid_to_user.get(request.sid)
+    if not from_user or not to_user:
+        return
+    emit("call_end", {"from_user_id": from_user}, room=to_user)
+
+
+@socketio.on("call_busy")
+def handle_call_busy(data):
+    to_user = data.get("to_user_id")
+    from_user = sid_to_user.get(request.sid)
+    if not from_user or not to_user:
+        return
+    emit("call_busy", {"from_user_id": from_user}, room=to_user)
+
 @socketio.on("mark_read")
 def ws_mark_read(data):
     conv_id = data.get("conversation_id")
