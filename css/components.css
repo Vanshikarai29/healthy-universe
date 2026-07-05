@@ -1115,3 +1115,26 @@ body.dark-mode .new-msg-modal-box { background:#1e2128; }
 @media (max-width:600px) {
   .camera-modal-box { max-width:100%; max-height:100%; }
 }
+
+
+/* ============================================
+   CHAT MEDIA MESSAGES + EMOJI BAR
+   ============================================ */
+.chat-emoji-bar { display:flex; gap:6px; padding:8px 20px 0; flex-wrap:wrap; }
+.chat-emoji-bar button { background:var(--bg); border:none; border-radius:8px; font-size:18px; padding:4px 8px; cursor:pointer; transition:background .15s; }
+.chat-emoji-bar button:hover { background:var(--green-bg); }
+
+.chat-attach-btn { background:none; border:none; font-size:20px; cursor:pointer; padding:6px; flex-shrink:0; opacity:.7; transition:opacity .15s; }
+.chat-attach-btn:hover { opacity:1; }
+
+.chat-media-preview { padding:10px 20px 0; }
+.chat-media-preview-item { position:relative; display:inline-block; }
+.chat-media-preview-item img, .chat-media-preview-item video { max-height:90px; border-radius:10px; display:block; }
+.chat-media-remove-btn { position:absolute; top:-6px; right:-6px; background:#111; color:white; border:none; border-radius:50%; width:20px; height:20px; font-size:11px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+.chat-msg-bubble-media { padding:6px !important; background:transparent !important; }
+.chat-msg-media { max-width:220px; max-height:280px; border-radius:12px; display:block; }
+.chat-msg-caption { font-size:13px; padding:6px 8px 2px; color:var(--text); }
+.chat-msg.mine .chat-msg-caption { color:var(--text); }
+
+body.dark-mode .chat-emoji-bar button { background:#272b33; }

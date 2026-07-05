@@ -323,3 +323,126 @@ navigate = function (pageId, clickedBtn) {
   hcOriginalNavigate(pageId, clickedBtn);
   if (pageId === "messages") renderConversationsList();
 };
+
+// ============================================
+// MEDIA MESSAGES + EMOJI (append to chat.js)
+// ============================================
+
+let hcPendingMediaFile = null;
+
+// ── Emoji quick insert ───────────────────────────────────────────────────────
+function insertEmoji(emoji) {
+  const input = document.getElementById("chat-input");
+  input.value += emoji;
+  input.focus();
+}
+
+// ── Media selection & preview ────────────────────────────────────────────────
+function handleChatMediaSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  hcPendingMediaFile = file;
+  const url = URL.createObjectURL(file);
+  const preview = document.getElementById("chat-media-preview");
+  const isVideo = file.type.startsWith("video");
+
+  preview.style.display = "flex";
+  preview.innerHTML = `
+    <div class="chat-media-preview-item">
+      ${isVideo
+        ? `<video src="${url}" muted></video>`
+        : `<img src="${url}"/>`}
+      <button class="chat-media-remove-btn" onclick="clearChatMediaPreview()">✕</button>
+    </div>
+  `;
+}
+
+function clearChatMediaPreview() {
+  hcPendingMediaFile = null;
+  document.getElementById("chat-media-input").value = "";
+  const preview = document.getElementById("chat-media-preview");
+  preview.style.display = "none";
+  preview.innerHTML = "";
+}
+
+// ── Upload media to backend, then send via socket ────────────────────────────
+async function uploadAndSendMediaMessage() {
+  if (!hcPendingMediaFile || !hcCurrentConversationId) return;
+
+  const fd = new FormData();
+  fd.append("media", hcPendingMediaFile);
+
+  const btn = document.querySelector(".chat-send-btn");
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await huFetch("/api/messages/upload-media", { method: "POST", body: fd });
+    if (!res || !res.ok) {
+      showToast("❌ Could not upload media");
+      return;
+    }
+    const data = await res.json();
+    const input = document.getElementById("chat-input");
+    const caption = input.value.trim();
+
+    hcSocket.emit("send_message", {
+      conversation_id: hcCurrentConversationId,
+      content: caption,
+      media_url: data.media_url,
+      media_type: data.media_type,
+    });
+
+    input.value = "";
+    clearChatMediaPreview();
+  } catch (e) {
+    showToast("❌ Error uploading media");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+// ── Override sendChatMessage to handle media ─────────────────────────────────
+const hcOriginalSendChatMessage = sendChatMessage;
+sendChatMessage = function () {
+  if (hcPendingMediaFile) {
+    uploadAndSendMediaMessage();
+    return;
+  }
+  hcOriginalSendChatMessage();
+};
+
+// ── Override hcAppendMessage to render media bubbles ─────────────────────────
+const hcOriginalAppendMessage = hcAppendMessage;
+hcAppendMessage = function (msg) {
+  const container = document.getElementById("chat-messages");
+  if (!container) return;
+
+  if (!msg.media_url) {
+    hcOriginalAppendMessage(msg);
+    return;
+  }
+
+  const currentUser = huGetUser();
+  const isMine = currentUser && String(msg.sender_id) === String(currentUser.id);
+  const time = hcFormatTime(msg.created_at);
+  const fullUrl = HU_API + msg.media_url;
+  const mediaHtml = msg.media_type === "video"
+    ? `<video src="${fullUrl}" controls class="chat-msg-media"></video>`
+    : `<img src="${fullUrl}" class="chat-msg-media"/>`;
+
+  const html = `
+    <div class="chat-msg ${isMine ? "mine" : "theirs"}">
+      <div class="chat-msg-bubble chat-msg-bubble-media">
+        ${mediaHtml}
+        ${msg.content ? `<div class="chat-msg-caption">${hcEscapeHtml(msg.content)}</div>` : ""}
+      </div>
+      <div class="chat-msg-meta">
+        <span class="chat-msg-time">${time}</span>
+        ${isMine ? `<span class="chat-msg-status">${msg.read_at ? "Read" : "Sent"}</span>` : ""}
+      </div>
+    </div>
+  `;
+  container.insertAdjacentHTML("beforeend", html);
+  container.scrollTop = container.scrollHeight;
+};

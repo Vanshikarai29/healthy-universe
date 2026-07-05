@@ -183,13 +183,30 @@
           </div>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
-        <div id="chat-typing-indicator" class="chat-typing-indicator" style="display:none;">typing…</div>
+        <!-- <div id="chat-typing-indicator" class="chat-typing-indicator" style="display:none;">typing…</div>
         <div class="chat-input-wrap">
           <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off"/>
           <button class="chat-send-btn" onclick="sendChatMessage()">
             <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
-        </div>
+        </div> -->
+        <div id="chat-typing-indicator" class="chat-typing-indicator" style="display:none;">typing…</div>
+<div id="chat-media-preview" class="chat-media-preview" style="display:none;"></div>
+<div class="chat-emoji-bar">
+  <button onclick="insertEmoji('👍')">👍</button>
+  <button onclick="insertEmoji('❤️')">❤️</button>
+  <button onclick="insertEmoji('😂')">😂</button>
+  <button onclick="insertEmoji('😮')">😮</button>
+  <button onclick="insertEmoji('😢')">😢</button>
+  <button onclick="insertEmoji('🙏')">🙏</button>
+  <button onclick="insertEmoji('🔥')">🔥</button>
+  <button onclick="insertEmoji('🎉')">🎉</button>
+</div>
+<div class="chat-input-wrap">
+  <input type="file" id="chat-media-input" accept="image/*,video/*" hidden onchange="handleChatMediaSelect(event)"/>
+  <button class="chat-attach-btn" onclick="document.getElementById('chat-media-input').click()">📎</button>
+  <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off"/>
+  <button class="chat-send-btn" onclick="sendChatMessage()">
       </div>
     </div>
   </div>

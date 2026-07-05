@@ -271,6 +271,9 @@ def init_db():
                     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """)
+
+            cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS media_url VARCHAR(500) DEFAULT '';")
+            cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS media_type VARCHAR(20) DEFAULT '';")
             # ── END NEW TABLES ───────────────────────────────────────────────
 
         conn.commit()
@@ -793,6 +796,30 @@ def start_conversation():
     return jsonify({"conversation_id": conv["id"]})
 
 
+@app.route("/api/messages/upload-media", methods=["POST"])
+@require_auth
+def upload_message_media():
+    media = request.files.get("media")
+    if not media or not media.filename:
+        return jsonify({"detail": "No file provided"}), 400
+
+    ct = media.content_type or ""
+    if ct not in (ALLOWED_IMAGES | ALLOWED_VIDEOS):
+        return jsonify({"detail": "Only images and videos are allowed"}), 400
+
+    file_bytes = media.read()
+    if len(file_bytes) > MAX_FILE_BYTES:
+        return jsonify({"detail": "File too large (max 50MB)"}), 400
+
+    ext = os.path.splitext(media.filename)[1] or ".bin"
+    fname = str(uuid.uuid4()) + ext
+    with open(os.path.join(UPLOAD_DIR, fname), "wb") as f:
+        f.write(file_bytes)
+
+    media_type = "image" if ct in ALLOWED_IMAGES else "video"
+    return jsonify({"media_url": f"/uploads/{fname}", "media_type": media_type})
+
+
 @app.route("/api/messages/conversations/<conv_id>/messages")
 @require_auth
 def get_messages(conv_id):
@@ -849,12 +876,31 @@ def ws_join_conversation(data):
         join_room("conv_" + conv_id)
 
 
+# @socketio.on("send_message")
+# def ws_send_message(data):
+#     conv_id = data.get("conversation_id")
+#     content = (data.get("content") or "").strip()
+#     uid = sid_to_user.get(request.sid)
+#     if not uid or not conv_id or not content:
+#         return
+
+#     conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
+#     if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
+#         return
+
+#     mid = str(uuid.uuid4())
+#     db_run(
+#         "INSERT INTO messages (id, conversation_id, sender_id, content) VALUES (%s,%s,%s,%s)",
+#         (mid, conv_id, uid, content)
+#     )
 @socketio.on("send_message")
 def ws_send_message(data):
     conv_id = data.get("conversation_id")
     content = (data.get("content") or "").strip()
+    media_url = data.get("media_url") or ""
+    media_type = data.get("media_type") or ""
     uid = sid_to_user.get(request.sid)
-    if not uid or not conv_id or not content:
+    if not uid or not conv_id or (not content and not media_url):
         return
 
     conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
@@ -863,8 +909,8 @@ def ws_send_message(data):
 
     mid = str(uuid.uuid4())
     db_run(
-        "INSERT INTO messages (id, conversation_id, sender_id, content) VALUES (%s,%s,%s,%s)",
-        (mid, conv_id, uid, content)
+        "INSERT INTO messages (id, conversation_id, sender_id, content, media_url, media_type) VALUES (%s,%s,%s,%s,%s,%s)",
+        (mid, conv_id, uid, content, media_url, media_type)
     )
     msg = db_one("SELECT * FROM messages WHERE id=%s", (mid,))
     msg = dict(msg)
