@@ -8,10 +8,14 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
+  /* :root {
     --green:       #22c55e;
     --green-dark:  #16a34a;
-    --green-light: #dcfce7;
+    --green-light: #dcfce7; */
+    :root {
+    --green:       #377dff;
+    --green-dark:  #196eff;
+    --green-light: #dbe8ff;
     --text:        #111827;
     --muted:       #6b7280;
     --border:      #e5e7eb;
@@ -29,9 +33,12 @@
     align-items: stretch;
   }
 
-  .auth-left {
+  /* .auth-left {
     flex: 1;
-    background: linear-gradient(145deg, #0f4c2a 0%, #166534 40%, #22c55e 100%);
+    background: linear-gradient(145deg, #0f4c2a 0%, #166534 40%, #22c55e 100%); */
+    .auth-left {
+    flex: 1;
+    background: linear-gradient(145deg, #0a2a66 0%, #1450b3 40%, #377dff 100%);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -59,12 +66,14 @@
 
   .left-logo { position: relative; z-index: 1; }
   .left-logo-text { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; color: #fff; }
-  .left-logo-text span { color: #86efac; }
+  /* .left-logo-text span { color: #86efac; } */
+  .left-logo-text span { color: #93c5fd; }
   .left-logo-sub { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 4px; letter-spacing: 0.5px; }
 
   .left-hero { position: relative; z-index: 1; }
   .left-hero h1 { font-family: 'Fraunces', serif; font-size: 42px; font-weight: 600; color: #fff; line-height: 1.2; margin-bottom: 18px; }
-  .left-hero h1 em { color: #86efac; font-style: normal; }
+  /* .left-hero h1 em { color: #86efac; font-style: normal; } */
+  .left-hero h1 em { color: #93c5fd; font-style: normal; }
   .left-hero p { color: rgba(255,255,255,0.7); font-size: 15.5px; line-height: 1.65; max-width: 360px; }
 
   .left-stats { display: flex; gap: 32px; position: relative; z-index: 1; }
@@ -109,8 +118,11 @@
     background: var(--white); outline: none;
     transition: border-color 0.2s, box-shadow 0.2s; width: 100%;
   }
+  /* .field input:focus,
+  .field select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(34,197,94,0.12); } */
+
   .field input:focus,
-  .field select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(34,197,94,0.12); }
+  .field select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(55,125,255,0.12); }
 
   .password-wrap { position: relative; }
   .password-wrap input { padding-right: 42px; }

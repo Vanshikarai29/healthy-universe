@@ -222,11 +222,16 @@ img { display: block; }
    ============================================ */
 
 /* ── LIGHT THEME (default) ── */
-:root {
+/* :root {
   --green:       #1DB954;
   --green-hover: #17a348;
   --green-bg:    #edfaf3;
-  --green-line:  #d1f5e0;
+  --green-line:  #d1f5e0; */
+  :root {
+  --green:       #377dff;
+  --green-hover: #196eff;
+  --green-bg:    #eaf1ff;
+  --green-line:  #cfe0ff;
   --bg:          #f0f2f5;
   --white:       #ffffff;
   --border:      #e5e7eb;
