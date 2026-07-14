@@ -30,6 +30,11 @@ function navigate(pageId, clickedBtn) {
   if (pageId === "consultations") renderDoctors();
   if (pageId === "jobs") renderJobs();
   if (pageId === "ads") renderAdsManager();
+  if (pageId === "games") {
+    if (typeof loadNextArcadeQuestion === "function") {
+      loadNextArcadeQuestion();
+    }
+  }
 
 }
 
@@ -1717,3 +1722,303 @@ function calculateHealthScore() {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", calculateHealthScore);
 });
+
+
+// ── SPIN THE WHEEL DAILY POPUP LOGIC ──
+
+// Page load hote hi check karega agar aaj ka spin baki hai
+document.addEventListener("DOMContentLoaded", () => {
+    checkDailySpinPopup();
+});
+
+function checkDailySpinPopup() {
+    const lastSpinDate = localStorage.getItem("lastHealthSpinDate");
+    const today = new Date().toDateString(); // Format: "Sat Jul 11 2026"
+
+    // Agar user ne aaj pehle spin nahi kiya hai, toh popup show karo
+    if (lastSpinDate !== today) {
+        setTimeout(() => {
+            const modal = document.getElementById("daily-spin-modal");
+            if (modal) modal.style.display = "flex";
+        }, 1500); // Page open hone ke 1.5 seconds baad smooth entry lega
+    }
+}
+
+function closeSpinModal() {
+    const modal = document.getElementById("daily-spin-modal");
+    if (modal) modal.style.display = "none";
+}
+
+function startLuckySpin() {
+    const wheel = document.getElementById("lucky-wheel");
+    const btn = document.getElementById("spin-trigger-btn");
+    const msg = document.getElementById("spin-reward-msg");
+    
+    if (!wheel || !btn) return;
+    
+    btn.disabled = true; // Taaki bar-bar click na ho
+    btn.style.opacity = "0.6";
+    if (msg) msg.innerText = "";
+
+    // Random rotation degree (kam se kam 5 complete rounds lagaye + extra random angle)
+    const randomDegree = Math.floor(3000 + Math.random() * 2000); 
+    wheel.style.transform = `rotate(${randomDegree}deg)`;
+
+    // 4 seconds ka spin animation khatam hone ka wait karein
+    setTimeout(() => {
+        // Rewards possibilities array
+        const rewards = [
+            "🎁 10 HU Coins!", 
+            "🍏 Free Diet Plan Chart!", 
+            "🪙 50 HU Coins Super Bonus!", 
+            "🩺 10% Off on next Consultation!", 
+            "💡 Daily Healthy Tip Unlocked!", 
+            "🎁 5 HU Coins!"
+        ];
+        
+        // Exact landing segment calculation
+        const actualMutedDegree = randomDegree % 360;
+        const segmentIndex = Math.floor(actualMutedDegree / 60); // 6 categories hain total
+        const finalReward = rewards[segmentIndex] || "🎁 5 HU Coins!";
+
+        // Reward message show karein
+        if (msg) msg.innerText = `🎉 Congratulations! You won: ${finalReward}`;
+        
+        // LocalStorage mein date save karein taaki aaj dubara na khule
+        const today = new Date().toDateString();
+        localStorage.setItem("lastHealthSpinDate", today);
+
+        // Agar project mein pehle se showToast defined hai toh use call karein
+        if (typeof showToast === "function") {
+            showToast(`Won ${finalReward}!`);
+        }
+
+        setTimeout(() => {
+            closeSpinModal();
+        }, 2500);
+
+    }, 4000); // Match with CSS transition time (4s)
+}
+
+
+// 1. 3-LEVEL DATA BANK (8 UNIQUE QUESTIONS PER LEVEL)
+const arcadeLevels = {
+    1: [
+        { type: "mcq", question: "What is the recommended average daily water intake for adults?", options: ["1-2 Liters", "3-4 Liters", "2-3 Liters", "5 Liters"], answer: 2 },
+        { type: "mcq", question: "How many hours of sleep do health experts generally recommend for adults?", options: ["5-6 hours", "7-9 hours", "10-12 hours", "4-5 hours"], answer: 1 },
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this essential daily habit: 'K L A W'", correctWord: "WALK", hint: "A simple form of physical activity done on foot." },
+        { type: "mcq", question: "Which macro-nutrient gives your body quick, immediate energy?", options: ["Proteins", "Fats", "Carbohydrates", "Vitamins"], answer: 2 },
+        { type: "mcq", question: "What is the healthiest way to cook vegetables to preserve their nutrients?", options: ["Deep Frying", "Boiling heavily", "Steaming", "Microwaving without water"], answer: 2 },
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this healthy sleep state: 'M A E R D'", correctWord: "DREAM", hint: "Occurs during the REM stage of sleeping." },
+        { type: "mcq", question: "Which of these is considered a healthy baseline resting heart rate?", options: ["60-100 bpm", "120-150 bpm", "30-40 bpm", "160-180 bpm"], answer: 0 },
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this natural stress-reliever: 'A G O Y'", correctWord: "YOGA", hint: "An ancient practice involving physical postures and breathing." }
+    ],
+    2: [
+        { type: "mcq", question: "Which vitamin is synthesized when human skin is exposed to direct sunlight?", options: ["Vitamin A", "Vitamin C", "Vitamin B12", "Vitamin D"], answer: 3 },
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this macronutrient group: 'N I E T O R P'", correctWord: "PROTEIN", hint: "Essential for muscle building and structural repair." },
+        { type: "mcq", question: "Which mineral is highly crucial for building and maintaining strong bones?", options: ["Iron", "Calcium", "Zinc", "Potassium"], answer: 1 },
+        { type: "mcq", question: "Deficiency of which vitamin causes temporary or permanent night blindness?", options: ["Vitamin B", "Vitamin K", "Vitamin A", "Vitamin C"], answer: 2 },
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this natural sugar alternative: 'Y E N O H'", correctWord: "HONEY", hint: "Sweet fluid made by bees from flower nectar." },
+        { type: "mcq", question: "Which organ produces insulin to regulate blood glucose levels?", options: ["Liver", "Pancreas", "Kidney", "Stomach"], answer: 1 },
+        { type: "mcq", question: "Citrus fruits like Oranges and Lemons are rich sources of which vitamin?", options: ["Vitamin C", "Vitamin D", "Vitamin E", "Vitamin B6"], answer: 0 },
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this gut-friendly food nutrient: 'R E B I F'", correctWord: "FIBER", hint: "Indigestible plant food part that helps your digestion." }
+    ],
+    3: [
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this vital filtering organ: 'Y E N D I K'", correctWord: "KIDNEY", hint: "It filters waste and excess fluids from your bloodstream." },
+        { type: "mcq", question: "What is the normal blood pressure range for a healthy resting adult?", options: ["140/90 mmHg", "120/80 mmHg", "90/60 mmHg", "160/100 mmHg"], answer: 1 },
+        { type: "mcq", question: "Which type of blood cells are primarily responsible for fighting infections?", options: ["Red Blood Cells", "White Blood Cells", "Platelets", "Plasma Cells"], answer: 1 },
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this critical master body gland: 'Y R A T I U T I P'", correctWord: "PITUITARY", hint: "The master gland at the base of the brain regulating hormones." },
+        { type: "mcq", question: "What is the largest internal organ in the entire human body?", options: ["Brain", "Liver", "Heart", "Lungs"], answer: 1 },
+        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this compound that carries oxygen: 'N I B O L G O M E H'", correctWord: "HEMOGLOBIN", hint: "Iron-rich protein present in your red blood cells." },
+        { type: "mcq", question: "How many bones are there in an adult human skeletal framework?", options: ["206 bones", "306 bones", "156 bones", "216 bones"], answer: 0 },
+        { type: "mcq", question: "Which vital biological gas do red blood cells distribute to your tissues?", options: ["Nitrogen", "Carbon Dioxide", "Oxygen", "Hydrogen"], answer: 2 }
+    ]
+};
+
+// State Tracking Variables
+let arcadeScore = 0;
+let currentLevel = 1; 
+let currentQuestionData = null;
+let currentLevelQueue = [];
+
+// Fisher-Yates Shuffle Algorithm to randomize layout questions within a specific level
+function shuffleLevelPool(level) {
+    let tempPool = [...arcadeLevels[level]];
+    for (let i = tempPool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tempPool[i], tempPool[j]] = [tempPool[j], tempPool[i]];
+    }
+    return tempPool;
+}
+
+// 2. MAIN ENGINE: LOAD LEVEL SMART QUESTION
+function loadNextArcadeQuestion() {
+    const qText = document.getElementById("arcade-question");
+    const optContainer = document.getElementById("arcade-options-container");
+    const nextBtn = document.getElementById("arcade-next-btn");
+
+    if (!qText || !optContainer) return;
+
+    if (nextBtn) nextBtn.style.display = "none";
+    optContainer.innerHTML = "";
+
+    // Clear unique inline grid configurations
+    optContainer.style.display = "grid";
+    optContainer.style.gridTemplateColumns = "1fr 1fr";
+    optContainer.style.flexDirection = "unset";
+    optContainer.style.gap = "16px";
+
+    // Level Check and Switch Logic
+    if (currentLevelQueue.length === 0) {
+        if (arcadeLevels[currentLevel]) {
+            currentLevelQueue = shuffleLevelPool(currentLevel);
+            showToast(`Welcome to Level ${currentLevel}! 🚀`);
+        } else {
+            // Infinite Fallback: Game completes all 3 levels, resets back dynamically to 1 with accumulated score
+            qText.innerHTML = `🎉 Champion Status! You completed all 3 levels with ${arcadeScore} points!`;
+            optContainer.innerHTML = `<button onclick="resetWholeArcadeGame()" style="grid-column: span 2; background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">Restart Arcade 🔄</button>`;
+            return;
+        }
+    }
+
+    // Extract next non-repeating question from current level
+    currentQuestionData = currentLevelQueue.pop();
+
+    if (currentQuestionData.type === "mcq") {
+        qText.textContent = `[Level ${currentLevel}] ${currentQuestionData.question}`;
+        
+        currentQuestionData.options.forEach((option, index) => {
+            const btn = document.createElement("button");
+            btn.textContent = option;
+            btn.style.cssText = "background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 15px; cursor: pointer; font-weight: 500; transition: 0.2s; color: #334155;";
+            
+            btn.onmouseover = () => btn.style.background = "#f1f5f9";
+            btn.onmouseout = () => { if(!btn.disabled) btn.style.background = "#f8fafc"; };
+            btn.onclick = () => checkMcqAnswer(index, btn);
+            
+            optContainer.appendChild(btn);
+        });
+    } else if (currentQuestionData.type === "puzzle") {
+        qText.textContent = `[Level ${currentLevel}] ${currentQuestionData.question}`;
+        
+        optContainer.style.display = "flex";
+        optContainer.style.flexDirection = "column";
+        optContainer.style.gap = "12px";
+
+        const inputField = document.createElement("input");
+        inputField.type = "text";
+        inputField.placeholder = `Hint: ${currentQuestionData.hint}`;
+        inputField.id = "puzzle-input";
+        inputField.style.cssText = "width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 16px; text-align: center; font-weight: bold; text-transform: uppercase; box-sizing: border-box;";
+        inputField.onkeyup = (e) => { if(e.key === 'Enter') submitBtn.click(); };
+
+        const submitBtn = document.createElement("button");
+        submitBtn.textContent = "Verify Answer 🗝️";
+        submitBtn.style.cssText = "background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;";
+        submitBtn.onclick = () => checkPuzzleAnswer(inputField, submitBtn);
+        
+        optContainer.appendChild(inputField);
+        optContainer.appendChild(submitBtn);
+        
+        setTimeout(() => inputField.focus(), 50);
+    }
+}
+
+// 3. ANSWER VALIDATION (MCQ)
+function checkMcqAnswer(selectedIndex, clickedBtn) {
+    const optContainer = document.getElementById("arcade-options-container");
+    const nextBtn = document.getElementById("arcade-next-btn");
+    const scoreElement = document.getElementById("arcade-score");
+    
+    const buttons = optContainer.querySelectorAll("button");
+    buttons.forEach(btn => btn.disabled = true);
+
+    if (selectedIndex === currentQuestionData.answer) {
+        clickedBtn.style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important;";
+        arcadeScore += 10;
+        showToast("Correct! +10 HU Coins 🎉");
+    } else {
+        clickedBtn.style.cssText += "background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important;";
+        buttons[currentQuestionData.answer].style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important;";
+        showToast("Oops! Incorrect 😢");
+    }
+
+    if(scoreElement) scoreElement.textContent = arcadeScore;
+    if (nextBtn) nextBtn.style.display = "inline-block";
+}
+
+// 4. ANSWER VALIDATION (PUZZLE)
+function checkPuzzleAnswer(inputField, submitBtn) {
+    const nextBtn = document.getElementById("arcade-next-btn");
+    const scoreElement = document.getElementById("arcade-score");
+    const userAnswer = inputField.value.trim().toUpperCase();
+
+    if(userAnswer === "") return;
+
+    inputField.disabled = true;
+    submitBtn.disabled = true;
+
+    if (userAnswer === currentQuestionData.correctWord) {
+        inputField.style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important;";
+        arcadeScore += 15;
+        showToast("Puzzle Cracked! +15 HU Coins 🧩");
+    } else {
+        inputField.style.cssText += "background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important;";
+        inputField.value = `Wrong! Answer: ${currentQuestionData.correctWord}`;
+        showToast("Incorrect Puzzle! 💥");
+    }
+
+    if(scoreElement) scoreElement.textContent = arcadeScore;
+    if (nextBtn) nextBtn.style.display = "inline-block";
+}
+
+// 5. NEXT BUTTON ENGINE ADVANCE
+function loadNextArcadeQuestionAndAdvance() {
+    // Agar current level ke saare 8 questions khatam ho gaye, toh level badhao
+    if (currentLevelQueue.length === 0) {
+        currentLevel++;
+    }
+    loadNextArcadeQuestion();
+}
+
+// 6. TOTAL RESET RESET MATRIX
+function resetWholeArcadeGame() {
+    arcadeScore = 0;
+    currentLevel = 1;
+    currentLevelQueue = [];
+    const scoreElement = document.getElementById("arcade-score");
+    if(scoreElement) scoreElement.textContent = "0";
+    loadNextArcadeQuestion();
+}
+
+
+function switchTab(tabName) {
+  // 1. Saare pages se 'active' class hatayein aur unhe hide karein
+  document.querySelectorAll(".page").forEach((page) => {
+    page.classList.remove("active");
+    page.style.display = "none";
+  });
+
+  // 2. Target page dhoondhein aur use active karein
+  const targetPage = document.getElementById(`page-${tabName}`);
+  if (targetPage) {
+    targetPage.classList.add("active");
+    
+    // Games (Arcade) page ko strictly FLEX layout dena taaki card stretch ho sake
+    if (tabName === "games") {
+        targetPage.style.setProperty("display", "flex", "important");
+    } else {
+        targetPage.style.setProperty("display", "block", "important");
+    }
+  }
+
+  // 3. Sidebar navigation links ka active status update karein
+  document.querySelectorAll(".nav-item").forEach((nav) => {
+    nav.classList.remove("active");
+  });
+  
+  const activeNav = document.getElementById(`nav-${tabName}`);
+  if (activeNav) {
+    activeNav.classList.add("active");
+  }
+}

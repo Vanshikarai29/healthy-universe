@@ -23,6 +23,7 @@ DATABASE_URL = os.getenv(
 
 ALLOWED_IMAGES = {"image/jpeg","image/png","image/gif","image/webp"}
 ALLOWED_VIDEOS = {"video/mp4","video/webm","video/quicktime"}
+ALLOWED_AUDIO = {"audio/webm","audio/mp4","audio/mpeg","audio/ogg","audio/wav"}
 MAX_FILE_BYTES = 50 * 1024 * 1024
 
 # ─── APP ───────────────────────────────────────────────────────────────────────
@@ -274,6 +275,31 @@ def init_db():
 
             cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS media_url VARCHAR(500) DEFAULT '';")
             cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS media_type VARCHAR(20) DEFAULT '';")
+
+
+
+            cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS reply_to_id VARCHAR(36) DEFAULT NULL;")
+            cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS edited_at TIMESTAMP DEFAULT NULL;")
+            cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT FALSE;")
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS pinned_conversations (
+                    id              VARCHAR(36) NOT NULL PRIMARY KEY,
+                    user_id         VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    conversation_id VARCHAR(36) NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+                    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE (user_id, conversation_id)
+                );
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS blocked_users (
+                    id          VARCHAR(36) NOT NULL PRIMARY KEY,
+                    blocker_id  VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    blocked_id  VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE (blocker_id, blocked_id)
+                );
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_messages_conv_created ON messages(conversation_id, created_at);")
             # ── END NEW TABLES ───────────────────────────────────────────────
 
         conn.commit()
@@ -745,6 +771,42 @@ def search_users():
     return jsonify([dict(r) for r in rows])
 
 
+# @app.route("/api/messages/conversations")
+# @require_auth
+# def list_conversations():
+#     uid = str(request.current_user["id"])
+#     rows = db_all(
+#         "SELECT * FROM conversations WHERE user_a_id=%s OR user_b_id=%s ORDER BY created_at DESC",
+#         (uid, uid)
+#     )
+#     result = []
+#     for c in rows:
+#         c = dict(c)
+#         other_id = c["user_b_id"] if str(c["user_a_id"]) == uid else c["user_a_id"]
+#         other = db_one("SELECT id, name, specialty, avatar_url FROM users WHERE id=%s", (other_id,)) or {}
+#         last_msg = db_one(
+#             "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at DESC LIMIT 1",
+#             (c["id"],)
+#         )
+#         unread = db_one(
+#             "SELECT COUNT(*) AS n FROM messages WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
+#             (c["id"], uid)
+#         )
+#         result.append({
+#             "id": c["id"],
+#             "other_user": {
+#                 "id": str(other.get("id","")),
+#                 "name": other.get("name","Unknown"),
+#                 "specialty": other.get("specialty",""),
+#                 "avatar": other.get("avatar_url",""),
+#                 "online": online_users.get(str(other.get("id","")), False),
+#             },
+#             "last_message": (dict(last_msg)["content"] if last_msg else ""),
+#             "last_time": (dict(last_msg)["created_at"].isoformat() if last_msg else ""),
+#             "unread_count": unread["n"] if unread else 0,
+#         })
+#     return jsonify(result)
+
 @app.route("/api/messages/conversations")
 @require_auth
 def list_conversations():
@@ -753,32 +815,44 @@ def list_conversations():
         "SELECT * FROM conversations WHERE user_a_id=%s OR user_b_id=%s ORDER BY created_at DESC",
         (uid, uid)
     )
+    pinned_rows = db_all("SELECT conversation_id FROM pinned_conversations WHERE user_id=%s", (uid,))
+    pinned_ids = set(str(p["conversation_id"]) for p in pinned_rows)
+
+    blocked_rows = db_all("SELECT blocked_id FROM blocked_users WHERE blocker_id=%s", (uid,))
+    blocked_by_me = set(str(b["blocked_id"]) for b in blocked_rows)
+
     result = []
     for c in rows:
         c = dict(c)
         other_id = c["user_b_id"] if str(c["user_a_id"]) == uid else c["user_a_id"]
         other = db_one("SELECT id, name, specialty, avatar_url FROM users WHERE id=%s", (other_id,)) or {}
         last_msg = db_one(
-            "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at DESC LIMIT 1",
+            "SELECT * FROM messages WHERE conversation_id=%s AND is_deleted=FALSE ORDER BY created_at DESC LIMIT 1",
             (c["id"],)
         )
         unread = db_one(
-            "SELECT COUNT(*) AS n FROM messages WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
+            "SELECT COUNT(*) AS n FROM messages WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL AND is_deleted=FALSE",
             (c["id"], uid)
         )
         result.append({
             "id": c["id"],
+            "is_pinned": str(c["id"]) in pinned_ids,
             "other_user": {
                 "id": str(other.get("id","")),
                 "name": other.get("name","Unknown"),
                 "specialty": other.get("specialty",""),
                 "avatar": other.get("avatar_url",""),
                 "online": online_users.get(str(other.get("id","")), False),
+                "blocked_by_me": str(other.get("id","")) in blocked_by_me,
             },
             "last_message": (dict(last_msg)["content"] if last_msg else ""),
+            "last_media_type": (dict(last_msg).get("media_type","") if last_msg else ""),
             "last_time": (dict(last_msg)["created_at"].isoformat() if last_msg else ""),
             "unread_count": unread["n"] if unread else 0,
         })
+
+    result.sort(key=lambda r: (not r["is_pinned"], r["last_time"] or ""), reverse=False)
+    result.sort(key=lambda r: r["is_pinned"], reverse=True)
     return jsonify(result)
 
 
@@ -803,9 +877,13 @@ def upload_message_media():
     if not media or not media.filename:
         return jsonify({"detail": "No file provided"}), 400
 
+    # ct = media.content_type or ""
+    # if ct not in (ALLOWED_IMAGES | ALLOWED_VIDEOS):
+    #     return jsonify({"detail": "Only images and videos are allowed"}), 400
+
     ct = media.content_type or ""
-    if ct not in (ALLOWED_IMAGES | ALLOWED_VIDEOS):
-        return jsonify({"detail": "Only images and videos are allowed"}), 400
+    if ct not in (ALLOWED_IMAGES | ALLOWED_VIDEOS | ALLOWED_AUDIO):
+        return jsonify({"detail": "Only images, videos, and audio are allowed"}), 400
 
     file_bytes = media.read()
     if len(file_bytes) > MAX_FILE_BYTES:
@@ -816,10 +894,132 @@ def upload_message_media():
     with open(os.path.join(UPLOAD_DIR, fname), "wb") as f:
         f.write(file_bytes)
 
-    media_type = "image" if ct in ALLOWED_IMAGES else "video"
+    # media_type = "image" if ct in ALLOWED_IMAGES else "video"
+    # return jsonify({"media_url": f"/uploads/{fname}", "media_type": media_type})
+
+    media_type = "image" if ct in ALLOWED_IMAGES else ("video" if ct in ALLOWED_VIDEOS else "audio")
     return jsonify({"media_url": f"/uploads/{fname}", "media_type": media_type})
 
+@app.route("/api/messages/<message_id>", methods=["DELETE"])
+@require_auth
+def delete_message(message_id):
+    uid = str(request.current_user["id"])
+    msg = db_one("SELECT * FROM messages WHERE id=%s", (message_id,))
+    if not msg:
+        return jsonify({"detail": "Message not found"}), 404
+    if str(msg["sender_id"]) != uid:
+        return jsonify({"detail": "You can only delete your own messages"}), 403
+    db_run("UPDATE messages SET is_deleted=TRUE, content='', media_url='', media_type='' WHERE id=%s", (message_id,))
+    emit_to_conversation = db_one("SELECT conversation_id FROM messages WHERE id=%s", (message_id,))
+    socketio.emit("message_deleted", {"message_id": message_id}, room="conv_" + str(msg["conversation_id"]))
+    return jsonify({"message": "Message deleted"})
 
+
+@app.route("/api/messages/<message_id>", methods=["PUT"])
+@require_auth
+def edit_message(message_id):
+    uid = str(request.current_user["id"])
+    data = request.get_json(force=True) or {}
+    new_content = (data.get("content") or "").strip()
+    if not new_content:
+        return jsonify({"detail": "Message content cannot be empty"}), 400
+
+    msg = db_one("SELECT * FROM messages WHERE id=%s", (message_id,))
+    if not msg:
+        return jsonify({"detail": "Message not found"}), 404
+    if str(msg["sender_id"]) != uid:
+        return jsonify({"detail": "You can only edit your own messages"}), 403
+    if msg["is_deleted"]:
+        return jsonify({"detail": "Cannot edit a deleted message"}), 400
+
+    db_run("UPDATE messages SET content=%s, edited_at=CURRENT_TIMESTAMP WHERE id=%s", (new_content, message_id))
+    socketio.emit("message_edited", {
+        "message_id": message_id, "content": new_content
+    }, room="conv_" + str(msg["conversation_id"]))
+    return jsonify({"message": "Message updated"})
+
+
+@app.route("/api/messages/conversations/<conv_id>/pin", methods=["POST"])
+@require_auth
+def toggle_pin_conversation(conv_id):
+    uid = str(request.current_user["id"])
+    conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
+    if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
+        return jsonify({"detail": "Conversation not found"}), 404
+
+    existing = db_one("SELECT id FROM pinned_conversations WHERE user_id=%s AND conversation_id=%s", (uid, conv_id))
+    if existing:
+        db_run("DELETE FROM pinned_conversations WHERE id=%s", (existing["id"],))
+        return jsonify({"pinned": False})
+    else:
+        db_run("INSERT INTO pinned_conversations (id, user_id, conversation_id) VALUES (%s,%s,%s)",
+               (str(uuid.uuid4()), uid, conv_id))
+        return jsonify({"pinned": True})
+
+
+@app.route("/api/users/<other_user_id>/block", methods=["POST"])
+@require_auth
+def toggle_block_user(other_user_id):
+    uid = str(request.current_user["id"])
+    if uid == other_user_id:
+        return jsonify({"detail": "Cannot block yourself"}), 400
+
+    existing = db_one("SELECT id FROM blocked_users WHERE blocker_id=%s AND blocked_id=%s", (uid, other_user_id))
+    if existing:
+        db_run("DELETE FROM blocked_users WHERE id=%s", (existing["id"],))
+        return jsonify({"blocked": False})
+    else:
+        db_run("INSERT INTO blocked_users (id, blocker_id, blocked_id) VALUES (%s,%s,%s)",
+               (str(uuid.uuid4()), uid, other_user_id))
+        return jsonify({"blocked": True})
+
+
+@app.route("/api/messages/conversations/<conv_id>/search")
+@require_auth
+def search_conversation_messages(conv_id):
+    uid = str(request.current_user["id"])
+    q = (request.args.get("q") or "").strip()
+    conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
+    if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
+        return jsonify({"detail": "Conversation not found"}), 404
+    if not q:
+        return jsonify([])
+
+    rows = db_all(
+        """SELECT * FROM messages WHERE conversation_id=%s AND is_deleted=FALSE
+           AND content ILIKE %s ORDER BY created_at ASC""",
+        (conv_id, f"%{q}%")
+    )
+    out = []
+    for m in rows:
+        m = dict(m)
+        for k, v in m.items():
+            if isinstance(v, datetime): m[k] = v.isoformat()
+        out.append(m)
+    return jsonify(out)
+
+# @app.route("/api/messages/conversations/<conv_id>/messages")
+# @require_auth
+# def get_messages(conv_id):
+#     uid = str(request.current_user["id"])
+#     conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
+#     if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
+#         return jsonify({"detail": "Conversation not found"}), 404
+
+#     rows = db_all(
+#         "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at ASC", (conv_id,)
+#     )
+#     db_run(
+#         "UPDATE messages SET read_at=CURRENT_TIMESTAMP WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
+#         (conv_id, uid)
+#     )
+#     out = []
+#     for m in rows:
+#         m = dict(m)
+#         for k, v in m.items():
+#             if isinstance(v, datetime): m[k] = v.isoformat()
+#         out.append(m)
+#     return jsonify(out)
 @app.route("/api/messages/conversations/<conv_id>/messages")
 @require_auth
 def get_messages(conv_id):
@@ -828,18 +1028,39 @@ def get_messages(conv_id):
     if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
         return jsonify({"detail": "Conversation not found"}), 404
 
-    rows = db_all(
-        "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at ASC", (conv_id,)
-    )
-    db_run(
-        "UPDATE messages SET read_at=CURRENT_TIMESTAMP WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
-        (conv_id, uid)
-    )
+    limit = min(int(request.args.get("limit", 50)), 200)
+    before = request.args.get("before")  # ISO timestamp, for loading older messages
+
+    if before:
+        rows = db_all(
+            "SELECT * FROM messages WHERE conversation_id=%s AND created_at < %s ORDER BY created_at DESC LIMIT %s",
+            (conv_id, before, limit)
+        )
+        rows = list(reversed(rows))
+    else:
+        rows = db_all(
+            "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at DESC LIMIT %s",
+            (conv_id, limit)
+        )
+        rows = list(reversed(rows))
+        db_run(
+            "UPDATE messages SET read_at=CURRENT_TIMESTAMP WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
+            (conv_id, uid)
+        )
+
     out = []
     for m in rows:
         m = dict(m)
         for k, v in m.items():
             if isinstance(v, datetime): m[k] = v.isoformat()
+        if m.get("reply_to_id"):
+            reply_msg = db_one("SELECT id, content, sender_id, is_deleted FROM messages WHERE id=%s", (m["reply_to_id"],))
+            if reply_msg:
+                m["reply_to"] = {
+                    "id": str(reply_msg["id"]),
+                    "content": "Message deleted" if reply_msg["is_deleted"] else reply_msg["content"],
+                    "sender_id": str(reply_msg["sender_id"]),
+                }
         out.append(m)
     return jsonify(out)
 
@@ -893,12 +1114,33 @@ def ws_join_conversation(data):
 #         "INSERT INTO messages (id, conversation_id, sender_id, content) VALUES (%s,%s,%s,%s)",
 #         (mid, conv_id, uid, content)
 #     )
+# @socketio.on("send_message")
+# def ws_send_message(data):
+#     conv_id = data.get("conversation_id")
+#     content = (data.get("content") or "").strip()
+#     media_url = data.get("media_url") or ""
+#     media_type = data.get("media_type") or ""
+#     uid = sid_to_user.get(request.sid)
+#     if not uid or not conv_id or (not content and not media_url):
+#         return
+
+#     conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
+#     if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
+#         return
+
+#     mid = str(uuid.uuid4())
+#     db_run(
+#         "INSERT INTO messages (id, conversation_id, sender_id, content, media_url, media_type) VALUES (%s,%s,%s,%s,%s,%s)",
+#         (mid, conv_id, uid, content, media_url, media_type)
+#     )
+
 @socketio.on("send_message")
 def ws_send_message(data):
     conv_id = data.get("conversation_id")
     content = (data.get("content") or "").strip()
     media_url = data.get("media_url") or ""
     media_type = data.get("media_type") or ""
+    reply_to_id = data.get("reply_to_id") or None
     uid = sid_to_user.get(request.sid)
     if not uid or not conv_id or (not content and not media_url):
         return
@@ -907,17 +1149,39 @@ def ws_send_message(data):
     if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
         return
 
+    other_id = str(conv["user_b_id"]) if str(conv["user_a_id"]) == uid else str(conv["user_a_id"])
+
+    blocked = db_one(
+        "SELECT id FROM blocked_users WHERE (blocker_id=%s AND blocked_id=%s) OR (blocker_id=%s AND blocked_id=%s)",
+        (uid, other_id, other_id, uid)
+    )
+    if blocked:
+        emit("message_blocked", {"conversation_id": conv_id})
+        return
+
     mid = str(uuid.uuid4())
     db_run(
-        "INSERT INTO messages (id, conversation_id, sender_id, content, media_url, media_type) VALUES (%s,%s,%s,%s,%s,%s)",
-        (mid, conv_id, uid, content, media_url, media_type)
+        "INSERT INTO messages (id, conversation_id, sender_id, content, media_url, media_type, reply_to_id) VALUES (%s,%s,%s,%s,%s,%s,%s)",
+        (mid, conv_id, uid, content, media_url, media_type, reply_to_id)
     )
     msg = db_one("SELECT * FROM messages WHERE id=%s", (mid,))
     msg = dict(msg)
     for k, v in msg.items():
         if isinstance(v, datetime): msg[k] = v.isoformat()
 
-    other_id = str(conv["user_b_id"]) if str(conv["user_a_id"]) == uid else str(conv["user_a_id"])
+    # other_id = str(conv["user_b_id"]) if str(conv["user_a_id"]) == uid else str(conv["user_a_id"])
+
+    # emit("new_message", msg, room="conv_" + conv_id)
+    # emit("conversation_update", {"conversation_id": conv_id}, room=other_id)
+
+    if reply_to_id:
+        reply_msg = db_one("SELECT id, content, sender_id, is_deleted FROM messages WHERE id=%s", (reply_to_id,))
+        if reply_msg:
+            msg["reply_to"] = {
+                "id": str(reply_msg["id"]),
+                "content": "Message deleted" if reply_msg["is_deleted"] else reply_msg["content"],
+                "sender_id": str(reply_msg["sender_id"]),
+            }
 
     emit("new_message", msg, room="conv_" + conv_id)
     emit("conversation_update", {"conversation_id": conv_id}, room=other_id)
