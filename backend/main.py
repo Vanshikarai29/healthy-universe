@@ -16,7 +16,7 @@ SECRET_KEY        = os.getenv("SECRET_KEY", "hu-super-secret-key-change-in-prod-
 # ─── ADMIN CONFIG — put the 2 admin emails here ────────────────────────────────
 ADMIN_EMAILS = {
     "vanshikarai4040@gmail.com",   # ← pehla admin email yahan daalo (jaise "vanshika@example.com")
-    "",   # ← doosra admin email yahan daalo
+    "kshitizsrivastava90@gmail.com",   # ← doosra admin email yahan daalo
 }
 
 TOKEN_EXPIRE_DAYS = int(os.getenv("TOKEN_EXPIRE_DAYS", 1))
