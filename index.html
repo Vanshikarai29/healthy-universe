@@ -79,6 +79,9 @@
     <button class="nav-link" onclick="navigate('profile', this)">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile
     </button>
+    <button class="nav-link" id="admin-nav-btn" onclick="navigate('admin', this)" style="display:none;">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin Panel
+</button>
     <button class="nav-link" onclick="navigate('settings', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
     </button>
@@ -503,6 +506,59 @@
     </div>
     <div class="posts-grid" id="posts-grid"></div>
   </section>
+
+  <!-- ADMIN PANEL PAGE -->
+<section id="page-admin" class="page">
+  <div class="page-header">
+    <h1>Admin Panel</h1>
+    <p>Manage users, content, reports, and ad campaigns</p>
+  </div>
+
+  <div class="admin-tabs-bar">
+    <button class="admin-tab active" onclick="switchAdminTab('users', this)">Users</button>
+    <button class="admin-tab" onclick="switchAdminTab('posts', this)">Posts</button>
+    <button class="admin-tab" onclick="switchAdminTab('reports', this)">Reports</button>
+    <button class="admin-tab" onclick="switchAdminTab('ads', this)">Ads Approval</button>
+    <button class="admin-tab" onclick="switchAdminTab('content', this)">Site Content</button>
+  </div>
+
+  <!-- USERS TAB -->
+  <div class="admin-tab-panel active" id="admin-tab-users">
+    <div id="admin-users-list" class="admin-list"></div>
+  </div>
+
+  <!-- POSTS TAB -->
+  <div class="admin-tab-panel" id="admin-tab-posts">
+    <div id="admin-posts-list" class="admin-list"></div>
+  </div>
+
+  <!-- REPORTS TAB -->
+  <div class="admin-tab-panel" id="admin-tab-reports">
+    <div id="admin-reports-list" class="admin-list"></div>
+  </div>
+
+  <!-- ADS TAB -->
+  <div class="admin-tab-panel" id="admin-tab-ads">
+    <div id="admin-ads-list" class="admin-list"></div>
+  </div>
+
+  <!-- CONTENT TAB -->
+  <div class="admin-tab-panel" id="admin-tab-content">
+    <div class="admin-content-section">
+      <div class="admin-content-header">
+        <h3>Trending Topics</h3>
+        <button class="admin-add-btn" onclick="openAddTopicForm()">+ Add Topic</button>
+      </div>
+      <div id="admin-add-topic-form" class="admin-inline-form" style="display:none;">
+        <input type="text" id="admin-topic-hashtag" placeholder="#HashtagName"/>
+        <input type="text" id="admin-topic-count" placeholder="e.g. 12.5K"/>
+        <button onclick="submitNewTopic()">Save</button>
+        <button onclick="closeAddTopicForm()">Cancel</button>
+      </div>
+      <div id="admin-topics-list" class="admin-list"></div>
+    </div>
+  </div>
+</section>
 
   <!-- SETTINGS PAGE -->
   <section id="page-settings" class="page">
@@ -1183,6 +1239,7 @@
 <script src="js/chat.js"></script>
 <script src="js/camera.js"></script>
 <script src="js/call.js"></script>
+<script src="js/admin.js"></script>
 
 <script>
 // ── Save Profile to Backend ───────────────────────────────────────────────────

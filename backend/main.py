@@ -12,6 +12,13 @@ load_dotenv()
 
 # ─── CONFIG ────────────────────────────────────────────────────────────────────
 SECRET_KEY        = os.getenv("SECRET_KEY", "hu-super-secret-key-change-in-prod-2024")
+
+# ─── ADMIN CONFIG — put the 2 admin emails here ────────────────────────────────
+ADMIN_EMAILS = {
+    "vanshikarai4040@gmail.com",   # ← pehla admin email yahan daalo (jaise "vanshika@example.com")
+    "",   # ← doosra admin email yahan daalo
+}
+
 TOKEN_EXPIRE_DAYS = int(os.getenv("TOKEN_EXPIRE_DAYS", 1))
 UPLOAD_DIR        = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -128,6 +135,25 @@ def require_auth(f):
         return f(*args, **kwargs)
     return decorated
 
+
+def require_admin(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth  = request.headers.get("Authorization", "")
+        token = auth[7:] if auth.startswith("Bearer ") else None
+        if not token:
+            return jsonify({"error": "Authentication required"}), 401
+        uid = decode_token(token)
+        if not uid:
+            return jsonify({"error": "Invalid or expired token"}), 401
+        user = db_one("SELECT * FROM users WHERE id=%s", (uid,))
+        if not user:
+            return jsonify({"error": "User not found"}), 401
+        if user["email"].lower() not in {e.lower() for e in ADMIN_EMAILS if e}:
+            return jsonify({"detail": "Admin access required"}), 403
+        request.current_user = user
+        return f(*args, **kwargs)
+    return decorated
 # ─── DB INIT ───────────────────────────────────────────────────────────────────
 # def init_db():
 #     conn = get_db()
@@ -300,6 +326,27 @@ def init_db():
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_messages_conv_created ON messages(conversation_id, created_at);")
+
+            cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_banned BOOLEAN DEFAULT FALSE;")
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS reports (
+                    id          VARCHAR(36) NOT NULL PRIMARY KEY,
+                    reporter_id VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    target_type VARCHAR(20) NOT NULL,
+                    target_id   VARCHAR(36) NOT NULL,
+                    reason      TEXT DEFAULT '',
+                    status      VARCHAR(20) DEFAULT 'pending',
+                    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS trending_topics (
+                    id          VARCHAR(36) NOT NULL PRIMARY KEY,
+                    hashtag     VARCHAR(100) NOT NULL,
+                    post_count  VARCHAR(20) DEFAULT '0',
+                    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
             # ── END NEW TABLES ───────────────────────────────────────────────
 
         conn.commit()
@@ -392,6 +439,9 @@ def login():
         return jsonify({"detail": "No account found with this email. Please sign up."}), 401
     if not bcrypt.checkpw(password.encode(), user["password"].encode()):
         return jsonify({"detail": "Incorrect password. Please try again."}), 401
+    
+    if user.get("is_banned"):
+        return jsonify({"detail": "Your account has been suspended. Contact support."}), 403
 
     u     = safe_user(user)
     token = make_token(u["id"])
@@ -608,11 +658,19 @@ def create_campaign():
             f.write(file_bytes)
         image_url = f"/uploads/{fname}"
 
+    # cid = str(uuid.uuid4())
+    # db_run(
+    #     """INSERT INTO ad_campaigns
+    #        (id, user_id, name, objective, budget, bid_amount, target_specialty, target_location, end_date)
+    #        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+    #     (cid, uid, name, objective, budget, bid_amount, specialty, location, end_date)
+    # )
+
     cid = str(uuid.uuid4())
     db_run(
         """INSERT INTO ad_campaigns
-           (id, user_id, name, objective, budget, bid_amount, target_specialty, target_location, end_date)
-           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+           (id, user_id, name, objective, status, budget, bid_amount, target_specialty, target_location, end_date)
+           VALUES (%s,%s,%s,%s,'pending',%s,%s,%s,%s,%s)""",
         (cid, uid, name, objective, budget, bid_amount, specialty, location, end_date)
     )
     crid = str(uuid.uuid4())
@@ -1270,6 +1328,185 @@ def ws_mark_read(data):
         (conv_id, uid)
     )
     emit("messages_read", {"conversation_id": conv_id, "reader_id": uid}, room="conv_" + conv_id)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  ADMIN PANEL ROUTES
+# ══════════════════════════════════════════════════════════════════════════════
+
+@app.route("/api/admin/check")
+@require_admin
+def admin_check():
+    return jsonify({"is_admin": True})
+
+
+# ─── Users ──────────────────────────────────────────────────────────────────────
+@app.route("/api/admin/users")
+@require_admin
+def admin_list_users():
+    rows = db_all("SELECT id,name,email,specialty,is_verified,is_banned,balance,hu_coins,created_at FROM users ORDER BY created_at DESC")
+    return jsonify([safe_user(r) for r in rows])
+
+
+@app.route("/api/admin/users/<user_id>/ban", methods=["POST"])
+@require_admin
+def admin_toggle_ban(user_id):
+    user = db_one("SELECT is_banned FROM users WHERE id=%s", (user_id,))
+    if not user:
+        return jsonify({"detail": "User not found"}), 404
+    new_status = not user["is_banned"]
+    db_run("UPDATE users SET is_banned=%s WHERE id=%s", (new_status, user_id))
+    return jsonify({"is_banned": new_status})
+
+
+@app.route("/api/admin/users/<user_id>", methods=["DELETE"])
+@require_admin
+def admin_delete_user(user_id):
+    if not db_one("SELECT id FROM users WHERE id=%s", (user_id,)):
+        return jsonify({"detail": "User not found"}), 404
+    db_run("DELETE FROM users WHERE id=%s", (user_id,))
+    return jsonify({"message": "User deleted"})
+
+
+# ─── Posts ──────────────────────────────────────────────────────────────────────
+@app.route("/api/admin/posts")
+@require_admin
+def admin_list_posts():
+    posts = db_all("SELECT * FROM posts ORDER BY created_at DESC LIMIT 200")
+    return jsonify([post_with_author(p) for p in posts])
+
+
+@app.route("/api/admin/posts/<post_id>", methods=["DELETE"])
+@require_admin
+def admin_delete_post(post_id):
+    if not db_one("SELECT id FROM posts WHERE id=%s", (post_id,)):
+        return jsonify({"detail": "Post not found"}), 404
+    db_run("DELETE FROM posts WHERE id=%s", (post_id,))
+    return jsonify({"message": "Post deleted"})
+
+
+# ─── Reports ────────────────────────────────────────────────────────────────────
+@app.route("/api/reports", methods=["POST"])
+@require_auth
+def create_report():
+    uid = str(request.current_user["id"])
+    data = request.get_json(force=True) or {}
+    target_type = data.get("target_type")
+    target_id = data.get("target_id")
+    reason = data.get("reason") or ""
+
+    if target_type not in ("post", "user") or not target_id:
+        return jsonify({"detail": "Invalid report"}), 400
+
+    db_run(
+        "INSERT INTO reports (id, reporter_id, target_type, target_id, reason) VALUES (%s,%s,%s,%s,%s)",
+        (str(uuid.uuid4()), uid, target_type, target_id, reason)
+    )
+    return jsonify({"message": "Report submitted. Our team will review it."}), 201
+
+
+@app.route("/api/admin/reports")
+@require_admin
+def admin_list_reports():
+    rows = db_all("SELECT * FROM reports ORDER BY created_at DESC")
+    out = []
+    for r in rows:
+        r = dict(r)
+        for k, v in r.items():
+            if isinstance(v, datetime): r[k] = v.isoformat()
+        reporter = db_one("SELECT name, email FROM users WHERE id=%s", (r["reporter_id"],)) or {}
+        r["reporter_name"] = reporter.get("name", "Unknown")
+        out.append(r)
+    return jsonify(out)
+
+
+@app.route("/api/admin/reports/<report_id>/resolve", methods=["POST"])
+@require_admin
+def admin_resolve_report(report_id):
+    if not db_one("SELECT id FROM reports WHERE id=%s", (report_id,)):
+        return jsonify({"detail": "Report not found"}), 404
+    db_run("UPDATE reports SET status='resolved' WHERE id=%s", (report_id,))
+    return jsonify({"message": "Report resolved"})
+
+
+# ─── Ads Approval ───────────────────────────────────────────────────────────────
+@app.route("/api/admin/campaigns")
+@require_admin
+def admin_list_all_campaigns():
+    rows = db_all("SELECT * FROM ad_campaigns ORDER BY created_at DESC")
+    out = []
+    for c in rows:
+        c = campaign_with_stats(c)
+        advertiser = db_one("SELECT name, email FROM users WHERE id=%s", (c["user_id"],)) or {}
+        c["advertiser_name"] = advertiser.get("name", "Unknown")
+        out.append(c)
+    return jsonify(out)
+
+
+@app.route("/api/admin/campaigns/<campaign_id>/approve", methods=["POST"])
+@require_admin
+def admin_approve_campaign(campaign_id):
+    if not db_one("SELECT id FROM ad_campaigns WHERE id=%s", (campaign_id,)):
+        return jsonify({"detail": "Campaign not found"}), 404
+    db_run("UPDATE ad_campaigns SET status='active' WHERE id=%s", (campaign_id,))
+    return jsonify({"message": "Campaign approved"})
+
+
+@app.route("/api/admin/campaigns/<campaign_id>/reject", methods=["POST"])
+@require_admin
+def admin_reject_campaign(campaign_id):
+    if not db_one("SELECT id FROM ad_campaigns WHERE id=%s", (campaign_id,)):
+        return jsonify({"detail": "Campaign not found"}), 404
+    db_run("UPDATE ad_campaigns SET status='rejected' WHERE id=%s", (campaign_id,))
+    return jsonify({"message": "Campaign rejected"})
+
+
+# ─── Site Content: Trending Topics ──────────────────────────────────────────────
+@app.route("/api/trending-topics")
+def get_trending_topics():
+    rows = db_all("SELECT * FROM trending_topics ORDER BY created_at DESC LIMIT 10")
+    out = []
+    for r in rows:
+        r = dict(r)
+        for k, v in r.items():
+            if isinstance(v, datetime): r[k] = v.isoformat()
+        out.append(r)
+    return jsonify(out)
+
+
+@app.route("/api/admin/trending-topics", methods=["POST"])
+@require_admin
+def admin_create_trending_topic():
+    data = request.get_json(force=True) or {}
+    hashtag = (data.get("hashtag") or "").strip()
+    post_count = data.get("post_count") or "0"
+    if not hashtag:
+        return jsonify({"detail": "Hashtag is required"}), 400
+    tid = str(uuid.uuid4())
+    db_run("INSERT INTO trending_topics (id, hashtag, post_count) VALUES (%s,%s,%s)", (tid, hashtag, post_count))
+    return jsonify({"id": tid, "hashtag": hashtag, "post_count": post_count}), 201
+
+
+@app.route("/api/admin/trending-topics/<topic_id>", methods=["PUT"])
+@require_admin
+def admin_edit_trending_topic(topic_id):
+    data = request.get_json(force=True) or {}
+    hashtag = (data.get("hashtag") or "").strip()
+    post_count = data.get("post_count") or "0"
+    if not db_one("SELECT id FROM trending_topics WHERE id=%s", (topic_id,)):
+        return jsonify({"detail": "Topic not found"}), 404
+    db_run("UPDATE trending_topics SET hashtag=%s, post_count=%s WHERE id=%s", (hashtag, post_count, topic_id))
+    return jsonify({"message": "Topic updated"})
+
+
+@app.route("/api/admin/trending-topics/<topic_id>", methods=["DELETE"])
+@require_admin
+def admin_delete_trending_topic(topic_id):
+    if not db_one("SELECT id FROM trending_topics WHERE id=%s", (topic_id,)):
+        return jsonify({"detail": "Topic not found"}), 404
+    db_run("DELETE FROM trending_topics WHERE id=%s", (topic_id,))
+    return jsonify({"message": "Topic deleted"})
+
 
 # ─── RUN ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
