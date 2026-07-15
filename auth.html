@@ -36,16 +36,29 @@
   /* .auth-left {
     flex: 1;
     background: linear-gradient(145deg, #0f4c2a 0%, #166534 40%, #22c55e 100%); */
-    .auth-left {
+    /* .auth-left {
     flex: 1;
     background: linear-gradient(145deg, #0a2a66 0%, #1450b3 40%, #377dff 100%);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     padding: 48px 52px;
     position: relative;
     overflow: hidden;
     min-height: 100vh;
+    gap: 50px;
+  } */
+   .auth-left {
+    flex: 1;
+    background: linear-gradient(145deg, #0a2a66 0%, #1450b3 40%, #377dff 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 52px;
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    gap: 28px;
   }
   .auth-left::before {
     content: '';
@@ -70,8 +83,12 @@
   .left-logo-text span { color: #93c5fd; }
   .left-logo-sub { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 4px; letter-spacing: 0.5px; }
 
-  .left-hero { position: relative; z-index: 1; }
-  .left-hero h1 { font-family: 'Fraunces', serif; font-size: 42px; font-weight: 600; color: #fff; line-height: 1.2; margin-bottom: 18px; }
+  /* .left-hero { position: relative; z-index: 1; max-width:650px;
+    margin-top:20px; }
+  .left-hero h1 { font-family: 'Fraunces', serif; font-size: 42px; font-weight: 600; color: #fff; line-height: 1.2; margin-bottom: 18px; } */
+  .left-hero { position: relative; z-index: 1; max-width:560px;
+    margin-top:0; }
+  .left-hero h1 { font-family: 'Fraunces', serif; font-size: 34px; font-weight: 600; color: #fff; line-height: 1.25; margin-bottom: 14px; }
   /* .left-hero h1 em { color: #86efac; font-style: normal; } */
   .left-hero h1 em { color: #93c5fd; font-style: normal; }
   .left-hero p { color: rgba(255,255,255,0.7); font-size: 15.5px; line-height: 1.65; max-width: 360px; }
@@ -190,6 +207,33 @@
     .auth-left { display: none; }
     .auth-right { width: 100%; padding: 40px 24px; }
   }
+  @keyframes fadeUpIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fade-item {
+    opacity: 0;
+    animation: fadeUpIn 0.7s ease forwards;
+  }
+  .left-logo { opacity: 0; animation: fadeUpIn 0.6s ease forwards; }
+  .left-hero h1.fade-item { animation-delay: 0.15s; }
+  .left-hero p.fade-item  { animation-delay: 0.35s; }
+  .cta-btn.fade-item      { animation-delay: 0.5s; }
+  .left-stats             { opacity: 0; animation: fadeUpIn 0.7s ease forwards; animation-delay: 0.65s; }
+
+  @keyframes shimmerMove {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  .shimmer-text {
+    font-style: normal;
+    background: linear-gradient(90deg, #93c5fd 0%, #ffffff 25%, #93c5fd 50%, #ffffff 75%, #93c5fd 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmerMove 3.5s linear infinite;
+  }
 </style>
 </head>
 <body>
@@ -197,13 +241,57 @@
 <!-- LEFT PANEL -->
 <div class="auth-left">
   <div class="left-logo">
-    <div class="left-logo-text">Healthy<span> Universe</span></div>
+    <div class="left-logo-text">Jorniz</div>
     <div class="left-logo-sub">Healthcare Social Network</div>
   </div>
-  <div class="left-hero">
+  <!-- <div class="left-hero">
     <h1>Learn, share &amp;<br/><em>earn</em> as a<br/>health professional.</h1>
     <p>Join verified doctors, nurses, and health educators sharing evidence-based content — and earning real revenue while doing it.</p>
-  </div>
+  </div> -->
+  <div class="left-hero">
+
+    <!-- <h1>
+        The World's First Social Network
+        <br>
+        where <em>Digital Participation</em>
+        earns you money & rewards.
+    </h1>
+
+    <p>
+        Watch what you love, create what inspires you, and build your career.
+        Redeem your earnings for medicines, healthcare products,
+        doctor consultations, diagnostics, and other essential services.
+    </p> -->
+
+    <!-- <a href="#" class="cta-btn">Get Started →</a> -->
+    <!-- <h1 class="fade-item">
+        The world's first social network where your
+        <em class="shimmer-text">participation</em>
+        earns real <em class="shimmer-text">rewards</em>.
+    </h1>
+
+    <p class="fade-item">
+        Watch, create, and earn — then redeem for
+        medicines, consultations, diagnostics and healthcare essentials.
+    </p> -->
+    <h1 class="fade-item">
+        The world's first social network where your
+        <em class="shimmer-text">Digital Participation</em>
+        can earn you money and rewards which you can
+        use to access healthy living.
+    </h1>
+
+    <p class="fade-item">
+        Watch what you love. Create what inspires you.
+        Build your career. Earn through meaningful
+        participation. Use eligible money and rewards
+        for medicines, healthy products, doctor
+        consultations, diagnostics, and more.
+    </p>
+
+    <!-- <a href="#" class="cta-btn fade-item">Get Started →</a> -->
+
+</div>
   <div class="left-stats">
     <div class="stat-pill"><strong>50K+</strong><span>Doctors</span></div>
     <div class="stat-pill"><strong>₹1.2Cr</strong><span>Paid Out</span></div>

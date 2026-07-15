@@ -30,11 +30,11 @@ function navigate(pageId, clickedBtn) {
   if (pageId === "consultations") renderDoctors();
   if (pageId === "jobs") renderJobs();
   if (pageId === "ads") renderAdsManager();
-  if (pageId === "games") {
-    if (typeof loadNextArcadeQuestion === "function") {
-      loadNextArcadeQuestion();
-    }
-  }
+  // if (pageId === "games") {
+  //   if (typeof loadNextArcadeQuestion === "function") {
+  //     loadNextArcadeQuestion();
+  //   }
+  // }
 
 }
 
@@ -1802,194 +1802,194 @@ function startLuckySpin() {
 
 
 // 1. 3-LEVEL DATA BANK (8 UNIQUE QUESTIONS PER LEVEL)
-const arcadeLevels = {
-    1: [
-        { type: "mcq", question: "What is the recommended average daily water intake for adults?", options: ["1-2 Liters", "3-4 Liters", "2-3 Liters", "5 Liters"], answer: 2 },
-        { type: "mcq", question: "How many hours of sleep do health experts generally recommend for adults?", options: ["5-6 hours", "7-9 hours", "10-12 hours", "4-5 hours"], answer: 1 },
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this essential daily habit: 'K L A W'", correctWord: "WALK", hint: "A simple form of physical activity done on foot." },
-        { type: "mcq", question: "Which macro-nutrient gives your body quick, immediate energy?", options: ["Proteins", "Fats", "Carbohydrates", "Vitamins"], answer: 2 },
-        { type: "mcq", question: "What is the healthiest way to cook vegetables to preserve their nutrients?", options: ["Deep Frying", "Boiling heavily", "Steaming", "Microwaving without water"], answer: 2 },
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this healthy sleep state: 'M A E R D'", correctWord: "DREAM", hint: "Occurs during the REM stage of sleeping." },
-        { type: "mcq", question: "Which of these is considered a healthy baseline resting heart rate?", options: ["60-100 bpm", "120-150 bpm", "30-40 bpm", "160-180 bpm"], answer: 0 },
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this natural stress-reliever: 'A G O Y'", correctWord: "YOGA", hint: "An ancient practice involving physical postures and breathing." }
-    ],
-    2: [
-        { type: "mcq", question: "Which vitamin is synthesized when human skin is exposed to direct sunlight?", options: ["Vitamin A", "Vitamin C", "Vitamin B12", "Vitamin D"], answer: 3 },
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this macronutrient group: 'N I E T O R P'", correctWord: "PROTEIN", hint: "Essential for muscle building and structural repair." },
-        { type: "mcq", question: "Which mineral is highly crucial for building and maintaining strong bones?", options: ["Iron", "Calcium", "Zinc", "Potassium"], answer: 1 },
-        { type: "mcq", question: "Deficiency of which vitamin causes temporary or permanent night blindness?", options: ["Vitamin B", "Vitamin K", "Vitamin A", "Vitamin C"], answer: 2 },
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this natural sugar alternative: 'Y E N O H'", correctWord: "HONEY", hint: "Sweet fluid made by bees from flower nectar." },
-        { type: "mcq", question: "Which organ produces insulin to regulate blood glucose levels?", options: ["Liver", "Pancreas", "Kidney", "Stomach"], answer: 1 },
-        { type: "mcq", question: "Citrus fruits like Oranges and Lemons are rich sources of which vitamin?", options: ["Vitamin C", "Vitamin D", "Vitamin E", "Vitamin B6"], answer: 0 },
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this gut-friendly food nutrient: 'R E B I F'", correctWord: "FIBER", hint: "Indigestible plant food part that helps your digestion." }
-    ],
-    3: [
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this vital filtering organ: 'Y E N D I K'", correctWord: "KIDNEY", hint: "It filters waste and excess fluids from your bloodstream." },
-        { type: "mcq", question: "What is the normal blood pressure range for a healthy resting adult?", options: ["140/90 mmHg", "120/80 mmHg", "90/60 mmHg", "160/100 mmHg"], answer: 1 },
-        { type: "mcq", question: "Which type of blood cells are primarily responsible for fighting infections?", options: ["Red Blood Cells", "White Blood Cells", "Platelets", "Plasma Cells"], answer: 1 },
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this critical master body gland: 'Y R A T I U T I P'", correctWord: "PITUITARY", hint: "The master gland at the base of the brain regulating hormones." },
-        { type: "mcq", question: "What is the largest internal organ in the entire human body?", options: ["Brain", "Liver", "Heart", "Lungs"], answer: 1 },
-        { type: "puzzle", question: "🧩 PUZZLE: Unscramble this compound that carries oxygen: 'N I B O L G O M E H'", correctWord: "HEMOGLOBIN", hint: "Iron-rich protein present in your red blood cells." },
-        { type: "mcq", question: "How many bones are there in an adult human skeletal framework?", options: ["206 bones", "306 bones", "156 bones", "216 bones"], answer: 0 },
-        { type: "mcq", question: "Which vital biological gas do red blood cells distribute to your tissues?", options: ["Nitrogen", "Carbon Dioxide", "Oxygen", "Hydrogen"], answer: 2 }
-    ]
-};
+// const arcadeLevels = {
+//     1: [
+//         { type: "mcq", question: "What is the recommended average daily water intake for adults?", options: ["1-2 Liters", "3-4 Liters", "2-3 Liters", "5 Liters"], answer: 2 },
+//         { type: "mcq", question: "How many hours of sleep do health experts generally recommend for adults?", options: ["5-6 hours", "7-9 hours", "10-12 hours", "4-5 hours"], answer: 1 },
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this essential daily habit: 'K L A W'", correctWord: "WALK", hint: "A simple form of physical activity done on foot." },
+//         { type: "mcq", question: "Which macro-nutrient gives your body quick, immediate energy?", options: ["Proteins", "Fats", "Carbohydrates", "Vitamins"], answer: 2 },
+//         { type: "mcq", question: "What is the healthiest way to cook vegetables to preserve their nutrients?", options: ["Deep Frying", "Boiling heavily", "Steaming", "Microwaving without water"], answer: 2 },
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this healthy sleep state: 'M A E R D'", correctWord: "DREAM", hint: "Occurs during the REM stage of sleeping." },
+//         { type: "mcq", question: "Which of these is considered a healthy baseline resting heart rate?", options: ["60-100 bpm", "120-150 bpm", "30-40 bpm", "160-180 bpm"], answer: 0 },
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this natural stress-reliever: 'A G O Y'", correctWord: "YOGA", hint: "An ancient practice involving physical postures and breathing." }
+//     ],
+//     2: [
+//         { type: "mcq", question: "Which vitamin is synthesized when human skin is exposed to direct sunlight?", options: ["Vitamin A", "Vitamin C", "Vitamin B12", "Vitamin D"], answer: 3 },
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this macronutrient group: 'N I E T O R P'", correctWord: "PROTEIN", hint: "Essential for muscle building and structural repair." },
+//         { type: "mcq", question: "Which mineral is highly crucial for building and maintaining strong bones?", options: ["Iron", "Calcium", "Zinc", "Potassium"], answer: 1 },
+//         { type: "mcq", question: "Deficiency of which vitamin causes temporary or permanent night blindness?", options: ["Vitamin B", "Vitamin K", "Vitamin A", "Vitamin C"], answer: 2 },
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this natural sugar alternative: 'Y E N O H'", correctWord: "HONEY", hint: "Sweet fluid made by bees from flower nectar." },
+//         { type: "mcq", question: "Which organ produces insulin to regulate blood glucose levels?", options: ["Liver", "Pancreas", "Kidney", "Stomach"], answer: 1 },
+//         { type: "mcq", question: "Citrus fruits like Oranges and Lemons are rich sources of which vitamin?", options: ["Vitamin C", "Vitamin D", "Vitamin E", "Vitamin B6"], answer: 0 },
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this gut-friendly food nutrient: 'R E B I F'", correctWord: "FIBER", hint: "Indigestible plant food part that helps your digestion." }
+//     ],
+//     3: [
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this vital filtering organ: 'Y E N D I K'", correctWord: "KIDNEY", hint: "It filters waste and excess fluids from your bloodstream." },
+//         { type: "mcq", question: "What is the normal blood pressure range for a healthy resting adult?", options: ["140/90 mmHg", "120/80 mmHg", "90/60 mmHg", "160/100 mmHg"], answer: 1 },
+//         { type: "mcq", question: "Which type of blood cells are primarily responsible for fighting infections?", options: ["Red Blood Cells", "White Blood Cells", "Platelets", "Plasma Cells"], answer: 1 },
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this critical master body gland: 'Y R A T I U T I P'", correctWord: "PITUITARY", hint: "The master gland at the base of the brain regulating hormones." },
+//         { type: "mcq", question: "What is the largest internal organ in the entire human body?", options: ["Brain", "Liver", "Heart", "Lungs"], answer: 1 },
+//         { type: "puzzle", question: "🧩 PUZZLE: Unscramble this compound that carries oxygen: 'N I B O L G O M E H'", correctWord: "HEMOGLOBIN", hint: "Iron-rich protein present in your red blood cells." },
+//         { type: "mcq", question: "How many bones are there in an adult human skeletal framework?", options: ["206 bones", "306 bones", "156 bones", "216 bones"], answer: 0 },
+//         { type: "mcq", question: "Which vital biological gas do red blood cells distribute to your tissues?", options: ["Nitrogen", "Carbon Dioxide", "Oxygen", "Hydrogen"], answer: 2 }
+//     ]
+// };
 
-// State Tracking Variables
-let arcadeScore = 0;
-let currentLevel = 1; 
-let currentQuestionData = null;
-let currentLevelQueue = [];
+// // State Tracking Variables
+// let arcadeScore = 0;
+// let currentLevel = 1; 
+// let currentQuestionData = null;
+// let currentLevelQueue = [];
 
-// Fisher-Yates Shuffle Algorithm to randomize layout questions within a specific level
-function shuffleLevelPool(level) {
-    let tempPool = [...arcadeLevels[level]];
-    for (let i = tempPool.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [tempPool[i], tempPool[j]] = [tempPool[j], tempPool[i]];
-    }
-    return tempPool;
-}
+// // Fisher-Yates Shuffle Algorithm to randomize layout questions within a specific level
+// function shuffleLevelPool(level) {
+//     let tempPool = [...arcadeLevels[level]];
+//     for (let i = tempPool.length - 1; i > 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [tempPool[i], tempPool[j]] = [tempPool[j], tempPool[i]];
+//     }
+//     return tempPool;
+// }
 
 // 2. MAIN ENGINE: LOAD LEVEL SMART QUESTION
-function loadNextArcadeQuestion() {
-    const qText = document.getElementById("arcade-question");
-    const optContainer = document.getElementById("arcade-options-container");
-    const nextBtn = document.getElementById("arcade-next-btn");
+// function loadNextArcadeQuestion() {
+//     const qText = document.getElementById("arcade-question");
+//     const optContainer = document.getElementById("arcade-options-container");
+//     const nextBtn = document.getElementById("arcade-next-btn");
 
-    if (!qText || !optContainer) return;
+//     if (!qText || !optContainer) return;
 
-    if (nextBtn) nextBtn.style.display = "none";
-    optContainer.innerHTML = "";
+//     if (nextBtn) nextBtn.style.display = "none";
+//     optContainer.innerHTML = "";
 
-    // Clear unique inline grid configurations
-    optContainer.style.display = "grid";
-    optContainer.style.gridTemplateColumns = "1fr 1fr";
-    optContainer.style.flexDirection = "unset";
-    optContainer.style.gap = "16px";
+//     // Clear unique inline grid configurations
+//     optContainer.style.display = "grid";
+//     optContainer.style.gridTemplateColumns = "1fr 1fr";
+//     optContainer.style.flexDirection = "unset";
+//     optContainer.style.gap = "16px";
 
-    // Level Check and Switch Logic
-    if (currentLevelQueue.length === 0) {
-        if (arcadeLevels[currentLevel]) {
-            currentLevelQueue = shuffleLevelPool(currentLevel);
-            showToast(`Welcome to Level ${currentLevel}! 🚀`);
-        } else {
-            // Infinite Fallback: Game completes all 3 levels, resets back dynamically to 1 with accumulated score
-            qText.innerHTML = `🎉 Champion Status! You completed all 3 levels with ${arcadeScore} points!`;
-            optContainer.innerHTML = `<button onclick="resetWholeArcadeGame()" style="grid-column: span 2; background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">Restart Arcade 🔄</button>`;
-            return;
-        }
-    }
+//     // Level Check and Switch Logic
+//     if (currentLevelQueue.length === 0) {
+//         if (arcadeLevels[currentLevel]) {
+//             currentLevelQueue = shuffleLevelPool(currentLevel);
+//             showToast(`Welcome to Level ${currentLevel}! 🚀`);
+//         } else {
+//             // Infinite Fallback: Game completes all 3 levels, resets back dynamically to 1 with accumulated score
+//             qText.innerHTML = `🎉 Champion Status! You completed all 3 levels with ${arcadeScore} points!`;
+//             optContainer.innerHTML = `<button onclick="resetWholeArcadeGame()" style="grid-column: span 2; background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold;">Restart Arcade 🔄</button>`;
+//             return;
+//         }
+//     }
 
-    // Extract next non-repeating question from current level
-    currentQuestionData = currentLevelQueue.pop();
+//     // Extract next non-repeating question from current level
+//     currentQuestionData = currentLevelQueue.pop();
 
-    if (currentQuestionData.type === "mcq") {
-        qText.textContent = `[Level ${currentLevel}] ${currentQuestionData.question}`;
+//     if (currentQuestionData.type === "mcq") {
+//         qText.textContent = `[Level ${currentLevel}] ${currentQuestionData.question}`;
         
-        currentQuestionData.options.forEach((option, index) => {
-            const btn = document.createElement("button");
-            btn.textContent = option;
-            btn.style.cssText = "background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 15px; cursor: pointer; font-weight: 500; transition: 0.2s; color: #334155;";
+//         currentQuestionData.options.forEach((option, index) => {
+//             const btn = document.createElement("button");
+//             btn.textContent = option;
+//             btn.style.cssText = "background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; font-size: 15px; cursor: pointer; font-weight: 500; transition: 0.2s; color: #334155;";
             
-            btn.onmouseover = () => btn.style.background = "#f1f5f9";
-            btn.onmouseout = () => { if(!btn.disabled) btn.style.background = "#f8fafc"; };
-            btn.onclick = () => checkMcqAnswer(index, btn);
+//             btn.onmouseover = () => btn.style.background = "#f1f5f9";
+//             btn.onmouseout = () => { if(!btn.disabled) btn.style.background = "#f8fafc"; };
+//             btn.onclick = () => checkMcqAnswer(index, btn);
             
-            optContainer.appendChild(btn);
-        });
-    } else if (currentQuestionData.type === "puzzle") {
-        qText.textContent = `[Level ${currentLevel}] ${currentQuestionData.question}`;
+//             optContainer.appendChild(btn);
+//         });
+//     } else if (currentQuestionData.type === "puzzle") {
+//         qText.textContent = `[Level ${currentLevel}] ${currentQuestionData.question}`;
         
-        optContainer.style.display = "flex";
-        optContainer.style.flexDirection = "column";
-        optContainer.style.gap = "12px";
+//         optContainer.style.display = "flex";
+//         optContainer.style.flexDirection = "column";
+//         optContainer.style.gap = "12px";
 
-        const inputField = document.createElement("input");
-        inputField.type = "text";
-        inputField.placeholder = `Hint: ${currentQuestionData.hint}`;
-        inputField.id = "puzzle-input";
-        inputField.style.cssText = "width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 16px; text-align: center; font-weight: bold; text-transform: uppercase; box-sizing: border-box;";
-        inputField.onkeyup = (e) => { if(e.key === 'Enter') submitBtn.click(); };
+//         const inputField = document.createElement("input");
+//         inputField.type = "text";
+//         inputField.placeholder = `Hint: ${currentQuestionData.hint}`;
+//         inputField.id = "puzzle-input";
+//         inputField.style.cssText = "width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 16px; text-align: center; font-weight: bold; text-transform: uppercase; box-sizing: border-box;";
+//         inputField.onkeyup = (e) => { if(e.key === 'Enter') submitBtn.click(); };
 
-        const submitBtn = document.createElement("button");
-        submitBtn.textContent = "Verify Answer 🗝️";
-        submitBtn.style.cssText = "background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;";
-        submitBtn.onclick = () => checkPuzzleAnswer(inputField, submitBtn);
+//         const submitBtn = document.createElement("button");
+//         submitBtn.textContent = "Verify Answer 🗝️";
+//         submitBtn.style.cssText = "background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px;";
+//         submitBtn.onclick = () => checkPuzzleAnswer(inputField, submitBtn);
         
-        optContainer.appendChild(inputField);
-        optContainer.appendChild(submitBtn);
+//         optContainer.appendChild(inputField);
+//         optContainer.appendChild(submitBtn);
         
-        setTimeout(() => inputField.focus(), 50);
-    }
-}
+//         setTimeout(() => inputField.focus(), 50);
+//     }
+// }
 
 // 3. ANSWER VALIDATION (MCQ)
-function checkMcqAnswer(selectedIndex, clickedBtn) {
-    const optContainer = document.getElementById("arcade-options-container");
-    const nextBtn = document.getElementById("arcade-next-btn");
-    const scoreElement = document.getElementById("arcade-score");
+// function checkMcqAnswer(selectedIndex, clickedBtn) {
+//     const optContainer = document.getElementById("arcade-options-container");
+//     const nextBtn = document.getElementById("arcade-next-btn");
+//     const scoreElement = document.getElementById("arcade-score");
     
-    const buttons = optContainer.querySelectorAll("button");
-    buttons.forEach(btn => btn.disabled = true);
+//     const buttons = optContainer.querySelectorAll("button");
+//     buttons.forEach(btn => btn.disabled = true);
 
-    if (selectedIndex === currentQuestionData.answer) {
-        clickedBtn.style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important;";
-        arcadeScore += 10;
-        showToast("Correct! +10 HU Coins 🎉");
-    } else {
-        clickedBtn.style.cssText += "background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important;";
-        buttons[currentQuestionData.answer].style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important;";
-        showToast("Oops! Incorrect 😢");
-    }
+//     if (selectedIndex === currentQuestionData.answer) {
+//         clickedBtn.style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important;";
+//         arcadeScore += 10;
+//         showToast("Correct! +10 HU Coins 🎉");
+//     } else {
+//         clickedBtn.style.cssText += "background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important;";
+//         buttons[currentQuestionData.answer].style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important;";
+//         showToast("Oops! Incorrect 😢");
+//     }
 
-    if(scoreElement) scoreElement.textContent = arcadeScore;
-    if (nextBtn) nextBtn.style.display = "inline-block";
-}
+//     if(scoreElement) scoreElement.textContent = arcadeScore;
+//     if (nextBtn) nextBtn.style.display = "inline-block";
+// }
 
 // 4. ANSWER VALIDATION (PUZZLE)
-function checkPuzzleAnswer(inputField, submitBtn) {
-    const nextBtn = document.getElementById("arcade-next-btn");
-    const scoreElement = document.getElementById("arcade-score");
-    const userAnswer = inputField.value.trim().toUpperCase();
+// function checkPuzzleAnswer(inputField, submitBtn) {
+//     const nextBtn = document.getElementById("arcade-next-btn");
+//     const scoreElement = document.getElementById("arcade-score");
+//     const userAnswer = inputField.value.trim().toUpperCase();
 
-    if(userAnswer === "") return;
+//     if(userAnswer === "") return;
 
-    inputField.disabled = true;
-    submitBtn.disabled = true;
+//     inputField.disabled = true;
+//     submitBtn.disabled = true;
 
-    if (userAnswer === currentQuestionData.correctWord) {
-        inputField.style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important;";
-        arcadeScore += 15;
-        showToast("Puzzle Cracked! +15 HU Coins 🧩");
-    } else {
-        inputField.style.cssText += "background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important;";
-        inputField.value = `Wrong! Answer: ${currentQuestionData.correctWord}`;
-        showToast("Incorrect Puzzle! 💥");
-    }
+//     if (userAnswer === currentQuestionData.correctWord) {
+//         inputField.style.cssText += "background: #dcfce7 !important; border-color: #22c55e !important; color: #15803d !important;";
+//         arcadeScore += 15;
+//         showToast("Puzzle Cracked! +15 HU Coins 🧩");
+//     } else {
+//         inputField.style.cssText += "background: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c !important;";
+//         inputField.value = `Wrong! Answer: ${currentQuestionData.correctWord}`;
+//         showToast("Incorrect Puzzle! 💥");
+//     }
 
-    if(scoreElement) scoreElement.textContent = arcadeScore;
-    if (nextBtn) nextBtn.style.display = "inline-block";
-}
+//     if(scoreElement) scoreElement.textContent = arcadeScore;
+//     if (nextBtn) nextBtn.style.display = "inline-block";
+// }
 
 // 5. NEXT BUTTON ENGINE ADVANCE
-function loadNextArcadeQuestionAndAdvance() {
-    // Agar current level ke saare 8 questions khatam ho gaye, toh level badhao
-    if (currentLevelQueue.length === 0) {
-        currentLevel++;
-    }
-    loadNextArcadeQuestion();
-}
+// function loadNextArcadeQuestionAndAdvance() {
+//     // Agar current level ke saare 8 questions khatam ho gaye, toh level badhao
+//     if (currentLevelQueue.length === 0) {
+//         currentLevel++;
+//     }
+//     loadNextArcadeQuestion();
+// }
 
 // 6. TOTAL RESET RESET MATRIX
-function resetWholeArcadeGame() {
-    arcadeScore = 0;
-    currentLevel = 1;
-    currentLevelQueue = [];
-    const scoreElement = document.getElementById("arcade-score");
-    if(scoreElement) scoreElement.textContent = "0";
-    loadNextArcadeQuestion();
-}
+// function resetWholeArcadeGame() {
+//     arcadeScore = 0;
+//     currentLevel = 1;
+//     currentLevelQueue = [];
+//     const scoreElement = document.getElementById("arcade-score");
+//     if(scoreElement) scoreElement.textContent = "0";
+//     loadNextArcadeQuestion();
+// }
 
 
 function switchTab(tabName) {
@@ -2005,11 +2005,11 @@ function switchTab(tabName) {
     targetPage.classList.add("active");
     
     // Games (Arcade) page ko strictly FLEX layout dena taaki card stretch ho sake
-    if (tabName === "games") {
-        targetPage.style.setProperty("display", "flex", "important");
-    } else {
-        targetPage.style.setProperty("display", "block", "important");
-    }
+    // if (tabName === "games") {
+    //     targetPage.style.setProperty("display", "flex", "important");
+    // } else {
+    //     targetPage.style.setProperty("display", "block", "important");
+    // }
   }
 
   // 3. Sidebar navigation links ka active status update karein
@@ -2022,3 +2022,218 @@ function switchTab(tabName) {
     activeNav.classList.add("active");
   }
 }
+
+/* ==========================================================================
+   🩺 HEALTHY UNIVERSE - GLOBAL DEEP UNDERSTANDING PROTOCOL MODAL
+   ========================================================================== */
+
+/**
+ * Open the Deep Understanding Modal and load content based on topicKey
+ */
+window.openDeepUnderstanding = function(topicKey) {
+  // Safe check for the global healthDataRepository
+  if (!window.healthDataRepository || !window.healthDataRepository[topicKey]) {
+    console.error(`Error: Topic key "${topicKey}" not found in healthDataRepository.`);
+    return;
+  }
+
+  const data = window.healthDataRepository[topicKey];
+  let modal = document.getElementById("deep-health-modal");
+  
+  // Dynamic Modal Structure Injection (if it doesn't already exist in the HTML)
+  if (!modal) {
+    const modalHtml = `
+      <div id="deep-health-modal" style="
+        display: none; 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(15, 23, 42, 0.65); 
+        backdrop-filter: blur(4px);
+        z-index: 99999; 
+        justify-content: center; 
+        align-items: center;
+        padding: 16px;
+        box-sizing: border-box;
+      ">
+        <div class="health-deep-card" style="
+          background: #ffffff; 
+          width: 100%;
+          max-width: 600px; 
+          padding: 28px; 
+          border-radius: 16px; 
+          position: relative;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          box-sizing: border-box;
+        ">
+          <button onclick="closeDeepModal()" style="
+            position: absolute; 
+            right: 20px; 
+            top: 20px; 
+            background: #f1f5f9; 
+            border: none; 
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px; 
+            cursor: pointer; 
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+          " onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">✕</button>
+          
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 24px;">
+            <span id="deep-emoji" style="
+              font-size: 2rem; 
+              background: #eff6ff; 
+              padding: 10px; 
+              border-radius: 12px;
+              line-height: 1;
+            "></span>
+            <h2 id="deep-title" style="margin: 0; color: #0f172a; font-size: 1.4rem; font-weight: 700; font-family: inherit;"></h2>
+          </div>
+          
+          <div class="deep-tabs-nav" style="
+            display: flex; 
+            gap: 6px; 
+            border-bottom: 2px solid #f1f5f9; 
+            margin-bottom: 20px; 
+            padding-bottom: 2px;
+          ">
+            <button class="deep-tab-btn active" onclick="switchDeepTab('overview', this)" style="
+              padding: 10px 16px; border: none; background: none; font-weight: 600; cursor: pointer; 
+              color: #2563eb; border-bottom: 2px solid #2563eb; margin-bottom: -4px; font-size: 0.9rem; transition: all 0.2s;
+            ">Science & Blueprint</button>
+            <button class="deep-tab-btn" onclick="switchDeepTab('clinical', this)" style="
+              padding: 10px 16px; border: none; background: none; font-weight: 600; cursor: pointer; 
+              color: #64748b; margin-bottom: -4px; font-size: 0.9rem; transition: all 0.2s;
+            ">Clinical Insights</button>
+            <button class="deep-tab-btn" onclick="switchDeepTab('resources', this)" style="
+              padding: 10px 16px; border: none; background: none; font-weight: 600; cursor: pointer; 
+              color: #64748b; margin-bottom: -4px; font-size: 0.9rem; transition: all 0.2s;
+            ">Research Journals</button>
+          </div>
+          
+          <div id="deep-body-content" style="
+            max-height: 380px; 
+            overflow-y: auto; 
+            color: #334155; 
+            line-height: 1.6; 
+            font-size: 0.95rem; 
+            padding-right: 6px;
+          "></div>
+        </div>
+      </div>
+
+      <style>
+        @keyframes modalSlideUp {
+          from { transform: translateY(30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        #deep-body-content::-webkit-scrollbar {
+          width: 6px;
+        }
+        #deep-body-content::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 10px;
+        }
+        #deep-body-content::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 10px;
+        }
+        #deep-body-content ul {
+          padding-left: 20px;
+          margin-top: 8px;
+        }
+        #deep-body-content li {
+          margin-bottom: 10px;
+        }
+        #deep-body-content h4 {
+          color: #1e293b;
+          font-size: 1.1rem;
+          margin-top: 18px;
+          margin-bottom: 8px;
+          font-weight: 600;
+        }
+        .research-card {
+          background: #f8fafc;
+          border-left: 4px solid #10b981;
+          padding: 16px;
+          border-radius: 0 8px 8px 0;
+          margin-top: 10px;
+        }
+      </style>
+    `;
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+    modal = document.getElementById("deep-health-modal");
+  }
+
+  // Save current active topic data globally
+  window.currentDeepTopic = data;
+
+  // Set initial content
+  document.getElementById("deep-emoji").textContent = data.emoji;
+  document.getElementById("deep-title").textContent = data.title;
+  
+  // Set default tab on open
+  const defaultTabBtn = modal.querySelector(".deep-tab-btn");
+  window.switchDeepTab('overview', defaultTabBtn);
+
+  // Open modal
+  modal.style.display = "flex";
+  document.body.style.overflow = "hidden"; // background scroll lock
+
+  // Close modal when clicking outside of modal card
+  modal.onclick = function(e) {
+    if (e.target === modal) {
+      window.closeDeepModal();
+    }
+  };
+}
+
+/**
+ * Close the Deep Understanding Modal
+ */
+window.closeDeepModal = function() {
+  const modal = document.getElementById("deep-health-modal");
+  if (modal) {
+    modal.style.display = "none";
+  }
+  document.body.style.overflow = ""; // restore background scroll
+}
+
+/**
+ * Switch tabs dynamically inside the modal
+ */
+window.switchDeepTab = function(tabType, clickedBtn) {
+  const data = window.currentDeepTopic;
+  if (!data) return;
+
+  // Visual active tab update
+  if (clickedBtn) {
+    document.querySelectorAll(".deep-tab-btn").forEach((btn) => {
+      btn.style.color = "#64748b";
+      btn.style.borderBottom = "none";
+    });
+    clickedBtn.style.color = "#2563eb";
+    clickedBtn.style.borderBottom = "2px solid #2563eb";
+  }
+
+  // Content loader update
+  const bodyContainer = document.getElementById("deep-body-content");
+  if (bodyContainer) {
+    bodyContainer.innerHTML = data[tabType] || "<p>No active protocol registered under this tab.</p>";
+  }
+}
+
+// Setup Escape key listener for fast closing
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    window.closeDeepModal();
+  }
+});

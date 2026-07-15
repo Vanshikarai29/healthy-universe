@@ -689,3 +689,252 @@ const EARNING_SOURCES = [
   { label: "Referrals", amount: 142.00, percent: 10, color: "#f59e0b" },
   { label: "Bonuses", amount: 109.40, percent: 8, color: "#8b5cf6" }
 ];
+
+
+/* ============================================
+   🧠 HEALTH DATA REPOSITORY (Globally Bound)
+   ============================================ */
+window.healthDataRepository = {
+  /* ----------------------------------------------------
+     1. HEART HEALTH ❤️
+     ---------------------------------------------------- */
+  heart_health: {
+    title: "Heart Health & Cardiovascular Vitality",
+    emoji: "❤️",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Aapka heart body ka sabse hard-working organ hai jo continuous pressure maintenance par kaam karta hai. Cardiovascular risk sirf cholesterol se nahi, balki <strong>ApoB (Apolipoprotein B)</strong> particles aur arterial wall inflammation se build hoti hai. Low Heart Rate Variability (HRV) indicate karta hai ki aapka autonomic nervous system chronic stress (fight-or-flight) me chal raha hai.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>Zone 2 Cardio Rule:</strong> Week me kam se kam 150 mins Zone 2 cardio (moderate pace jisme aap baat kar sakein par gaa na sakein) karein. Ye mitochondria ki efficiency badhata hai aur resting heart rate (RHR) ko drop karta hai.</li>
+        <li><strong>Nitric Oxide Boosters:</strong> Beetroot, palak (spinach), aur garlic ko diet me shamil karein. Ye blood vessels ko dilate karke overall arterial blood pressure (BP) ko regulate karte hain.</li>
+        <li><strong>The 10-Minute Post-Meal Walk:</strong> Har bade meal ke baad 10 minutes ki normal walk karein. Isse blood sugar spikes flat ho jate hain, jisse blood vessel walls par direct oxidative stress kam hota hai.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Clinical & Cardiovascular Biomarkers</h4>
+      <p>Sirf basic Lipid Profile par rely karne ke bajay Advanced metrics monitor karein. ApoB, Hs-CRP (systemic inflammation marker), aur HbA1c ka combined assessment cardiac risk profiles ko accurately predict karne me help karta hai.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: Journal of the American College of Cardiology (JACC)</strong>
+        <p>Evidence confirms that steady-state zone 2 aerobic adaptations actively reduce arterial stiffness index and elevate dynamic endothelial nitric oxide release pathways.</p>
+      </div>
+    `,
+  },
+
+  /* ----------------------------------------------------
+     2. MENTAL WELLNESS 🧠
+     ---------------------------------------------------- */
+  mental_wellness: {
+    title: "Mental Wellness & Stress Resilience",
+    emoji: "🧠",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Stress humari survival ka natural response hai, lekin jab <strong>Cortisol</strong> (stress hormone) constantly elevated rehta hai, toh ye brain ke hippocampus (memory aur learning centre) ko micro-damage karta hai. Chronic anxiety aur low mood aksar neural pathways ke dopamine depletion aur constant amygdala hyperactivity ke karan hote hain.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>The Physiological Sigh:</strong> Jab bhi sudden tension ya peak stress feel ho, double-inhale karein nose se (ek deep breath aur uske upar ek choti breath) aur fir mouth se dheere se pura exhale karein. Ye instantly aapke nervous system ko autonomic rest cycle me shift karta hai.</li>
+        <li><strong>Digital Dopamine Fasting:</strong> Morning wake-up ke pehle 45-60 mins tak screen bypass karein. Subah scrolling karne se brain seedha low-attention aur high-reactivity state me chala jata hai.</li>
+        <li><strong>Gratitude & Rewiring:</strong> Sone se pehle pure din ke 3 positive events likhne ki habit dalein. Ye continuous neuroplasticity practice chronic anxiety levels ko permanent bypass karne me effective hai.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Neuro-Endocrine Regulation</h4>
+      <p>Cortisol aur adrenaline ka elevated balance sleep aur memory processes ko interrupt karta hai. Continuous slow breathing exercises (4-7-8 breathing) directly vagus nerve pathway ko stimulate karti hain to block sympathetic spikes.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: JAMA Psychiatry (Q1 Index)</strong>
+        <p>A randomized trial shows that structured mindfulness practice is clinically comparable to pharmacotherapy for managing persistent generalized anxiety markers.</p>
+      </div>
+    `,
+  },
+
+  /* ----------------------------------------------------
+     3. NUTRITION TIPS 🥗
+     ---------------------------------------------------- */
+  nutrition_tips: {
+    title: "Metabolic Nutrition & Insulin Optimization",
+    emoji: "🥗",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Food sirf caloric intake nahi, balki genetic system ke liye information wave hai. Jab aap bar-bar refined carbohydrates aur processed foods consume karte hain, toh blood me continuous high glucose rehta hai. Overtime, aapke body cells insulin-resistant ho jate hain, jisse continuous energy-crashes aur visceral fat storage badh jata hai.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>The Sequential Eating Rule:</strong> Kisi bhi meal me pehle Fibers (salads, veggies) khayein, fir Proteins/Fats, aur sabse end me Carbohydrates. Is pattern se meal ka total glucose spike lagbhag 70% tak smooth aur controlled ho jata hai.</li>
+        <li><strong>Eliminate Emulsifiers:</strong> Chemical stabilizers aur preservatives jo packed foods me hote hain, wo gut lining ko compromise karte hain. Baseline focus natural, single-ingredient whole foods par rakhein.</li>
+        <li><strong>Hydration Buffering:</strong> Khane ke immediate pehle ya immediate baad excess pani pina avoid karein, taaki aapke stomach acid aur proteolytic enzymes ka digestive concentration weak na ho.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Metabolic Dynamics & Assays</h4>
+      <p>Continuous glucose variability ko stability range me maintain karne se systemic metabolic diseases ka baseline drop ho jata hai. Fasting Insulin test cell-level insulin responsiveness analyze karne ke liye gold standard hai.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: The American Journal of Clinical Nutrition</strong>
+        <p>Longitudinal studies indicate that managing postprandial glucose volatility lowers system-wide oxidative stress markers and optimizes metabolic flexibility index.</p>
+      </div>
+    `,
+  },
+
+  /* ----------------------------------------------------
+     4. FITNESS GOALS 💪
+     ---------------------------------------------------- */
+  fitness_goals: {
+    title: "Hypertrophy, Strength & Longevity Physiology",
+    emoji: "💪",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Muscles sirf body aesthetics ke liye nahi, balki long-term life survival ka sabse bada metabolic glucose sink hain. 30 years ki age ke baad baseline muscle mass speed se kam hone lagta hai, jise <strong>Sarcopenia</strong> kehte hain. Muscle strength increase karne se skeletal system optimize hota hai aur systemic metabolic function healthy rehta hai.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>Progressive Overload Blueprint:</strong> Training me continuous adaptation ke liye progressive demand (higher weight, controlled range of motion, ya slow repetitions) introduce karein.</li>
+        <li><strong>The Protein Target:</strong> Din me kam se kam 1.6g to 2g protein per kilogram of target weight consume karein. Amino acid signaling (leucine intake) muscle protein synthesis (MPS) ke liye trigger point hai.</li>
+        <li><strong>Active Mobility:</strong> Sirf stretching nahi, joints ki active functional range aur control strength build karein taaki connective tendons load handle karne ke liye elastic aur safe rahein.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Neuromuscular & Longevity Medicine</h4>
+      <p>Skeletal structural mass dynamic longevity parameters se highly linked hai. VO2 Max capacity aur physical grip-strength values statistically long-term physiological survival outcomes ke ultimate predictors hain.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: Sports Medicine Reviews</strong>
+        <p>Scientific reviews indicate resistance-based stimulus directly elevates systemic growth factors and acts as a potent independent regulator of bone mass accumulation.</p>
+      </div>
+    `,
+  },
+  gut_health: {
+    title: "Gut & Stomach Optimization",
+    emoji: "🦠",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Aapka stomach aur intestines sirf khana digest nahi karte, balki ise <strong>"Second Brain"</strong> kaha jata hai. Humare gut me trillions of good bacteria hote hain jo mood, immunity, aur energy control karte hain. Chronic bloating, acidity, aur lethargy aksar gut microbiome ke balance bigadne se hoti hain.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>The 30-Gram Fiber Rule:</strong> Apni daily diet me complex fibers (jaise oats, dal, green vegetables) add karein taaki good bacteria grow kar sakein.</li>
+        <li><strong>Probiotic Window:</strong> Din me ek baar fermented food jaise Dahi (curd) ya Chaas zaroor lein. Isse live cultures directly gut ko milte hain.</li>
+        <li><strong>Circadian Fasting:</strong> Raat ke khane aur agle din ke breakfast me kam se kam 12 ghante ka gap rakhein taaki digestive tract ko repair hone ka time mile.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Clinical Indicators</h4>
+      <p>Agar aapko frequent acid reflux ya sudden food intolerance ho rahi hai, toh ye low stomach acid ya leaky gut wall ka signal ho sakta hai. Is condition me processing agents aur artificial sweeteners se bilkul door rahein.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: Nature Microbiology (Q1 Index)</strong>
+        <p>Research confirms that dietary changes can significantly modify the human gut microbiota composition within 24–48 hours.</p>
+      </div>
+    `,
+  },
+
+  neuro_brain: {
+    title: "Neuroplasticity & Cognitive Power",
+    emoji: "🧠",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Brain ki capability constant rehti hai ye ek myth hai. Brain me <strong>Neuroplasticity</strong> hoti hai, matlab ye naye pathways bana sakta hai. Aajkal ka low focus aur brain-fog aksar constant screen multitasking aur high dopamine spikes (social media scroll) ki wajah se hota hai.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>Non-Sleep Deep Rest (NSDR):</strong> Agar din me thakan mehsoos ho, toh 10-20 mins ka NSDR ya Yoga Nidra audio sunein. Ye nervous system ko instantly calm aur reboot karta hai.</li>
+        <li><strong>90-Minute Focus Blocks:</strong> Brain ultra-dian rhythms par kaam karta hai. 90 mins tak phone door rakh kar intense focus karein, phir 10 mins ka complete break lein.</li>
+        <li><strong>The Morning Light Hack:</strong> Uthne ke 30 mins ke andar natural sunlight ko apni aankhon me aane dein (direct sun ko nahi dekhna hai). Isse cortisol timing optimize hoti hai aur raat ko neend acchi aati hai.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Neurological Optimization</h4>
+      <p>Chronic high stress humare prefrontal cortex (decision-making area) ko temporarily weak kar deta hai. Deep box breathing (4s inhale, 4s hold, 4s exhale, 4s hold) vagus nerve ko activate karke brain fog ko instantly hatati hai.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: Frontiers in Human Neuroscience</strong>
+        <p>Studies show structured cognitive breaks and deep breathing exercises lower beta-wave hyperactivity, improving working memory retention.</p>
+      </div>
+    `,
+  },
+
+  sexual_wellness: {
+    title: "Hormonal Balance & Sexual Wellness",
+    emoji: "🧬",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Sexual health pure human body ke endocrine aur reproductive health ka reflection hai. Yeh sirf energy ke baare me nahi hai, balki aapke blood flow, testosterone/estrogen levels, stress hormone (cortisol), aur pelvic strength par directly depend karta hai.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>Cortisol Management:</strong> High stress body me sexual wellness hormones ko dabata hai. Daily 7-8 ghante ki quality sleep aur cardiovascular workouts is balance ko wapas laate hain.</li>
+        <li><strong>Pelvic Floor Strength (Kegels):</strong> Both men aur women ke liye pelvic floor exercises bladder control aur reproductive blood flow ko optimize karne me madad karti hain.</li>
+        <li><strong>Micronutrient Density:</strong> Zinc aur Magnesium rich foods (jaise pumpkin seeds, almonds, spinach) daily include karein, kyunki ye baseline hormone production ke building blocks hain.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Metabolic & Endocrine View</h4>
+      <p>Poor circulation aur high inflammation levels reproductive stamina aur wellness ko hamper karte hain. Daily dynamic movements aur clean hydration panels circulatory health ke liye essential hain.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: The Journal of Sexual Medicine</strong>
+        <p>Evidence highlights that moderate aerobic activity and stress mitigation significantly improve overall reproductive system vascular function.</p>
+      </div>
+    `,
+  },
+
+  sleep_recovery: {
+    title: "Sleep Architecture & Circadian Recovery",
+    emoji: "💤",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Neend sirf rest time nahi hai, ye aapke brain ka <strong>"Glymphatic System"</strong> (waste clearance) aur tissue repair protocol hai. Jab aap deep sleep skip karte hain, toh brain me toxic proteins accumulate hote hain aur cells properly recover nahi kar paate, jisse cognitive lag aur subah lethargy hoti hai.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>The 10-3-2-1-0 Rule:</strong> Sone se 10 ghante pehle caffeine band, 3 ghante pehle heavy meal band, 2 ghante pehle focus work band, 1 ghante pehle screen zero, aur subah hit the alarm button at 0 snooze!</li>
+        <li><strong>Thermal Shift:</strong> Apne room ko thoda cool (around 20-22°C) rakhein. Body temperature jab drop hota hai, toh brain biologically melatonin release karke deep sleep triggers initiate karta hai.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Sleep Architecture Metrics</h4>
+      <p>Deep sleep aur REM (Rapid Eye Movement) cycles ka baseline monitor karna heavy physical stress markers ko control karta hai. Resting heart rate (RHR) ko optimize rakhna recovery ke liye kafi zaroori hai.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: Sleep Medicine Reviews</strong>
+        <p>Comprehensive trials validate that consistency in wake times stabilizes global hormonal parameters far more efficiently than tracking erratic high-duration weekend sleep.</p>
+      </div>
+    `,
+  },
+
+  skin_barrier: {
+    title: "Skin Health & Epidermal Barrier Protection",
+    emoji: "✨",
+    overview: `
+      <h4>🔬 The Science (Understand)</h4>
+      <p>Aapki skin body ka sabse bada organ aur main defense shield hai. Aajkal modern environment me stress aur excessive harsh products lagane ki wajah se <strong>Epidermal Skin Barrier</strong> crash ho jata hai. Is wajah se premature wrinkles, sudden breakouts, aur redness shuru ho jati hai.</p>
+      
+      <h4>🎯 Life Blueprint (Implement Now)</h4>
+      <ul>
+        <li><strong>Minimalist Approach:</strong> Multi-step routine ki jagah simple Cleanser, Moisturizer, aur Sunscreen (CMS routine) par basic focus rakhein. Extra chemical combinations active flare-ups badhate hain.</li>
+        <li><strong>Daily UV Defense:</strong> Cloud rays aur indoor lighting se hone wale cellular degradation ko rokne ke liye broad-spectrum SPF 30+ daily zaroor apply karein.</li>
+      </ul>
+    `,
+    clinical: `
+      <h4>🩺 Dermatology & Cellular Integrity View</h4>
+      <p>Skin parameters directly system inflammation se map hote hain. Cellular level par oxidative stress ko drop karne ke liye daily internal hydration channels aur minimal topical irritants sabse solid layer framework hain.</p>
+    `,
+    resources: `
+      <div class='research-card'>
+        <strong>Journal Reference: Clinics in Dermatology</strong>
+        <p>Scientific data points out that topical ceramide-rich formulations combined with optimized anti-inflammatory whole food diets accelerate cutaneous structural barrier repair by up to 60%.</p>
+      </div>
+    `,
+  },
+};
