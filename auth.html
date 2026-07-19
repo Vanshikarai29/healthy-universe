@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Healthy Universe – Sign In</title>
+<title>Jorniz – Sign In</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -311,7 +311,7 @@
   <form class="auth-form active" id="form-login" onsubmit="submitLogin(event)">
     <div>
       <div class="form-title">Welcome back 👋</div>
-      <div class="form-subtitle">Sign in to your Healthy Universe account</div>
+      <div class="form-subtitle">Sign in to your Jorniz account</div>
     </div>
 
     <div class="error-banner"   id="login-error"></div>
@@ -359,7 +359,7 @@
   <!-- SIGNUP FORM -->
   <form class="auth-form" id="form-signup" onsubmit="submitSignup(event)">
     <div>
-      <div class="form-title">Join Healthy Universe 🏥</div>
+      <div class="form-title">Join Jorniz 🏥</div>
       <div class="form-subtitle">Create your verified healthcare professional account</div>
     </div>
 
@@ -377,7 +377,7 @@
     </div>
 
     <div class="field">
-      <label>Specialty / Role</label>
+      <!-- <label>Specialty / Role</label>
       <select id="signup-specialty">
         <option value="General Physician">General Physician</option>
         <option value="Cardiologist">Cardiologist</option>
@@ -389,7 +389,29 @@
         <option value="Medical Student">Medical Student</option>
         <option value="Nurse / Practitioner">Nurse / Practitioner</option>
         <option value="General User">General User / Patient</option>
-      </select>
+      </select> -->
+      <label for="signup-role">Role</label>
+<select id="signup-role">
+    <option value="">Select your role</option>
+    <option value="Patient">Patient / General User</option>
+    <option value="Doctor">Doctor</option>
+    <option value="Nurse">Nurse</option>
+    <option value="Medical Student">Medical Student</option>
+    <option value="Dentist">Dentist</option>
+    <option value="Pharmacist">Pharmacist</option>
+    <option value="Physiotherapist">Physiotherapist</option>
+    <option value="Psychologist">Psychologist</option>
+    <option value="Nutritionist">Nutritionist / Dietitian</option>
+    <option value="Researcher">Medical Researcher</option>
+    <option value="Fitness Professional">Fitness Professional</option>
+    <option value="Healthcare Professional">Other Healthcare Professional</option>
+</select>
+
+<div id="specialty-container" style="display:none; margin-top:15px;">
+    <label for="signup-specialty">Specialization</label>
+    <select id="signup-specialty">
+    </select>
+</div>
     </div>
 
     <div class="field">
@@ -599,5 +621,6 @@ const API = 'https://healthy-universe.onrender.com';
     }
   }
 </script>
+<script src="js/auth.js"></script>
 </body>
 </html>
