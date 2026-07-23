@@ -5,7 +5,7 @@ from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from dotenv import load_dotenv
-import os, uuid, bcrypt, jwt, psycopg2, psycopg2.extras
+import os, uuid, bcrypt, jwt, psycopg2, psycopg2.extras, random, requests
 from flask_socketio import SocketIO, emit, join_room
 
 load_dotenv()
@@ -15,8 +15,8 @@ SECRET_KEY        = os.getenv("SECRET_KEY", "hu-super-secret-key-change-in-prod-
 
 # ─── ADMIN CONFIG — put the 2 admin emails here ────────────────────────────────
 ADMIN_EMAILS = {
-    "vanshikarai4040@gmail.com",   # ← pehla admin email yahan daalo (jaise "vanshika@example.com")
-    "kshitizsrivastava90@gmail.com",   # ← doosra admin email yahan daalo
+    "vanshikarai4040@gmail.com",
+    "kshitizsrivastava90@gmail.com",
 }
 
 TOKEN_EXPIRE_DAYS = int(os.getenv("TOKEN_EXPIRE_DAYS", 1))
@@ -28,6 +28,19 @@ DATABASE_URL = os.getenv(
     ""
 )
 
+# ─── EMAIL (EmailJS REST API) CONFIG — for OTP / forgot password ──────────────
+EMAILJS_SERVICE_ID  = os.getenv("EMAILJS_SERVICE_ID", "")
+EMAILJS_TEMPLATE_ID = os.getenv("EMAILJS_TEMPLATE_ID", "")
+EMAILJS_PUBLIC_KEY  = os.getenv("EMAILJS_PUBLIC_KEY", "")
+EMAILJS_PRIVATE_KEY = os.getenv("EMAILJS_PRIVATE_KEY", "")
+OTP_EXPIRE_MINUTES  = int(os.getenv("OTP_EXPIRE_MINUTES", 10))
+MAX_OTP_ATTEMPTS    = 5
+
+# ─── AD REWARDS CONFIG — HU Coins for viewing/clicking ads ────────────────────
+COIN_REWARD_PER_IMPRESSION = int(os.getenv("COIN_REWARD_PER_IMPRESSION", 1))
+COIN_REWARD_PER_CLICK      = int(os.getenv("COIN_REWARD_PER_CLICK", 5))
+COST_PER_IMPRESSION        = float(os.getenv("COST_PER_IMPRESSION", 0.01))
+
 ALLOWED_IMAGES = {"image/jpeg","image/png","image/gif","image/webp"}
 ALLOWED_VIDEOS = {"video/mp4","video/webm","video/quicktime"}
 ALLOWED_AUDIO = {"audio/webm","audio/mp4","audio/mpeg","audio/ogg","audio/wav"}
@@ -37,12 +50,10 @@ MAX_FILE_BYTES = 50 * 1024 * 1024
 app = Flask(__name__)
 CORS(app, origins=os.getenv("ALLOWED_ORIGINS","*").split(","))
 
-# socketio = SocketIO(app, cors_allowed_origins=os.getenv("ALLOWED_ORIGINS","*").split(","), async_mode="eventlet")
 socketio = SocketIO(app, cors_allowed_origins=os.getenv("ALLOWED_ORIGINS","*").split(","), async_mode="threading")
 
-# in-memory presence tracking (single-instance; resets on restart)
-online_users = {}   # user_id -> True
-sid_to_user  = {}   # socket session id -> user_id
+online_users = {}
+sid_to_user  = {}
 
 # ─── DB HELPERS ────────────────────────────────────────────────────────────────
 def get_db():
@@ -154,46 +165,52 @@ def require_admin(f):
         request.current_user = user
         return f(*args, **kwargs)
     return decorated
+
+
+# ─── EMAIL SENDING (via EmailJS REST API, called server-side) ─────────────────
+def send_otp_email(to_email: str, to_name: str, otp_code: str) -> bool:
+    """
+    Sends the OTP using EmailJS's REST API from the backend (not the browser),
+    so the OTP code never has to pass through the frontend.
+    Requires an EmailJS template with variables: to_email, to_name, otp_code.
+    """
+    if not (EMAILJS_SERVICE_ID and EMAILJS_TEMPLATE_ID and EMAILJS_PUBLIC_KEY and EMAILJS_PRIVATE_KEY):
+        print("⚠️ EmailJS is not configured — set EMAILJS_SERVICE_ID / EMAILJS_TEMPLATE_ID / "
+              "EMAILJS_PUBLIC_KEY / EMAILJS_PRIVATE_KEY in your .env")
+        return False
+
+    payload = {
+        "service_id":  EMAILJS_SERVICE_ID,
+        "template_id": EMAILJS_TEMPLATE_ID,
+        "user_id":     EMAILJS_PUBLIC_KEY,
+        "accessToken": EMAILJS_PRIVATE_KEY,
+        "template_params": {
+            "to_email": to_email,
+            "to_name":  to_name or "there",
+            "otp_code": otp_code,
+        },
+    }
+    try:
+        res = requests.post(
+            "https://api.emailjs.com/api/v1.0/email/send",
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=10,
+        )
+        if res.status_code == 200:
+            return True
+        print(f"⚠️ EmailJS send failed: {res.status_code} {res.text}")
+        return False
+    except Exception as e:
+        print(f"⚠️ EmailJS request error: {e}")
+        return False
+
+
+def generate_otp_code() -> str:
+    return str(random.randint(100000, 999999))
+
+
 # ─── DB INIT ───────────────────────────────────────────────────────────────────
-# def init_db():
-#     conn = get_db()
-#     try:
-#         with conn.cursor() as cur:
-#             cur.execute("""
-#                 CREATE TABLE IF NOT EXISTS users (
-#                     id          VARCHAR(36)   NOT NULL PRIMARY KEY,
-#                     name        VARCHAR(120)  NOT NULL,
-#                     email       VARCHAR(180)  NOT NULL UNIQUE,
-#                     password    VARCHAR(255)  NOT NULL,
-#                     specialty   VARCHAR(100)  DEFAULT 'General User',
-#                     hospital    VARCHAR(150)  DEFAULT '',
-#                     bio         TEXT,
-#                     avatar_url  VARCHAR(500)  DEFAULT '',
-#                     is_verified BOOLEAN       DEFAULT FALSE,
-#                     balance     NUMERIC(10,2) DEFAULT 0.00,
-#                     hu_coins    INT           DEFAULT 500,
-#                     created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
-#                     updated_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
-#                 );
-#             """)
-#             cur.execute("""
-#                 CREATE TABLE IF NOT EXISTS posts (
-#                     id          VARCHAR(36)   NOT NULL PRIMARY KEY,
-#                     user_id     VARCHAR(36)   NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-#                     content     TEXT          NOT NULL,
-#                     media_url   VARCHAR(500)  DEFAULT '',
-#                     media_type  VARCHAR(20)   DEFAULT '',
-#                     category    VARCHAR(80)   DEFAULT 'General Wellness',
-#                     likes       INT           DEFAULT 0,
-#                     views       INT           DEFAULT 0,
-#                     revenue     NUMERIC(10,2) DEFAULT 0.00,
-#                     created_at  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
-#                 );
-#             """)
-#         conn.commit()
-#         print("✅ PostgreSQL tables ready")
-#     finally:
-#         conn.close()
 def init_db():
     conn = get_db()
     try:
@@ -230,7 +247,7 @@ def init_db():
                 );
             """)
 
-            # ── NEW: ADS ENGINE TABLES ──────────────────────────────────────
+            # ── ADS ENGINE TABLES ──────────────────────────────────────────
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS ad_campaigns (
                     id               VARCHAR(36)   NOT NULL PRIMARY KEY,
@@ -278,7 +295,7 @@ def init_db():
                     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """)
-            # ── NEW: MESSAGING TABLES ────────────────────────────────────────
+            # ── MESSAGING TABLES ────────────────────────────────────────────
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS conversations (
                     id          VARCHAR(36) NOT NULL PRIMARY KEY,
@@ -301,9 +318,6 @@ def init_db():
 
             cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS media_url VARCHAR(500) DEFAULT '';")
             cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS media_type VARCHAR(20) DEFAULT '';")
-
-
-
             cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS reply_to_id VARCHAR(36) DEFAULT NULL;")
             cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS edited_at TIMESTAMP DEFAULT NULL;")
             cur.execute("ALTER TABLE messages ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT FALSE;")
@@ -347,6 +361,20 @@ def init_db():
                     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """)
+
+            # ── NEW: PASSWORD RESET / OTP TABLE ─────────────────────────────
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS password_resets (
+                    id          VARCHAR(36) NOT NULL PRIMARY KEY,
+                    user_id     VARCHAR(36) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    otp_code    VARCHAR(10) NOT NULL,
+                    attempts    INT NOT NULL DEFAULT 0,
+                    is_used     BOOLEAN NOT NULL DEFAULT FALSE,
+                    expires_at  TIMESTAMP NOT NULL,
+                    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_password_resets_user ON password_resets(user_id, is_used);")
             # ── END NEW TABLES ───────────────────────────────────────────────
 
         conn.commit()
@@ -361,7 +389,7 @@ with app.app_context():
         print("✅ DB initialized on startup")
     except Exception as e:
         print(f"⚠️ DB init error: {e}")
-        
+
 # ─── SERVE UPLOADS ─────────────────────────────────────────────────────────────
 @app.route("/uploads/<path:filename>")
 def serve_upload(filename):
@@ -439,7 +467,7 @@ def login():
         return jsonify({"detail": "No account found with this email. Please sign up."}), 401
     if not bcrypt.checkpw(password.encode(), user["password"].encode()):
         return jsonify({"detail": "Incorrect password. Please try again."}), 401
-    
+
     if user.get("is_banned"):
         return jsonify({"detail": "Your account has been suspended. Contact support."}), 403
 
@@ -500,6 +528,131 @@ def change_password():
     hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
     db_run("UPDATE users SET password=%s WHERE id=%s", (hashed, uid))
     return jsonify({"message": "Password changed successfully 🔐"})
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  FORGOT PASSWORD — OTP via EmailJS (no login required)
+# ══════════════════════════════════════════════════════════════════════════════
+
+@app.route("/api/auth/forgot-password", methods=["POST"])
+def forgot_password():
+    """Step 1: user submits their email → we generate + email a 6-digit OTP."""
+    data  = request.get_json(force=True) or {}
+    email = (data.get("email") or "").strip().lower()
+
+    if not email:
+        return jsonify({"detail": "Email is required"}), 400
+
+    user = db_one("SELECT id, name, email FROM users WHERE email=%s", (email,))
+    # Always return a generic success message even if the email isn't registered —
+    # this avoids leaking which emails have accounts.
+    generic_response = {"message": "If that email is registered, a verification code has been sent."}
+
+    if not user:
+        return jsonify(generic_response)
+
+    # invalidate any previous unused OTPs for this user
+    db_run("UPDATE password_resets SET is_used=TRUE WHERE user_id=%s AND is_used=FALSE", (user["id"],))
+
+    otp_code   = generate_otp_code()
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=OTP_EXPIRE_MINUTES)
+
+    db_run(
+        "INSERT INTO password_resets (id, user_id, otp_code, expires_at) VALUES (%s,%s,%s,%s)",
+        (str(uuid.uuid4()), user["id"], otp_code, expires_at)
+    )
+
+    sent = send_otp_email(user["email"], user["name"], otp_code)
+    if not sent:
+        # Don't reveal server email config issues to the client; log server-side only.
+        print(f"⚠️ Could not send OTP email to {user['email']}")
+
+    return jsonify(generic_response)
+
+
+@app.route("/api/auth/verify-otp", methods=["POST"])
+def verify_otp():
+    """Step 2: user submits the OTP they received → we confirm it's valid."""
+    data     = request.get_json(force=True) or {}
+    email    = (data.get("email") or "").strip().lower()
+    otp_code = (data.get("otp") or "").strip()
+
+    if not email or not otp_code:
+        return jsonify({"detail": "Email and OTP are required"}), 400
+
+    user = db_one("SELECT id FROM users WHERE email=%s", (email,))
+    if not user:
+        return jsonify({"detail": "Invalid or expired code"}), 400
+
+    reset_row = db_one(
+        """SELECT * FROM password_resets
+           WHERE user_id=%s AND is_used=FALSE
+           ORDER BY created_at DESC LIMIT 1""",
+        (user["id"],)
+    )
+    if not reset_row:
+        return jsonify({"detail": "No verification code found. Please request a new one."}), 400
+
+    if reset_row["attempts"] >= MAX_OTP_ATTEMPTS:
+        return jsonify({"detail": "Too many attempts. Please request a new code."}), 400
+
+    expires_at = reset_row["expires_at"]
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if datetime.now(timezone.utc) > expires_at:
+        return jsonify({"detail": "This code has expired. Please request a new one."}), 400
+
+    if reset_row["otp_code"] != otp_code:
+        db_run("UPDATE password_resets SET attempts=attempts+1 WHERE id=%s", (reset_row["id"],))
+        return jsonify({"detail": "Incorrect verification code"}), 400
+
+    return jsonify({"message": "Code verified", "verified": True})
+
+
+@app.route("/api/auth/reset-password", methods=["POST"])
+def reset_password():
+    """Step 3: user submits the OTP again + new password → password is updated."""
+    data         = request.get_json(force=True) or {}
+    email        = (data.get("email") or "").strip().lower()
+    otp_code     = (data.get("otp") or "").strip()
+    new_password =  data.get("new_password") or ""
+
+    if not email or not otp_code:
+        return jsonify({"detail": "Email and OTP are required"}), 400
+    if len(new_password) < 6:
+        return jsonify({"detail": "Password must be at least 6 characters"}), 400
+
+    user = db_one("SELECT id FROM users WHERE email=%s", (email,))
+    if not user:
+        return jsonify({"detail": "Invalid or expired code"}), 400
+
+    reset_row = db_one(
+        """SELECT * FROM password_resets
+           WHERE user_id=%s AND is_used=FALSE
+           ORDER BY created_at DESC LIMIT 1""",
+        (user["id"],)
+    )
+    if not reset_row:
+        return jsonify({"detail": "No verification code found. Please request a new one."}), 400
+
+    if reset_row["attempts"] >= MAX_OTP_ATTEMPTS:
+        return jsonify({"detail": "Too many attempts. Please request a new code."}), 400
+
+    expires_at = reset_row["expires_at"]
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if datetime.now(timezone.utc) > expires_at:
+        return jsonify({"detail": "This code has expired. Please request a new one."}), 400
+
+    if reset_row["otp_code"] != otp_code:
+        db_run("UPDATE password_resets SET attempts=attempts+1 WHERE id=%s", (reset_row["id"],))
+        return jsonify({"detail": "Incorrect verification code"}), 400
+
+    hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
+    db_run("UPDATE users SET password=%s WHERE id=%s", (hashed, user["id"]))
+    db_run("UPDATE password_resets SET is_used=TRUE WHERE id=%s", (reset_row["id"],))
+
+    return jsonify({"message": "Password reset successfully. You can now log in. ✅"})
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -587,7 +740,7 @@ def delete_post(post_id):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  ADS ENGINE — campaigns, creatives, serving, tracking
+#  ADS ENGINE — campaigns, creatives, serving, tracking, HU Coin rewards
 # ══════════════════════════════════════════════════════════════════════════════
 
 def campaign_with_stats(c) -> dict:
@@ -657,14 +810,6 @@ def create_campaign():
         with open(os.path.join(UPLOAD_DIR, fname), "wb") as f:
             f.write(file_bytes)
         image_url = f"/uploads/{fname}"
-
-    # cid = str(uuid.uuid4())
-    # db_run(
-    #     """INSERT INTO ad_campaigns
-    #        (id, user_id, name, objective, budget, bid_amount, target_specialty, target_location, end_date)
-    #        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-    #     (cid, uid, name, objective, budget, bid_amount, specialty, location, end_date)
-    # )
 
     cid = str(uuid.uuid4())
     db_run(
@@ -745,11 +890,22 @@ def serve_ad():
         if isinstance(v, datetime): row[k] = v.isoformat()
     advertiser = db_one("SELECT name, avatar_url FROM users WHERE id=%s", (row["user_id"],)) or {}
     row["advertiser_name"] = advertiser.get("name", "Sponsored")
+    # Let the frontend know how many coins viewing/clicking this ad will earn,
+    # so it can show "+1 HU Coin" style UI before the user even acts.
+    row["impression_reward"] = COIN_REWARD_PER_IMPRESSION
+    row["click_reward"]      = COIN_REWARD_PER_CLICK
     return jsonify(row)
 
 
 @app.route("/api/ads/impression", methods=["POST"])
 def log_impression():
+    """
+    Logs an ad view. The FIRST time a given logged-in user sees a given campaign,
+    they earn HU Coins and a tiny amount is deducted from the campaign's budget.
+    Repeat views by the same user on the same campaign are still logged (for
+    accurate impression counts) but do not pay out again, to prevent coin-farming
+    by refreshing the feed.
+    """
     data = request.get_json(force=True) or {}
     campaign_id = data.get("campaign_id")
     creative_id = data.get("creative_id")
@@ -760,15 +916,47 @@ def log_impression():
     token = auth[7:] if auth.startswith("Bearer ") else None
     uid   = decode_token(token) if token else None
 
+    campaign = db_one("SELECT * FROM ad_campaigns WHERE id=%s", (campaign_id,))
+    if not campaign:
+        return jsonify({"detail": "Campaign not found"}), 404
+
+    coins_earned = 0
+    new_balance  = None
+
+    if uid and campaign["status"] == "active":
+        already_seen = db_one(
+            "SELECT id FROM ad_impressions WHERE campaign_id=%s AND user_id=%s LIMIT 1",
+            (campaign_id, uid)
+        )
+        if not already_seen:
+            remaining = float(campaign["budget"]) - float(campaign["spent"])
+            if remaining > 0:
+                cost = min(COST_PER_IMPRESSION, remaining)
+                new_spent = float(campaign["spent"]) + cost
+                db_run("UPDATE ad_campaigns SET spent=%s WHERE id=%s", (new_spent, campaign_id))
+                if new_spent >= float(campaign["budget"]):
+                    db_run("UPDATE ad_campaigns SET status='paused' WHERE id=%s", (campaign_id,))
+
+                db_run("UPDATE users SET hu_coins = hu_coins + %s WHERE id=%s",
+                       (COIN_REWARD_PER_IMPRESSION, uid))
+                coins_earned = COIN_REWARD_PER_IMPRESSION
+                bal = db_one("SELECT hu_coins FROM users WHERE id=%s", (uid,))
+                new_balance = bal["hu_coins"] if bal else None
+
     db_run(
         "INSERT INTO ad_impressions (id, campaign_id, creative_id, user_id) VALUES (%s,%s,%s,%s)",
         (str(uuid.uuid4()), campaign_id, creative_id, uid)
     )
-    return jsonify({"message": "logged"})
+    return jsonify({"message": "logged", "coins_earned": coins_earned, "hu_coins": new_balance})
 
 
 @app.route("/api/ads/click", methods=["POST"])
 def log_click():
+    """
+    Logs an ad click. The FIRST time a given logged-in user clicks a given
+    campaign, they earn HU Coins (on top of impression coins) and the
+    campaign's configured bid_amount is deducted from its budget, same as before.
+    """
     data = request.get_json(force=True) or {}
     campaign_id = data.get("campaign_id")
     creative_id = data.get("creative_id")
@@ -794,7 +982,29 @@ def log_click():
     if new_spent >= float(campaign["budget"]):
         db_run("UPDATE ad_campaigns SET status='paused' WHERE id=%s", (campaign_id,))
 
-    return jsonify({"message": "logged", "spent": new_spent})
+    coins_earned = 0
+    new_balance  = None
+    if uid:
+        # count clicks by this user on this campaign (including the one we just inserted) —
+        # reward only fires the first time.
+        prior_clicks = db_one(
+            "SELECT COUNT(*) AS n FROM ad_clicks WHERE campaign_id=%s AND user_id=%s",
+            (campaign_id, uid)
+        )
+        if prior_clicks and prior_clicks["n"] <= 1:
+            db_run("UPDATE users SET hu_coins = hu_coins + %s WHERE id=%s",
+                   (COIN_REWARD_PER_CLICK, uid))
+            coins_earned = COIN_REWARD_PER_CLICK
+            bal = db_one("SELECT hu_coins FROM users WHERE id=%s", (uid,))
+            new_balance = bal["hu_coins"] if bal else None
+
+    return jsonify({
+        "message": "logged",
+        "spent": new_spent,
+        "coins_earned": coins_earned,
+        "hu_coins": new_balance,
+    })
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  MESSAGING ENGINE — REST routes
@@ -828,42 +1038,6 @@ def search_users():
         )
     return jsonify([dict(r) for r in rows])
 
-
-# @app.route("/api/messages/conversations")
-# @require_auth
-# def list_conversations():
-#     uid = str(request.current_user["id"])
-#     rows = db_all(
-#         "SELECT * FROM conversations WHERE user_a_id=%s OR user_b_id=%s ORDER BY created_at DESC",
-#         (uid, uid)
-#     )
-#     result = []
-#     for c in rows:
-#         c = dict(c)
-#         other_id = c["user_b_id"] if str(c["user_a_id"]) == uid else c["user_a_id"]
-#         other = db_one("SELECT id, name, specialty, avatar_url FROM users WHERE id=%s", (other_id,)) or {}
-#         last_msg = db_one(
-#             "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at DESC LIMIT 1",
-#             (c["id"],)
-#         )
-#         unread = db_one(
-#             "SELECT COUNT(*) AS n FROM messages WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
-#             (c["id"], uid)
-#         )
-#         result.append({
-#             "id": c["id"],
-#             "other_user": {
-#                 "id": str(other.get("id","")),
-#                 "name": other.get("name","Unknown"),
-#                 "specialty": other.get("specialty",""),
-#                 "avatar": other.get("avatar_url",""),
-#                 "online": online_users.get(str(other.get("id","")), False),
-#             },
-#             "last_message": (dict(last_msg)["content"] if last_msg else ""),
-#             "last_time": (dict(last_msg)["created_at"].isoformat() if last_msg else ""),
-#             "unread_count": unread["n"] if unread else 0,
-#         })
-#     return jsonify(result)
 
 @app.route("/api/messages/conversations")
 @require_auth
@@ -935,10 +1109,6 @@ def upload_message_media():
     if not media or not media.filename:
         return jsonify({"detail": "No file provided"}), 400
 
-    # ct = media.content_type or ""
-    # if ct not in (ALLOWED_IMAGES | ALLOWED_VIDEOS):
-    #     return jsonify({"detail": "Only images and videos are allowed"}), 400
-
     ct = media.content_type or ""
     if ct not in (ALLOWED_IMAGES | ALLOWED_VIDEOS | ALLOWED_AUDIO):
         return jsonify({"detail": "Only images, videos, and audio are allowed"}), 400
@@ -952,11 +1122,9 @@ def upload_message_media():
     with open(os.path.join(UPLOAD_DIR, fname), "wb") as f:
         f.write(file_bytes)
 
-    # media_type = "image" if ct in ALLOWED_IMAGES else "video"
-    # return jsonify({"media_url": f"/uploads/{fname}", "media_type": media_type})
-
     media_type = "image" if ct in ALLOWED_IMAGES else ("video" if ct in ALLOWED_VIDEOS else "audio")
     return jsonify({"media_url": f"/uploads/{fname}", "media_type": media_type})
+
 
 @app.route("/api/messages/<message_id>", methods=["DELETE"])
 @require_auth
@@ -968,7 +1136,6 @@ def delete_message(message_id):
     if str(msg["sender_id"]) != uid:
         return jsonify({"detail": "You can only delete your own messages"}), 403
     db_run("UPDATE messages SET is_deleted=TRUE, content='', media_url='', media_type='' WHERE id=%s", (message_id,))
-    emit_to_conversation = db_one("SELECT conversation_id FROM messages WHERE id=%s", (message_id,))
     socketio.emit("message_deleted", {"message_id": message_id}, room="conv_" + str(msg["conversation_id"]))
     return jsonify({"message": "Message deleted"})
 
@@ -1056,28 +1223,7 @@ def search_conversation_messages(conv_id):
         out.append(m)
     return jsonify(out)
 
-# @app.route("/api/messages/conversations/<conv_id>/messages")
-# @require_auth
-# def get_messages(conv_id):
-#     uid = str(request.current_user["id"])
-#     conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
-#     if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
-#         return jsonify({"detail": "Conversation not found"}), 404
 
-#     rows = db_all(
-#         "SELECT * FROM messages WHERE conversation_id=%s ORDER BY created_at ASC", (conv_id,)
-#     )
-#     db_run(
-#         "UPDATE messages SET read_at=CURRENT_TIMESTAMP WHERE conversation_id=%s AND sender_id!=%s AND read_at IS NULL",
-#         (conv_id, uid)
-#     )
-#     out = []
-#     for m in rows:
-#         m = dict(m)
-#         for k, v in m.items():
-#             if isinstance(v, datetime): m[k] = v.isoformat()
-#         out.append(m)
-#     return jsonify(out)
 @app.route("/api/messages/conversations/<conv_id>/messages")
 @require_auth
 def get_messages(conv_id):
@@ -1087,7 +1233,7 @@ def get_messages(conv_id):
         return jsonify({"detail": "Conversation not found"}), 404
 
     limit = min(int(request.args.get("limit", 50)), 200)
-    before = request.args.get("before")  # ISO timestamp, for loading older messages
+    before = request.args.get("before")
 
     if before:
         rows = db_all(
@@ -1132,9 +1278,9 @@ def ws_connect():
     token = request.args.get("token")
     uid = decode_token(token) if token else None
     if not uid:
-        return False  # reject connection
+        return False
     uid = str(uid)
-    join_room(uid)  # personal room for this user
+    join_room(uid)
     online_users[uid] = True
     sid_to_user[request.sid] = uid
     emit("presence", {"user_id": uid, "online": True}, broadcast=True)
@@ -1154,43 +1300,6 @@ def ws_join_conversation(data):
     if conv_id:
         join_room("conv_" + conv_id)
 
-
-# @socketio.on("send_message")
-# def ws_send_message(data):
-#     conv_id = data.get("conversation_id")
-#     content = (data.get("content") or "").strip()
-#     uid = sid_to_user.get(request.sid)
-#     if not uid or not conv_id or not content:
-#         return
-
-#     conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
-#     if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
-#         return
-
-#     mid = str(uuid.uuid4())
-#     db_run(
-#         "INSERT INTO messages (id, conversation_id, sender_id, content) VALUES (%s,%s,%s,%s)",
-#         (mid, conv_id, uid, content)
-#     )
-# @socketio.on("send_message")
-# def ws_send_message(data):
-#     conv_id = data.get("conversation_id")
-#     content = (data.get("content") or "").strip()
-#     media_url = data.get("media_url") or ""
-#     media_type = data.get("media_type") or ""
-#     uid = sid_to_user.get(request.sid)
-#     if not uid or not conv_id or (not content and not media_url):
-#         return
-
-#     conv = db_one("SELECT * FROM conversations WHERE id=%s", (conv_id,))
-#     if not conv or uid not in (str(conv["user_a_id"]), str(conv["user_b_id"])):
-#         return
-
-#     mid = str(uuid.uuid4())
-#     db_run(
-#         "INSERT INTO messages (id, conversation_id, sender_id, content, media_url, media_type) VALUES (%s,%s,%s,%s,%s,%s)",
-#         (mid, conv_id, uid, content, media_url, media_type)
-#     )
 
 @socketio.on("send_message")
 def ws_send_message(data):
@@ -1227,11 +1336,6 @@ def ws_send_message(data):
     for k, v in msg.items():
         if isinstance(v, datetime): msg[k] = v.isoformat()
 
-    # other_id = str(conv["user_b_id"]) if str(conv["user_a_id"]) == uid else str(conv["user_a_id"])
-
-    # emit("new_message", msg, room="conv_" + conv_id)
-    # emit("conversation_update", {"conversation_id": conv_id}, room=other_id)
-
     if reply_to_id:
         reply_msg = db_one("SELECT id, content, sender_id, is_deleted FROM messages WHERE id=%s", (reply_to_id,))
         if reply_msg:
@@ -1251,7 +1355,6 @@ def ws_typing(data):
     uid = sid_to_user.get(request.sid)
     if conv_id and uid:
         emit("typing", {"conversation_id": conv_id, "user_id": uid}, room="conv_" + conv_id, include_self=False)
-
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1317,6 +1420,7 @@ def handle_call_busy(data):
         return
     emit("call_busy", {"from_user_id": from_user}, room=to_user)
 
+
 @socketio.on("mark_read")
 def ws_mark_read(data):
     conv_id = data.get("conversation_id")
@@ -1340,7 +1444,6 @@ def admin_check():
     return jsonify({"is_admin": True})
 
 
-# ─── Users ──────────────────────────────────────────────────────────────────────
 @app.route("/api/admin/users")
 @require_admin
 def admin_list_users():
@@ -1368,7 +1471,6 @@ def admin_delete_user(user_id):
     return jsonify({"message": "User deleted"})
 
 
-# ─── Posts ──────────────────────────────────────────────────────────────────────
 @app.route("/api/admin/posts")
 @require_admin
 def admin_list_posts():
@@ -1385,7 +1487,6 @@ def admin_delete_post(post_id):
     return jsonify({"message": "Post deleted"})
 
 
-# ─── Reports ────────────────────────────────────────────────────────────────────
 @app.route("/api/reports", methods=["POST"])
 @require_auth
 def create_report():
@@ -1429,7 +1530,6 @@ def admin_resolve_report(report_id):
     return jsonify({"message": "Report resolved"})
 
 
-# ─── Ads Approval ───────────────────────────────────────────────────────────────
 @app.route("/api/admin/campaigns")
 @require_admin
 def admin_list_all_campaigns():
@@ -1461,7 +1561,6 @@ def admin_reject_campaign(campaign_id):
     return jsonify({"message": "Campaign rejected"})
 
 
-# ─── Site Content: Trending Topics ──────────────────────────────────────────────
 @app.route("/api/trending-topics")
 def get_trending_topics():
     rows = db_all("SELECT * FROM trending_topics ORDER BY created_at DESC LIMIT 10")
@@ -1521,10 +1620,8 @@ if __name__ == "__main__":
         print(f"📡 Running on http://localhost:{port}")
         print(f"🔧 Debug mode: {'ON' if debug else 'OFF'}")
         print("="*50 + "\n")
-        # app.run(host="0.0.0.0", port=port, debug=debug)
-        # socketio.run(app, host="0.0.0.0", port=port, debug=debug)
         socketio.run(app, host="0.0.0.0", port=port, debug=debug, allow_unsafe_werkzeug=True)
-        
+
     except Exception as e:
         print(f"\n❌ Startup failed: {e}")
         print("👉 Check DATABASE_URL is correct in .env\n")
