@@ -2238,3 +2238,232 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+/**
+ * Close the Deep Understanding Modal
+ */
+window.closeDeepModal = function() {
+  const modal = document.getElementById("deep-health-modal");
+  if (modal) {
+    modal.style.display = "none";
+  }
+  document.body.style.overflow = ""; // restore background scroll
+};
+
+/**
+ * Switch tabs dynamically inside the modal
+ */
+window.switchDeepTab = function(tabType, clickedBtn) {
+  const data = window.currentDeepTopic;
+  if (!data) return;
+
+  // Visual active tab update
+  if (clickedBtn) {
+    document.querySelectorAll(".deep-tab-btn").forEach((btn) => {
+      btn.style.color = "#64748b";
+      btn.style.borderBottom = "none";
+    });
+    clickedBtn.style.color = "#2563eb";
+    clickedBtn.style.borderBottom = "2px solid #2563eb";
+  }
+
+  // Content loader update
+  const bodyContainer = document.getElementById("deep-body-content");
+  if (bodyContainer) {
+    bodyContainer.innerHTML = data[tabType] || "<p>No active protocol registered under this tab.</p>";
+  }
+};
+
+// Setup Escape key listener for fast closing
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    window.closeDeepModal();
+    window.closePostJobModal();
+  }
+});
+
+/* ============================
+   POST JOB MODAL
+============================ */
+
+window.openPostJobModal = function () {
+    const modal = document.getElementById("post-job-modal");
+
+    if (!modal) {
+        console.error("Post Job Modal not found!");
+        return;
+    }
+
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+};
+
+window.closePostJobModal = function () {
+    const modal = document.getElementById("post-job-modal");
+
+    if (!modal) return;
+
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+
+    const form = document.getElementById("post-job-form");
+    if (form) form.reset();
+};
+
+
+/* ============================
+   Escape HTML
+============================ */
+
+function escapeHTML(text) {
+    const div = document.createElement("div");
+    div.innerText = text || "";
+    return div.innerHTML;
+}
+
+
+/* ============================
+   Build Job Card
+============================ */
+
+function buildJobCard(job) {
+
+    const tags = job.tags
+        .map(tag => `<span class="job-tag">${escapeHTML(tag)}</span>`)
+        .join("");
+
+    return `
+
+<div class="job-card">
+
+<div class="job-card-header">
+
+<div class="job-info-main">
+
+<div class="hospital-logo">🏥</div>
+
+<div>
+
+<h3>${escapeHTML(job.title)}</h3>
+
+<p>
+<strong>${escapeHTML(job.hospital)}</strong> •
+${escapeHTML(job.location)}
+</p>
+
+<div class="job-badges">
+<span class="badge badge-primary">${escapeHTML(job.type)}</span>
+<span class="badge">${escapeHTML(job.specialty)}</span>
+
+${
+job.experience
+?
+`<span class="badge">${escapeHTML(job.experience)}</span>`
+:
+""
+}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<p class="job-description">
+${escapeHTML(job.description)}
+</p>
+
+<div class="job-tags-container">
+${tags}
+</div>
+
+<div class="job-card-footer">
+
+<div>
+
+<strong>${escapeHTML(job.salary || "Negotiable")}</strong>
+
+${
+job.deadline
+?
+`<div>Deadline : ${escapeHTML(job.deadline)}</div>`
+:
+""
+}
+
+</div>
+
+<button class="btn-primary">
+Apply Now
+</button>
+
+</div>
+
+</div>
+
+`;
+}
+
+
+/* ============================
+   Publish Job
+============================ */
+
+window.handlePostJobSubmit = function (event) {
+
+    event.preventDefault();
+
+    const job = {
+
+        title: document.getElementById("job-title").value,
+
+        hospital: document.getElementById("job-hospital").value,
+
+        location: document.getElementById("job-location").value,
+
+        type: document.getElementById("job-type").value,
+
+        specialty: document.getElementById("job-specialty").value,
+
+        experience: document.getElementById("job-experience").value,
+
+        salary: document.getElementById("job-salary").value,
+
+        description: document.getElementById("job-description").value,
+
+        tags: document
+            .getElementById("job-tags")
+            .value
+            .split(",")
+            .map(tag => tag.trim())
+            .filter(tag => tag !== ""),
+
+        deadline: document.getElementById("job-deadline").value
+    };
+
+
+    /* Insert card */
+
+    const jobsList = document.getElementById("jobs-list");
+
+    jobsList.insertAdjacentHTML(
+        "afterbegin",
+        buildJobCard(job)
+    );
+
+
+    /* Update counter */
+
+    const counter = document.getElementById("jobs-count");
+
+    counter.textContent =
+        parseInt(counter.textContent) + 1;
+
+
+    /* Close modal */
+
+    closePostJobModal();
+
+    alert("✅ Job posted successfully!");
+};

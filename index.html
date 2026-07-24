@@ -333,61 +333,201 @@
   </section>
 
   <!-- JOBS PAGE -->
-  <section id="page-jobs" class="page">
-    <div class="page-header jobs-page-header">
-      <div>
-        <h1>Jobs Marketplace</h1>
-        <p>Find healthcare jobs, internships &amp; residencies</p>
-      </div>
-      <button class="jobs-post-btn" onclick="showToast('📝 Job posting coming soon!')">+ Post a Job</button>
+  <!-- JOBS PAGE -->
+<section id="page-jobs" class="page">
+
+  <div class="page-header jobs-page-header">
+    <div>
+      <h1>Jobs Marketplace</h1>
+      <p>Find healthcare jobs, internships &amp; residencies</p>
     </div>
-    <div class="jobs-search-row">
-      <div class="jobs-search-wrap">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="jobs-search-input" placeholder="Search by job title, hospital, or specialty..." oninput="searchJobs(this.value)"/>
-      </div>
-      <select class="jobs-filter-select" onchange="filterJobsBySpecialty(this.value)">
-        <option value="All">All Specialties</option>
-        <option value="Cardiology">Cardiology</option>
-        <option value="Psychiatry">Psychiatry</option>
-        <option value="Nutrition">Nutrition</option>
-        <option value="Dermatology">Dermatology</option>
-        <option value="Orthopedics">Orthopedics</option>
-        <option value="Pediatrics">Pediatrics</option>
-        <option value="General Physician">General Physician</option>
+
+    <button class="jobs-post-btn" onclick="openPostJobModal()">
+      + Post a Job
+    </button>
+  </div>
+
+  <div class="jobs-search-row">
+
+    <div class="jobs-search-wrap">
+      <svg viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+
+      <input
+        type="text"
+        id="jobs-search-input"
+        placeholder="Search by job title, hospital, or specialty..."
+        oninput="searchJobs(this.value)"
+      />
+    </div>
+
+    <select class="jobs-filter-select" onchange="filterJobsBySpecialty(this.value)">
+      <option value="All">All Specialties</option>
+      <option value="Cardiology">Cardiology</option>
+      <option value="Psychiatry">Psychiatry</option>
+      <option value="Nutrition">Nutrition</option>
+      <option value="Dermatology">Dermatology</option>
+      <option value="Orthopedics">Orthopedics</option>
+      <option value="Pediatrics">Pediatrics</option>
+      <option value="General Physician">General Physician</option>
+    </select>
+
+    <select class="jobs-filter-select" onchange="filterJobsByLocation(this.value)">
+      <option value="All">All Locations</option>
+      <option value="Mumbai">Mumbai</option>
+      <option value="Delhi">Delhi</option>
+      <option value="Bangalore">Bangalore</option>
+      <option value="Chennai">Chennai</option>
+      <option value="Hyderabad">Hyderabad</option>
+      <option value="Pune">Pune</option>
+      <option value="Remote">Remote</option>
+    </select>
+
+  </div>
+
+  <div class="job-type-pills">
+    <button class="job-type-pill active" onclick="filterJobsByType('All',this)">All Types</button>
+    <button class="job-type-pill" onclick="filterJobsByType('Full-Time',this)">Full-Time</button>
+    <button class="job-type-pill" onclick="filterJobsByType('Part-Time',this)">Part-Time</button>
+    <button class="job-type-pill" onclick="filterJobsByType('Internship',this)">Internship</button>
+    <button class="job-type-pill" onclick="filterJobsByType('Residency',this)">Residency</button>
+  </div>
+
+  <div class="jobs-stats-bar">
+    <div class="jobs-stat">
+      <strong id="jobs-count">8</strong>
+      <span>Open Positions</span>
+    </div>
+
+    <div class="jobs-stat">
+      <strong>120+</strong>
+      <span>Hospitals</span>
+    </div>
+
+    <div class="jobs-stat">
+      <strong>₹3L–35L</strong>
+      <span>Salary Range</span>
+    </div>
+
+    <div class="jobs-stat">
+      <strong>3</strong>
+      <span>New Today</span>
+    </div>
+  </div>
+
+  <div class="jobs-tabs-bar">
+    <button class="jobs-tab active" onclick="switchJobsTab('browse',this)">Browse Jobs</button>
+    <button class="jobs-tab" onclick="switchJobsTab('saved',this)">Saved Jobs</button>
+    <button class="jobs-tab" onclick="switchJobsTab('applications',this)">My Applications</button>
+  </div>
+
+  <div id="jobs-list"></div>
+
+  <div id="applications-list" style="display:none;"></div>
+
+</section>
+<div id="post-job-modal" class="hu-modal" style="display:none;">
+
+    <div class="hu-modal-overlay" onclick="closePostJobModal()"></div>
+
+    <div class="hu-modal-content">
+
+        <div class="hu-modal-header">
+            <h3>🏥 Post a Healthcare Job</h3>
+
+            <button
+                type="button"
+                class="close-btn"
+                onclick="closePostJobModal()">
+                &times;
+            </button>
+        </div>
+
+        <form id="post-job-form" onsubmit="handlePostJobSubmit(event)">
+
+            <!-- Your existing form goes here exactly as it is -->
+             <form id="post-job-form" onsubmit="handlePostJobSubmit(event)">
+
+  <div class="form-group">
+    <label for="job-title">Job Title *</label>
+    <input type="text" id="job-title" name="job-title" placeholder="e.g. Senior Cardiologist" required>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="job-hospital">Hospital / Organization *</label>
+      <input type="text" id="job-hospital" name="job-hospital" required>
+    </div>
+
+    <div class="form-group">
+      <label for="job-location">Location *</label>
+      <input type="text" id="job-location" name="job-location" required>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="job-type">Job Type *</label>
+      <select id="job-type" name="job-type">
+        <option>Full-Time</option>
+        <option>Part-Time</option>
+        <option>Internship</option>
+        <option>Residency</option>
       </select>
-      <select class="jobs-filter-select" onchange="filterJobsByLocation(this.value)">
-        <option value="All">All Locations</option>
-        <option value="Mumbai">Mumbai</option>
-        <option value="Delhi">Delhi</option>
-        <option value="Bangalore">Bangalore</option>
-        <option value="Chennai">Chennai</option>
-        <option value="Hyderabad">Hyderabad</option>
-        <option value="Pune">Pune</option>
-        <option value="Remote">Remote</option>
-      </select>
     </div>
-    <div class="job-type-pills">
-      <button class="job-type-pill active" onclick="filterJobsByType('All', this)">All Types</button>
-      <button class="job-type-pill" onclick="filterJobsByType('Full-Time', this)">Full-Time</button>
-      <button class="job-type-pill" onclick="filterJobsByType('Part-Time', this)">Part-Time</button>
-      <button class="job-type-pill" onclick="filterJobsByType('Internship', this)">Internship</button>
-      <button class="job-type-pill" onclick="filterJobsByType('Residency', this)">Residency</button>
+
+    <div class="form-group">
+      <label for="job-specialty">Specialty *</label>
+      <input type="text" id="job-specialty" name="job-specialty" required>
     </div>
-    <div class="jobs-stats-bar">
-      <div class="jobs-stat"><strong id="jobs-count">8</strong><span>Open Positions</span></div>
-      <div class="jobs-stat"><strong>120+</strong><span>Hospitals</span></div>
-      <div class="jobs-stat"><strong>₹3L–35L</strong><span>Salary Range</span></div>
-      <div class="jobs-stat"><strong>3</strong><span>New Today</span></div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="job-experience">Experience</label>
+      <input type="text" id="job-experience" name="job-experience">
     </div>
-    <div class="jobs-tabs-bar">
-      <button class="jobs-tab active" onclick="switchJobsTab('browse', this)">Browse Jobs</button>
-      <button class="jobs-tab" onclick="switchJobsTab('saved', this)">Saved Jobs</button>
-      <button class="jobs-tab" onclick="switchJobsTab('applications', this)">My Applications</button>
+
+    <div class="form-group">
+      <label for="job-salary">Salary</label>
+      <input type="text" id="job-salary" name="job-salary">
     </div>
-    <div id="jobs-list"></div>
-    <div id="applications-list" style="display:none;"></div>
-  </section>
+  </div>
+
+  <div class="form-group">
+    <label for="job-description">Job Description *</label>
+    <textarea id="job-description" name="job-description" rows="4" required></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="job-tags">Tags</label>
+    <input type="text" id="job-tags" name="job-tags">
+  </div>
+
+  <div class="form-group">
+    <label for="job-deadline">Deadline</label>
+    <input type="date" id="job-deadline" name="job-deadline">
+  </div>
+
+  <div class="hu-modal-actions">
+    <button type="button" class="btn-secondary" onclick="closePostJobModal()">
+      Cancel
+    </button>
+
+    <button type="submit" class="btn-primary">
+      Publish Job
+    </button>
+  </div>
+
+</form>
+
+        </form>
+
+    </div>
+
+</div>
 
   <!-- WALLET PAGE -->
   <section id="page-wallet" class="page">
