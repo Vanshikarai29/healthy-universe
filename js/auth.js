@@ -28,6 +28,30 @@ const specialties = {
     "Pathologist",
   ],
 
+  "Ayurvedic Doctor": [
+    "General Ayurveda",
+    "Kayachikitsa (Internal Medicine)",
+    "Panchakarma",
+    "Shalya Tantra (Surgery)",
+    "Shalakya Tantra (ENT & Ophthalmology)",
+    "Kaumarbhritya (Pediatrics)",
+    "Prasuti & Stri Roga (Gynecology & Obstetrics)",
+    "Rasayana (Rejuvenation)",
+    "Agada Tantra (Toxicology)",
+    "Other",
+  ],
+
+  "Homeopathic Doctor": [
+    "General Homeopathy",
+    "Pediatric Homeopathy",
+    "Dermatological Homeopathy",
+    "Chronic Disease Management",
+    "Constitutional Medicine",
+    "Materia Medica Specialist",
+    "Repertoirization Specialist",
+    "Psychosomatic Homeopathy",
+    "Other",
+  ],
   Nurse: [
     "Registered Nurse (RN)",
     "Nurse Practitioner",
@@ -165,7 +189,16 @@ roleSelect.addEventListener("change", function () {
   specialtySelect.appendChild(defaultOption);
 
   // Add options
-  specialties[role].forEach(function (item) {
+  // specialties[role].forEach(function (item) {
+  //   const option = document.createElement("option");
+  //   option.value = item;
+  //   option.textContent = item;
+  //   specialtySelect.appendChild(option);
+  // });
+  // NEW CODE:
+  const roleSpecialties = specialties[role] || ["General Practice", "Other"];
+
+  roleSpecialties.forEach(function (item) {
     const option = document.createElement("option");
     option.value = item;
     option.textContent = item;

@@ -223,7 +223,7 @@ const SUGGESTED_USERS = [
   },
 ];
 
-const DOCTORS = [
+let DOCTORS = [
   {
     id: "d1",
     name: "Dr. Sarah Mitchell",
@@ -373,7 +373,8 @@ const DOCTORS = [
 /* ============================================
    ✨ JOBS DATA
    ============================================ */
-const JOBS = [
+
+  let JOBS = [
   {
     id: "j1",
     title: "Senior Cardiologist",
@@ -938,3 +939,54 @@ window.healthDataRepository = {
     `,
   },
 };
+
+/* ============================================
+   ✨ MERGE ADMIN-ADDED JOBS & DOCTORS INTO EXISTING ARRAYS
+   (Existing hardcoded JOBS/DOCTORS untouched — sirf naye push honge)
+   ============================================ */
+
+async function loadAdminAddedJobs() {
+  try {
+    const res = await fetch(HU_API + "/api/jobs");
+    if (!res.ok) return;
+    const adminJobs = await res.json();
+
+    const existingIds = new Set(JOBS.map(j => j.id));
+    adminJobs.forEach(function (aj) {
+      if (!existingIds.has(aj.id)) JOBS.push(aj);
+    });
+
+    // Agar user abhi Jobs page par hai, to turant re-render karo
+    const jobsList = document.getElementById("jobs-list");
+    if (jobsList && typeof renderJobs === "function") renderJobs();
+  } catch (e) {
+    console.error("Could not load admin-added jobs:", e);
+  }
+}
+
+async function loadAdminAddedDoctors() {
+  try {
+    const res = await fetch(HU_API + "/api/doctors");
+    if (!res.ok) return;
+    const adminDoctors = await res.json();
+
+    const existingIds = new Set(DOCTORS.map(d => d.id));
+    adminDoctors.forEach(function (ad) {
+      if (!existingIds.has(ad.id)) DOCTORS.push(ad);
+    });
+
+    const doctorsGrid = document.getElementById("doctors-grid");
+    if (doctorsGrid && typeof renderDoctors === "function") renderDoctors();
+  } catch (e) {
+    console.error("Could not load admin-added doctors:", e);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  // app.js ka apna DOMContentLoaded handler pehle chalne dete hain (fake posts, feed etc.)
+  // uske thodi der baad hum admin data merge karke silently array update kar dete hain
+  setTimeout(function () {
+    loadAdminAddedJobs();
+    loadAdminAddedDoctors();
+  }, 800);
+});

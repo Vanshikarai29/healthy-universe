@@ -5,6 +5,7 @@ from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from dotenv import load_dotenv
+import json as _json
 import os, uuid, bcrypt, jwt, psycopg2, psycopg2.extras, random, requests
 from flask_socketio import SocketIO, emit, join_room
 
@@ -375,6 +376,48 @@ def init_db():
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_password_resets_user ON password_resets(user_id, is_used);")
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS jobs (
+                    id            VARCHAR(36)  NOT NULL PRIMARY KEY,
+                    title         VARCHAR(150) NOT NULL,
+                    company       VARCHAR(150) NOT NULL,
+                    company_logo  VARCHAR(500) DEFAULT '',
+                    location      VARCHAR(100) DEFAULT 'Remote',
+                    job_type      VARCHAR(30)  DEFAULT 'Full-Time',
+                    specialty     VARCHAR(100) DEFAULT 'General Physician',
+                    salary        VARCHAR(60)  DEFAULT '',
+                    experience    VARCHAR(60)  DEFAULT '',
+                    deadline      VARCHAR(60)  DEFAULT '',
+                    applicants    INT          DEFAULT 0,
+                    tags          JSONB        DEFAULT '[]',
+                    description   TEXT         DEFAULT '',
+                    featured      BOOLEAN      DEFAULT FALSE,
+                    is_active     BOOLEAN      DEFAULT TRUE,
+                    created_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS doctors (
+                    id            VARCHAR(36)  NOT NULL PRIMARY KEY,
+                    name          VARCHAR(150) NOT NULL,
+                    specialty     VARCHAR(100) NOT NULL,
+                    hospital      VARCHAR(150) DEFAULT '',
+                    avatar_url    VARCHAR(500) DEFAULT '',
+                    verified      BOOLEAN      DEFAULT TRUE,
+                    rating        NUMERIC(2,1) DEFAULT 4.8,
+                    reviews       INT          DEFAULT 0,
+                    experience    INT          DEFAULT 0,
+                    consultations INT          DEFAULT 0,
+                    status        VARCHAR(20)  DEFAULT 'online',
+                    price         NUMERIC(10,2) DEFAULT 0,
+                    coins         INT          DEFAULT 0,
+                    tags          JSONB        DEFAULT '[]',
+                    next_slot     VARCHAR(60)  DEFAULT 'Available Now',
+                    is_active     BOOLEAN      DEFAULT TRUE,
+                    created_at    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
             # ── END NEW TABLES ───────────────────────────────────────────────
 
         conn.commit()
@@ -1607,6 +1650,130 @@ def admin_delete_trending_topic(topic_id):
     return jsonify({"message": "Topic deleted"})
 
 
+def job_to_frontend_shape(j) -> dict:
+    j = dict(j)
+    tags = j.get("tags") or []
+    if isinstance(tags, str):
+        try: tags = _json.loads(tags)
+        except Exception: tags = []
+    delta = datetime.now(timezone.utc) - j["created_at"].replace(tzinfo=timezone.utc)
+    posted = "Today" if delta.days <= 0 else (f"{delta.days} day{'s' if delta.days>1 else ''} ago")
+    return {
+        "id": j["id"], "title": j["title"], "company": j["company"],
+        "companyLogo": j["company_logo"], "location": j["location"],
+        "type": j["job_type"], "specialty": j["specialty"], "salary": j["salary"],
+        "experience": j["experience"], "posted": posted, "deadline": j["deadline"],
+        "applicants": j["applicants"], "tags": tags, "description": j["description"],
+        "featured": j["featured"], "saved": False, "applied": False,
+    }
+
+def doctor_to_frontend_shape(d) -> dict:
+    d = dict(d)
+    tags = d.get("tags") or []
+    if isinstance(tags, str):
+        try: tags = _json.loads(tags)
+        except Exception: tags = []
+    return {
+        "id": d["id"], "name": d["name"], "specialty": d["specialty"],
+        "hospital": d["hospital"], "avatar": d["avatar_url"], "verified": d["verified"],
+        "rating": float(d["rating"]), "reviews": d["reviews"], "experience": d["experience"],
+        "consultations": d["consultations"], "status": d["status"], "price": float(d["price"]),
+        "coins": d["coins"], "tags": tags, "nextSlot": d["next_slot"],
+    }
+
+
+# ── JOBS ──────────────────────────────────────────────────────────
+@app.route("/api/jobs")
+def get_jobs():
+    rows = db_all("SELECT * FROM jobs WHERE is_active=TRUE ORDER BY created_at DESC")
+    return jsonify([job_to_frontend_shape(r) for r in rows])
+
+@app.route("/api/admin/jobs", methods=["POST"])
+@require_admin
+def admin_create_job():
+    data = request.get_json(force=True) or {}
+    title = (data.get("title") or "").strip()
+    company = (data.get("company") or "").strip()
+    if not title or not company:
+        return jsonify({"detail": "Title and company are required"}), 400
+
+    tags = data.get("tags") or []
+    if isinstance(tags, str):
+        tags = [t.strip() for t in tags.split(",") if t.strip()]
+
+    jid = str(uuid.uuid4())
+    db_run(
+        """INSERT INTO jobs (id, title, company, company_logo, location, job_type,
+           specialty, salary, experience, deadline, tags, description, featured)
+           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+        (jid, title, company,
+         data.get("company_logo") or "", data.get("location") or "Remote",
+         data.get("job_type") or "Full-Time", data.get("specialty") or "General Physician",
+         data.get("salary") or "", data.get("experience") or "", data.get("deadline") or "",
+         _json.dumps(tags), data.get("description") or "", bool(data.get("featured", False)))
+    )
+    return jsonify({"message": "Job posted ✅", "id": jid}), 201
+
+@app.route("/api/admin/jobs")
+@require_admin
+def admin_list_jobs():
+    rows = db_all("SELECT * FROM jobs ORDER BY created_at DESC")
+    return jsonify([job_to_frontend_shape(r) for r in rows])
+
+@app.route("/api/admin/jobs/<job_id>", methods=["DELETE"])
+@require_admin
+def admin_delete_job(job_id):
+    if not db_one("SELECT id FROM jobs WHERE id=%s", (job_id,)):
+        return jsonify({"detail": "Job not found"}), 404
+    db_run("DELETE FROM jobs WHERE id=%s", (job_id,))
+    return jsonify({"message": "Job deleted"})
+
+
+# ── DOCTORS / CONSULTATIONS ───────────────────────────────────────
+@app.route("/api/doctors")
+def get_doctors():
+    rows = db_all("SELECT * FROM doctors WHERE is_active=TRUE ORDER BY created_at DESC")
+    return jsonify([doctor_to_frontend_shape(r) for r in rows])
+
+@app.route("/api/admin/doctors", methods=["POST"])
+@require_admin
+def admin_create_doctor():
+    data = request.get_json(force=True) or {}
+    name = (data.get("name") or "").strip()
+    specialty = (data.get("specialty") or "").strip()
+    if not name or not specialty:
+        return jsonify({"detail": "Name and specialty are required"}), 400
+
+    tags = data.get("tags") or []
+    if isinstance(tags, str):
+        tags = [t.strip() for t in tags.split(",") if t.strip()]
+
+    did = str(uuid.uuid4())
+    db_run(
+        """INSERT INTO doctors (id, name, specialty, hospital, avatar_url, verified,
+           rating, reviews, experience, consultations, status, price, coins, tags, next_slot)
+           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+        (did, name, specialty, data.get("hospital") or "", data.get("avatar_url") or "",
+         bool(data.get("verified", True)), data.get("rating") or 4.8, data.get("reviews") or 0,
+         data.get("experience") or 0, data.get("consultations") or 0, data.get("status") or "online",
+         data.get("price") or 0, data.get("coins") or (float(data.get("price") or 0) * 2),
+         _json.dumps(tags), data.get("next_slot") or "Available Now")
+    )
+    return jsonify({"message": "Doctor added ✅", "id": did}), 201
+
+@app.route("/api/admin/doctors")
+@require_admin
+def admin_list_doctors():
+    rows = db_all("SELECT * FROM doctors ORDER BY created_at DESC")
+    return jsonify([doctor_to_frontend_shape(r) for r in rows])
+
+@app.route("/api/admin/doctors/<doctor_id>", methods=["DELETE"])
+@require_admin
+def admin_delete_doctor(doctor_id):
+    if not db_one("SELECT id FROM doctors WHERE id=%s", (doctor_id,)):
+        return jsonify({"detail": "Doctor not found"}), 404
+    db_run("DELETE FROM doctors WHERE id=%s", (doctor_id,))
+    return jsonify({"message": "Doctor removed"})
 # ─── RUN ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     print("\n" + "="*50)
@@ -1625,3 +1792,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ Startup failed: {e}")
         print("👉 Check DATABASE_URL is correct in .env\n")
+
+
+    

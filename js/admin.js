@@ -28,6 +28,8 @@ function switchAdminTab(tab, btn) {
   else if (tab === "reports") loadAdminReports();
   else if (tab === "ads") loadAdminAds();
   else if (tab === "content") loadAdminTopics();
+  else if (tab === "jobs") loadAdminJobs();
+  else if (tab === "doctors") loadAdminDoctors();
 }
 
 // ── Users ──────────────────────────────────────────────────────────────────
@@ -348,6 +350,106 @@ async function deleteTopicAdmin(id) {
     showToast("🗑️ Topic deleted");
     loadAdminTopics();
   }
+}
+// ── Jobs ───────────────────────────────────────────────────────────────────
+function openAddJobForm() { document.getElementById("admin-add-job-form").style.display = "flex"; }
+function closeAddJobForm() { document.getElementById("admin-add-job-form").style.display = "none"; }
+
+async function loadAdminJobs() {
+  const list = document.getElementById("admin-jobs-list");
+  list.innerHTML = '<p class="admin-loading">Loading jobs...</p>';
+  const res = await huFetch("/api/admin/jobs");
+  if (!res || !res.ok) { list.innerHTML = '<p class="admin-loading">Could not load</p>'; return; }
+  const jobs = await res.json();
+  if (jobs.length === 0) { list.innerHTML = '<p class="admin-loading">No jobs added yet</p>'; return; }
+  list.innerHTML = jobs.map(function (j) {
+    return '<div class="admin-row"><div class="admin-row-info"><strong>' + j.title +
+      '</strong><span>' + j.company + ' · ' + j.location + ' · ' + j.type + '</span></div>' +
+      '<div class="admin-row-actions"><button class="admin-action-btn danger" onclick="deleteAdminJob(\'' + j.id + '\')">Delete</button></div></div>';
+  }).join("");
+}
+
+async function submitNewJob() {
+  const title = document.getElementById("job-title").value.trim();
+  const company = document.getElementById("job-company").value.trim();
+  if (!title || !company) { showToast("⚠️ Title and company required"); return; }
+  const tagsRaw = document.getElementById("job-tags").value.trim();
+  const tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()).filter(Boolean) : [];
+
+  const res = await huFetch("/api/admin/jobs", {
+    method: "POST",
+    body: JSON.stringify({
+      title, company,
+      company_logo: document.getElementById("job-logo").value.trim(),
+      location: document.getElementById("job-location").value.trim() || "Remote",
+      job_type: document.getElementById("job-type").value,
+      specialty: document.getElementById("job-specialty").value,
+      salary: document.getElementById("job-salary").value.trim(),
+      experience: document.getElementById("job-experience").value.trim(),
+      deadline: document.getElementById("job-deadline").value.trim(),
+      tags,
+      description: document.getElementById("job-description").value.trim(),
+      featured: document.getElementById("job-featured").checked,
+    }),
+  });
+  if (res && res.ok) { showToast("✅ Job posted"); closeAddJobForm(); loadAdminJobs(); }
+}
+
+async function deleteAdminJob(id) {
+  if (!confirm("Delete this job?")) return;
+  const res = await huFetch("/api/admin/jobs/" + id, { method: "DELETE" });
+  if (res && res.ok) { showToast("🗑️ Deleted"); loadAdminJobs(); }
+}
+
+// ── Doctors / Consultations ─────────────────────────────────────────────────
+function openAddDoctorForm() { document.getElementById("admin-add-doctor-form").style.display = "flex"; }
+function closeAddDoctorForm() { document.getElementById("admin-add-doctor-form").style.display = "none"; }
+
+async function loadAdminDoctors() {
+  const list = document.getElementById("admin-doctors-list");
+  list.innerHTML = '<p class="admin-loading">Loading doctors...</p>';
+  const res = await huFetch("/api/admin/doctors");
+  if (!res || !res.ok) { list.innerHTML = '<p class="admin-loading">Could not load</p>'; return; }
+  const docs = await res.json();
+  if (docs.length === 0) { list.innerHTML = '<p class="admin-loading">No doctors added yet</p>'; return; }
+  list.innerHTML = docs.map(function (d) {
+    return '<div class="admin-row"><div class="admin-row-info"><strong>' + d.name +
+      '</strong><span>' + d.specialty + ' · ₹' + d.price + '</span></div>' +
+      '<div class="admin-row-actions"><button class="admin-action-btn danger" onclick="deleteAdminDoctor(\'' + d.id + '\')">Delete</button></div></div>';
+  }).join("");
+}
+
+async function submitNewDoctor() {
+  const name = document.getElementById("doc-name").value.trim();
+  if (!name) { showToast("⚠️ Enter doctor name"); return; }
+  const tagsRaw = document.getElementById("doc-tags").value.trim();
+  const tags = tagsRaw ? tagsRaw.split(",").map(t => t.trim()).filter(Boolean) : [];
+
+  const res = await huFetch("/api/admin/doctors", {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+      specialty: document.getElementById("doc-specialty").value,
+      hospital: document.getElementById("doc-hospital").value.trim(),
+      avatar_url: document.getElementById("doc-avatar").value.trim(),
+      experience: document.getElementById("doc-experience").value || 0,
+      rating: document.getElementById("doc-rating").value || 4.8,
+      reviews: document.getElementById("doc-reviews").value || 0,
+      consultations: document.getElementById("doc-consultations").value || 0,
+      status: document.getElementById("doc-status").value,
+      price: document.getElementById("doc-price").value || 0,
+      coins: document.getElementById("doc-coins").value || "",
+      next_slot: document.getElementById("doc-nextslot").value.trim() || "Available Now",
+      tags,
+    }),
+  });
+  if (res && res.ok) { showToast("✅ Doctor added"); closeAddDoctorForm(); loadAdminDoctors(); }
+}
+
+async function deleteAdminDoctor(id) {
+  if (!confirm("Remove this doctor?")) return;
+  const res = await huFetch("/api/admin/doctors/" + id, { method: "DELETE" });
+  if (res && res.ok) { showToast("🗑️ Removed"); loadAdminDoctors(); }
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────

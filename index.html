@@ -549,6 +549,8 @@
     <button class="admin-tab" onclick="switchAdminTab('posts', this)">Posts</button>
     <button class="admin-tab" onclick="switchAdminTab('reports', this)">Reports</button>
     <button class="admin-tab" onclick="switchAdminTab('ads', this)">Ads Approval</button>
+    <button class="admin-tab" onclick="switchAdminTab('jobs', this)">Jobs</button>
+  <button class="admin-tab" onclick="switchAdminTab('doctors', this)">Consultations</button>
     <button class="admin-tab" onclick="switchAdminTab('content', this)">Site Content</button>
   </div>
 
@@ -571,6 +573,74 @@
   <div class="admin-tab-panel" id="admin-tab-ads">
     <div id="admin-ads-list" class="admin-list"></div>
   </div>
+  
+
+  <!-- JOBS TAB -->
+  <div class="admin-tab-panel" id="admin-tab-jobs">
+    <div class="admin-content-header">
+      <h3>Job Postings</h3>
+      <button class="admin-add-btn" onclick="openAddJobForm()">+ Add Job</button>
+    </div>
+    <div id="admin-add-job-form" class="admin-inline-form" style="display:none;flex-wrap:wrap;gap:10px;">
+      <input type="text" id="job-title" placeholder="Job Title"/>
+      <input type="text" id="job-company" placeholder="Company / Hospital Name"/>
+      <input type="url" id="job-logo" placeholder="Company Logo URL (optional)"/>
+      <input type="text" id="job-location" placeholder="Location (e.g. Mumbai, Remote)"/>
+      <select id="job-type">
+        <option>Full-Time</option><option>Part-Time</option><option>Internship</option><option>Residency</option>
+      </select>
+      <select id="job-specialty">
+        <option>General Physician</option><option>Cardiology</option><option>Psychiatry</option>
+        <option>Nutrition</option><option>Dermatology</option><option>Orthopedics</option><option>Pediatrics</option>
+        <option>Ayurveda</option><option>Homeopathy</option><option>Nursing</option>
+      </select>
+      <input type="text" id="job-salary" placeholder="Salary (e.g. ₹8L – ₹14L/yr)"/>
+      <input type="text" id="job-experience" placeholder="Experience (e.g. 2-4 years)"/>
+      <input type="text" id="job-deadline" placeholder="Deadline (e.g. Jan 15, 2026)"/>
+      <input type="text" id="job-tags" placeholder="Tags, comma separated (MBBS, MD Cardiology)"/>
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;">
+        <input type="checkbox" id="job-featured"/> Featured Job
+      </label>
+      <textarea id="job-description" placeholder="Job description..." style="width:100%;"></textarea>
+      <button onclick="submitNewJob()">Save</button>
+      <button onclick="closeAddJobForm()">Cancel</button>
+    </div>
+    <div id="admin-jobs-list" class="admin-list"></div>
+  </div>
+
+  <!-- DOCTORS / CONSULTATIONS TAB -->
+  <div class="admin-tab-panel" id="admin-tab-doctors">
+    <div class="admin-content-header">
+      <h3>Consultation Doctors</h3>
+      <button class="admin-add-btn" onclick="openAddDoctorForm()">+ Add Doctor</button>
+    </div>
+    <div id="admin-add-doctor-form" class="admin-inline-form" style="display:none;flex-wrap:wrap;gap:10px;">
+      <input type="text" id="doc-name" placeholder="Dr. Full Name"/>
+      <select id="doc-specialty">
+        <option>Cardiologist</option><option>Psychiatrist</option><option>Nutritionist</option>
+        <option>Dermatologist</option><option>Orthopedic</option><option>Pediatrician</option>
+        <option>General Physician</option><option>Ayurvedic Doctor</option><option>Homeopathic Doctor</option>
+      </select>
+      <input type="text" id="doc-hospital" placeholder="Hospital / Clinic"/>
+      <input type="url" id="doc-avatar" placeholder="Photo URL"/>
+      <input type="number" id="doc-experience" placeholder="Experience (years)"/>
+      <input type="number" id="doc-rating" placeholder="Rating (e.g. 4.8)" step="0.1" min="0" max="5"/>
+      <input type="number" id="doc-reviews" placeholder="Reviews count"/>
+      <input type="number" id="doc-consultations" placeholder="Total consultations"/>
+      <select id="doc-status">
+        <option value="online">Online</option><option value="busy">Busy</option><option value="offline">Offline</option>
+      </select>
+      <input type="number" id="doc-price" placeholder="Consultation Fee (₹)"/>
+      <input type="number" id="doc-coins" placeholder="HU Coins equivalent (optional)"/>
+      <input type="text" id="doc-nextslot" placeholder="Next Slot (e.g. Today, 3:00 PM)"/>
+      <input type="text" id="doc-tags" placeholder="Tags, comma separated (Anxiety, Depression)"/>
+      <button onclick="submitNewDoctor()">Save</button>
+      <button onclick="closeAddDoctorForm()">Cancel</button>
+    </div>
+    <div id="admin-doctors-list" class="admin-list"></div>
+  </div>
+
+  
 
   <!-- CONTENT TAB -->
   <div class="admin-tab-panel" id="admin-tab-content">
@@ -637,10 +707,16 @@
             <div class="settings-field">
               <label class="settings-label">Specialty / Role</label>
               <select class="settings-input" id="sf-specialty">
+                <!-- <option>Psychiatrist</option><option>Cardiologist</option><option>Dermatologist</option>
+                <option>General Physician</option><option>Nutritionist</option><option>Orthopedic Surgeon</option>
+                <option>Pediatrician</option><option>Medical Student</option><option>Nurse / Practitioner</option>
+                <option>Healthcare Admin</option><option>Patient / General User</option> -->
                 <option>Psychiatrist</option><option>Cardiologist</option><option>Dermatologist</option>
                 <option>General Physician</option><option>Nutritionist</option><option>Orthopedic Surgeon</option>
                 <option>Pediatrician</option><option>Medical Student</option><option>Nurse / Practitioner</option>
                 <option>Healthcare Admin</option><option>Patient / General User</option>
+                <option>Ayurvedic Doctor</option><option>Homeopathic Doctor</option>
+                <option>Unani Practitioner</option><option>Naturopath</option><option>Yoga Instructor</option>
               </select>
             </div>
             <div class="settings-field">
